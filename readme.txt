@@ -2,10 +2,10 @@
 Contributors: retargeting
 Tags: retargeting, woocommerce
 Requires at least: 3.8
-Tested up to: 4.2
-Stable tag: 4.2
+Tested up to: 4.4.1
+Stable tag: 4.4.1
 Requires WooCommerce at least: 2.2.6
-Tested WooCommerce up to: 2.3.8
+Tested WooCommerce up to: 2.4.13
 License: GPLv2
 
 Adds Retargeting tracking to WooCommerce.

@@ -7,6 +7,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+require_once (dirname(__FILE__).'/../lib/Retargeting_REST_API_Client.php');
+
 class WC_Integration_Retargeting_Tracking extends WC_Integration
 {
     protected static $product_type = array(
@@ -28,14 +30,17 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->init_settings();
 
         $this->domain_api_key = $this->get_option('domain_api_key');
-        $this->discount_api_key = $this->get_option('discounts_api_key');
+        $this->token = $this->get_option('token');
         $this->help_pages = $this->get_option('help_pages');
 
         add_action('woocommerce_update_options_integration_retargeting', array($this, 'process_admin_options'));
-//Retargeting Tracking Code V3
-//        add_action('wp_head', array($this, 'get_retargeting_tracking_code'), 999);
-//Retargeting Tracking Code V2
-        add_action('wp_head', array($this, 'get_retargeting_tracking_code_v2'), 999);
+        if($this->domain_api_key && $this->domain_api_key != ''){
+            //Retargeting Tracking Code V3
+           add_action('wp_head', array($this, 'get_retargeting_tracking_code'), 999);
+        } else {
+            //Retargeting Tracking Code V2
+            add_action('wp_head', array($this, 'get_retargeting_tracking_code_v2'), 999);
+        }
 
         add_action('wp_head', array($this, 'set_email'), 9999);
 
@@ -86,9 +91,9 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 'type' => 'text',
                 'default' => '',
             ),
-            'discounts_api_key' => array(
-                'title' => __('Discounts API KEY'),
-                'description' => __('Insert retargeting Discounts API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=028e36488ab8dd68eaac58e07ef8f9bf" target="_blank">Click here</a> to get your Discounts API Key'),
+            'token' => array(
+                'title' => __('Token'),
+                'description' => __('Insert Retargeting Token. <a href="https://retargeting.biz/admin?action=api_redirect&token=028e36488ab8dd68eaac58e07ef8f9bf" target="_blank">Click here</a> to get your Token'),
                 'type' => 'text',
                 'default' => '',
             ),
@@ -170,7 +175,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 _ra.sendCategoryInfo = {
                     "id": ' . $categories->term_id . ',
                     "name" : "' . $categories->name . '",
-                    "parent": ' . $categories->parent . ',
+                    "parent": false,
                     "category_breadcrumb": []
                 }
 
@@ -243,7 +248,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                         "category": {
                             "id": ' . $cat['catid'] . ',
                             "name": "' . $cat['cat'] . '",
-                            "parent": ' . $cat['catparent'] . '
+                            "parent": false
                         },
                         "category_breadcrumb": []
                     };
@@ -333,9 +338,8 @@ _ra.setVariation(' . $product->id . ', {
             <script>
                 function _ra_helper_addLoadEvent(func){var oldonload = window.onload;
                 if (typeof window.onload != "function") {window.onload = func;}
-                else {window.onload = function() {if (oldonload) {oldonload();}func();}
-}
-}
+                else {window.onload = function() {if (oldonload) {oldonload();}func();}}}
+
                 function _ra_triggerClickImage() {
                     if(typeof _ra.clickImage !== "undefined") _ra.clickImage("' . $product->id . '");
                 }
@@ -468,8 +472,8 @@ _ra.setVariation(' . $product->id . ', {
                 $data['line_items'][] = $line_item;
             }
 
-            echo '<script>
-var _ra = _ra || {};
+echo '<script>
+    var _ra = _ra || {};
     _ra.saveOrderInfo = {
         "order_no": '. $order->id .',
         "lastname": "'.$order->billing_last_name.'",
@@ -492,7 +496,33 @@ var _ra = _ra || {};
         _ra.saveOrder(_ra.saveOrderInfo, _ra.saveOrderProducts);
     }
 </script>';
-        } //endif
+        }
+
+    //REST API
+        $orderInfo = array(
+            "order_no" => $order->id,
+            "lastname" =>$order->billing_last_name,
+            "firstname" => $order->billing_first_name,
+            "email" => $order->billing_email,
+            "phone" => $order->billing_phone,
+            "state" => $order->billing_state,
+            "city" => $order->billing_city,
+            "address" => $order->billing_address_1 . " " . $order->billing_address_2,
+            "discount_code" => $coupons_list,
+            "discount" => (empty($order->get_discount) ? 0 : $order->get_discount),
+            "shipping" => (empty($order->get_total_shipping) ? 0 : $order->get_total_shipping),
+            "total" => $order->order_total
+        );
+        
+        if($this->domain_api_key && $this->domain_api_key != "" && $this->token && $this->token != '') {
+
+            $orderClient = new Retargeting_REST_API_Client($this->domain_api_key, $this->token);
+            $orderClient->setResponseFormat("json");
+            $orderClient->setDecoding(false);
+            $response = $orderClient->order->save($orderInfo, $data['line_items']); 
+
+        }
+
     }
 
     /*
@@ -561,7 +591,7 @@ var _ra = _ra || {};
 
     if(isset($wp_query->query['retargeting']) && $wp_query->query['retargeting'] == 'discounts') {        
         if(isset($wp_query->query['key']) && isset($wp_query->query['value']) && isset($wp_query->query['type']) && isset($wp_query->query['count']) ){
-                    if( $wp_query->query['key'] != "" && $wp_query->query['key'] == $this->discount_api_key && $wp_query->query['value'] != "" && $wp_query->query['type'] != "" && $wp_query->query['count'] != ""){
+                    if( $wp_query->query['key'] != "" && $wp_query->query['key'] == $this->token && $wp_query->query['value'] != "" && $wp_query->query['type'] != "" && $wp_query->query['count'] != ""){
                         //daca totul este ok, genereaza si afiseaza codurile de reducere
                         echo generate_coupons($wp_query->query['count']);
                         exit;
