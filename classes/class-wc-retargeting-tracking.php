@@ -233,6 +233,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 } else {
                     $sp = $product->get_sale_price();
                 }
+                $stock = $product->is_in_stock() ? 1 : 0;
                 echo '
                 <script>
                     var _ra = _ra || {};
@@ -243,7 +244,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                         "img": "' . $image_url . '",
                         "price": ' . $price . ',
                         "promo": ' . $sp . ',
-                        "stock": ' . $product->is_in_stock() . ',
+                        "stock": ' . $stock . ',
                         "brand": false,
                         "category": {
                             "id": ' . $cat['catid'] . ',
@@ -272,7 +273,7 @@ _ra_vdetails[_ra_value] = {
 "category_name": _ra_label,
 "category": _ra_label,
 "value": _ra_value,
-"stock": ' . $product->is_in_stock() . '
+"stock": ' . $stock . '
 };
 }
 _ra.setVariation(' . $product->id . ', {
