@@ -244,14 +244,19 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                         "img": "' . $image_url . '",
                         "price": ' . $price . ',
                         "promo": ' . $sp . ',
-                        "stock": ' . $stock . ',
-                        "brand": false,
-                        "category": {
-                            "id": ' . $cat['catid'] . ',
-                            "name": "' . $cat['cat'] . '",
-                            "parent": false
+                        "inventory": {
+                                "variations": false,
+                                "stock": ' . $stock . ',
                         },
-                        "category_breadcrumb": []
+                        "brand": false,
+                        "category": [
+                                {
+                                    "id": ' . $cat['catid'] . ',
+                                    "name": ' . $cat['cat'] . ',
+                                    "parent": false,
+                                    breadcrumb: []
+                                }
+                        ]
                     };
 //Set Variation
 jQuery(document).ready(function(){
