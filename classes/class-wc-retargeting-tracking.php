@@ -34,41 +34,31 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->help_pages = $this->get_option('help_pages');
 
         add_action('woocommerce_update_options_integration_retargeting', array($this, 'process_admin_options'));
-        if($this->domain_api_key && $this->domain_api_key != ''){
-            //Retargeting Tracking Code V3
-           add_action('wp_head', array($this, 'get_retargeting_tracking_code'), 999);
-        } else {
-            //Retargeting Tracking Code V2
-            add_action('wp_head', array($this, 'get_retargeting_tracking_code_v2'), 999);
-        }
+
+        add_action('wp_head', array($this, 'get_retargeting_tracking_code'), 999);
 
         add_action('wp_head', array($this, 'set_email'), 9999);
 
-        //Cat
+
         add_action('woocommerce_before_main_content', array($this, 'send_category'), 30, 0);
-        //Prod
+
         add_action('woocommerce_before_single_product', array($this, 'send_product'), 20, 0);
-        //add2cart
+
         add_action('woocommerce_after_add_to_cart_button', array($this, 'add_to_cart'));
-        //click_image
+
         add_action('woocommerce_before_single_product', array($this, 'click_image'), 30, 0);
-        //Mouse Over Price
-//        add_action('woocommerce_before_single_product', array($this, 'mouse_over_price'), 40, 0);
-        //Mouse over add to cart
-//        add_action('woocommerce_before_single_product', array($this, 'mouse_over_add_to_cart'), 50, 0);
-        //Like Facebook
+
         add_action('woocommerce_before_single_product', array($this, 'like_facebook'), 50, 0);
-        //HelpPages
+
         add_action('wp_footer', array($this, 'help_pages'), 999, 0);
-        //CheckoutIds
+
         add_action('woocommerce_after_cart', array($this, 'checkout_ids'), 90, 0);
         add_action('woocommerce_after_checkout_form', array($this, 'checkout_ids'), 90, 0);
-        // SaveOrder
+
         add_action('woocommerce_thankyou', array($this, 'save_order'));
-        // API's
+
         add_action('template_redirect', array($this,'discount_api_template'));
         add_filter( 'query_vars', array($this,'retargeting_api_add_query_vars'));
-
 
     }
 
@@ -86,14 +76,14 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
 
         $this->form_fields = array(
             'domain_api_key' => array(
-                'title' => __('Domain API KEY'),
-                'description' => __('Insert retargeting Domain API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=5ac66ac466f3e1ec5e6fe5a040356997" target="_blank">Click here</a> to get your Domain API Key'),
+                'title' => __('Tracking API KEY'),
+                'description' => __('Insert retargeting TRACKING API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=5ac66ac466f3e1ec5e6fe5a040356997" target="_blank">Click here</a> to get your Domain API Key'),
                 'type' => 'text',
                 'default' => '',
             ),
             'token' => array(
-                'title' => __('Token'),
-                'description' => __('Insert Retargeting Token. <a href="https://retargeting.biz/admin?action=api_redirect&token=028e36488ab8dd68eaac58e07ef8f9bf" target="_blank">Click here</a> to get your Token'),
+                'title' => __('REST API Key'),
+                'description' => __('Insert Retargeting REST API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=028e36488ab8dd68eaac58e07ef8f9bf" target="_blank">Click here</a> to get your Token'),
                 'type' => 'text',
                 'default' => '',
             ),
@@ -112,29 +102,17 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     public function get_retargeting_tracking_code()
     {
         echo '<!-- Retargeting Tracking Code -->
-        <script type="text/javascript">
+       <script type="text/javascript">
         (function(){
-        var ra_key = "' . esc_js($this->domain_api_key) . '";
+        ra_key = "' . esc_js($this->domain_api_key) . '";
+        ra_params = {
+        add_to_cart_button_id: "add_to_cart_button_id",
+        price_label_id: "price_label_id",
+        };
         var ra = document.createElement("script"); ra.type ="text/javascript"; ra.async = true; ra.src = ("https:" ==
-        document.location.protocol ? "https://" : "http://") + "retargeting-data.eu/rajs/" + ra_key + ".js";
+        document.location.protocol ? "https://" : "http://") + "tracking.retargeting.biz/v3/rajs/" + ra_key + ".js";
         var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ra,s);})();
         </script>
-        <!-- Retargeting Tracking Code -->';
-    }
-
-    /*
-     * Retargeting Tracking Code V2
-     * */
-    public function get_retargeting_tracking_code_v2()
-    {
-        echo '<!-- Retargeting Tracking Code -->
-        <script type="text/javascript">
-    (function(){
-    var ra = document.createElement("script"); ra.type ="text/javascript"; ra.async = true; ra.src = ("https:" ==
-    document.location.protocol ? "https://" : "http://") + "retargeting-data.eu/" +
-    document.location.hostname.replace("www.","") + "/ra.js"; var s =
-    document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ra,s);})();
-    </script>
         <!-- Retargeting Tracking Code -->';
     }
 
@@ -184,18 +162,24 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 }
 
                 </script>';
+            } else {
+                echo '<script>
+                var _ra = _ra || {};
+                _ra.sendCategoryInfo = {
+                    "id": 1,
+                    "name" : Root,
+                    "parent": false,
+                    "category_breadcrumb": []
+                }
+
+                if (_ra.ready !== undefined) {
+                    _ra.sendCategory(_ra.sendCategoryInfo);
+                }
+
+                </script>';  
             }
         }
     }
-
-    /*
-    * SendBrand
-    */
-    public function send_brand()
-    {
-
-    }
-
 
     /*
      * SendProduct
@@ -226,6 +210,10 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                         $cat['cat'] = $category->name;
                         $cat['catparent'] = $category->parent;
                     }
+                } else {
+                    $cat['catid'] = 1;
+                    $cat['cat'] = "Root";
+                    $cat['catparent'] = "false";
                 }
                 $dsp = $product->get_sale_price();
                 if (empty($dsp)) {
@@ -244,47 +232,52 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                         "img": "' . $image_url . '",
                         "price": ' . $price . ',
                         "promo": ' . $sp . ',
-                        "stock": ' . $stock . ',
-                        "brand": false,
-                        "category": {
-                            "id": ' . $cat['catid'] . ',
-                            "name": "' . $cat['cat'] . '",
-                            "parent": false
+                        "inventory": {
+                                "variations": false,
+                                "stock": ' . $stock . ',
                         },
-                        "category_breadcrumb": []
+                        "brand": false,
+                        "category": [
+                                {
+                                    "id": ' . $cat['catid'] . ',
+                                    "name": "' . $cat['cat'] . '",
+                                    "parent": false,
+                                    breadcrumb: []
+                                }
+                        ]
                     };
-//Set Variation
-jQuery(document).ready(function(){
+                    //Set Variation
+                    jQuery(document).ready(function(){
 
 
-var _ra_sv = document.querySelectorAll("[data-attribute_name]");
-if (_ra_sv.length > 0) {
-for(var i = 0; i < _ra_sv.length; i ++) {
-_ra_sv[i].addEventListener("change", function() {
-var _ra_vcode = [], _ra_vdetails = {};
-var _ra_v = document.querySelectorAll("[data-attribute_name]");
-for(var i = 0; i < _ra_v.length; i ++) {
-var _ra_label = document.querySelector(\'[for="\' + _ra_v[i].getAttribute(\'id\') + \'"\');
-_ra_label = (_ra_label !== null ? _ra_label = document.querySelector(\'[for="\' + _ra_v[i].getAttribute(\'id\') + \'"\').textContent : _ra_v[i].getAttribute(\'data-option\') );
-var _ra_value = (typeof _ra_v[i].value !== \'undefined\' ? _ra_v[i].value : _ra_v[i].textContent);
-_ra_value = _ra_value.replace(/-/g, "_");
-_ra_vcode.push(_ra_value);
-_ra_vdetails[_ra_value] = {
-"category_name": _ra_label,
-"category": _ra_label,
-"value": _ra_value,
-"stock": ' . $stock . '
-};
-}
-_ra.setVariation(' . $product->id . ', {
-"code": _ra_vcode.join(\'-\'),
-"details": _ra_vdetails
-});
-});
-}
-}
-});
-//set Variation
+                    var _ra_sv = document.querySelectorAll("[data-attribute_name]");
+                    if (_ra_sv.length > 0) {
+                    for(var i = 0; i < _ra_sv.length; i ++) {
+                    _ra_sv[i].addEventListener("change", function() {
+                    var _ra_vcode = [], _ra_vdetails = {};
+                    var _ra_v = document.querySelectorAll("[data-attribute_name]");
+                    for(var i = 0; i < _ra_v.length; i ++) {
+                    var _ra_label = document.querySelector(\'[for="\' + _ra_v[i].getAttribute(\'id\') + \'"\');
+                    _ra_label = (_ra_label !== null ? _ra_label = document.querySelector(\'[for="\' + _ra_v[i].getAttribute(\'id\') + \'"\').textContent : _ra_v[i].getAttribute(\'data-option\') );
+                    var _ra_value = (typeof _ra_v[i].value !== \'undefined\' ? _ra_v[i].value : _ra_v[i].textContent);
+                    _ra_value = _ra_value.replace(/-/g, "_");
+                    _ra_vcode.push(_ra_value);
+                    _ra_vdetails[_ra_value] = {
+                    "category_name": _ra_label,
+                    "category": _ra_label,
+                    "value": _ra_value,
+                    "stock": ' . $stock . '
+                    };
+                    }
+                    _ra.setVariation(' . $product->id . ', {
+                    "code": _ra_vcode.join(\'-\'),
+                    "details": _ra_vdetails
+                    });
+                    });
+                    }
+                    }
+                    });
+                    //set Variation
                     if (_ra.ready !== undefined) {
                         _ra.sendProduct(_ra.sendProductInfo);
 
@@ -306,27 +299,11 @@ _ra.setVariation(' . $product->id . ', {
                 <script>
                 jQuery(document).ready(function(){
                     jQuery(".single_add_to_cart_button").click(function(){
-                        _ra.addToCart("' . $product->id . '",false,function(){console.log("cart")});
+                        _ra.addToCart("' . $product->id . '",1,false,function(){console.log("cart")});
                     });
                 });
                 </script>';
         }
-    }
-
-    /*
-    * SetVariations
-    */
-    public function set_variations()
-    {
-
-    }
-
-    /*
-    * AddToWishlist
-    */
-    public function add_to_wishlist()
-    {
-
     }
 
     /*
@@ -355,68 +332,6 @@ _ra.setVariation(' . $product->id . ', {
             });
             </script>
         ';
-    }
-
-    /*
-    * CommentOnProduct
-    */
-    public function comment_on_product()
-    {
-
-    }
-
-    /*
-    * MouseOverPrice
-    */
-    public function mouse_over_price()
-    {
-        global $product;
-        $variation_id = get_post_meta($this->id, '_min_regular_price_variation_id', true);
-
-        if (!$variation_id) {
-            $price = $price = get_post_meta(get_the_ID(), '_min_variation_price', true);;
-        } else {
-            $price = get_post_meta($variation_id, '_regular_price', true);
-        }
-        $dsp = $product->get_sale_price();
-        if (empty($dsp)) {
-            $sp = 0;
-        } else {
-            $sp = $product->get_sale_price();
-        }
-        echo "<script>
-            jQuery(document).ready(function(){
-                if(jQuery('.product-info .price.large').length > 0){
-                    jQuery('.price.large').hover(function(){
-                        _ra.mouseOverPrice(" . $product->id . ", {
-                            'price': " . $price . ",
-                            'promo': " . $sp . "
-                        }, function() {
-                            console.log('the informations have been sent');
-                        });
-                    });
-                }
-            });
-        </script>";
-    }
-
-    /*
-    * MouseOverAddToCart
-    */
-    public function mouse_over_add_to_cart()
-    {
-        global $product;
-        echo "<script>
-            jQuery(document).ready(function(){
-                if(jQuery('.single_add_to_cart_button').length > 0){
-                    jQuery('.single_add_to_cart_button').mouseover(function(){
-                       _ra.mouseOverAddToCart(" . $product->id . ", function() {
-                            console.log('the informations have been sent');
-                        });
-                    });
-                }
-            });
-        </script>";
     }
 
     /*
@@ -473,30 +388,32 @@ _ra.setVariation(' . $product->id . ', {
                 $data['line_items'][] = $line_item;
             }
 
-echo '<script>
-    var _ra = _ra || {};
-    _ra.saveOrderInfo = {
-        "order_no": '. $order->id .',
-        "lastname": "'.$order->billing_last_name.'",
-        "firstname": "'. $order->billing_first_name.'",
-        "email": "'.$order->billing_email.'",
-        "phone": "'.$order->billing_phone.'",
-        "state": "'.$order->billing_state.'",
-        "city": "'.$order->billing_city.'",
-        "address": "'.$order->billing_address_1 . " " . $order->billing_address_2.'",
-        "discount_code": "'.$coupons_list.'",
-        "discount": '.(empty($order->get_discount) ? 0 : $order->get_discount).',
-        "shipping": '.(empty($order->get_total_shipping) ? 0 : $order->get_total_shipping).',
-        "total": '.$order->order_total.'
-    };
-    _ra.saveOrderProducts =
-        '.json_encode($data['line_items'], JSON_PRETTY_PRINT).'
-    ;
-    
-    if( _ra.ready !== undefined ){
-        _ra.saveOrder(_ra.saveOrderInfo, _ra.saveOrderProducts);
-    }
-</script>';
+            echo '<script>
+                var _ra = _ra || {};
+                _ra.saveOrderInfo = {
+                    "order_no": '. $order->id .',
+                    "lastname": "'.$order->billing_last_name.'",
+                    "firstname": "'. $order->billing_first_name.'",
+                    "email": "'.$order->billing_email.'",
+                    "phone": "'.$order->billing_phone.'",
+                    "state": "'.$order->billing_state.'",
+                    "city": "'.$order->billing_city.'",
+                    "address": "'.$order->billing_address_1 . " " . $order->billing_address_2.'",
+                    "discount_code": "'.$coupons_list.'",
+                    "discount": '.(empty($order->get_discount) ? 0 : $order->get_discount).',
+                    "shipping": '.(empty($order->get_total_shipping) ? 0 : $order->get_total_shipping).',
+                    "rebates": 0,
+                    "fees": 0,
+                    "total": '.$order->order_total.'
+                };
+                _ra.saveOrderProducts =
+                    '.json_encode($data['line_items'], JSON_PRETTY_PRINT).'
+                ;
+                
+                if( _ra.ready !== undefined ){
+                    _ra.saveOrder(_ra.saveOrderInfo, _ra.saveOrderProducts);
+                }
+            </script>';
         }
 
     //REST API
