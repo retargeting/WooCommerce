@@ -152,7 +152,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 var _ra = _ra || {};
                 _ra.sendCategoryInfo = {
                     "id": ' . $categories->term_id . ',
-                    "name" : "' . $categories->name . '",
+                    "name" : "' . htmlspecialchars($categories->name) . '",
                     "parent": false,
                     "category_breadcrumb": []
                 }
@@ -227,7 +227,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     var _ra = _ra || {};
                     _ra.sendProductInfo = {
                         "id": ' . $product->id . ',
-                        "name": "' . $product->get_title() . '",
+                        "name": "' . htmlspecialchars($product->get_title()) . '",
                         "url": "' . get_permalink() . '",
                         "img": "' . $image_url . '",
                         "price": ' . $price . ',
