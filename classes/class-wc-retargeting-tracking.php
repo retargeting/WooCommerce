@@ -407,7 +407,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     "total": '.$order->order_total.'
                 };
                 _ra.saveOrderProducts =
-                    '.json_encode($data['line_items'], JSON_PRETTY_PRINT).'
+                    '.json_encode($data['line_items']).'
                 ;
                 
                 if( _ra.ready !== undefined ){
@@ -548,7 +548,7 @@ function generate_coupons($count) {
         }
 
     }
-    return json_encode($couponCodes,JSON_PRETTY_PRINT);
+    return json_encode($couponCodes);
 }
 
 function woocommerce_verify_discount($code){
