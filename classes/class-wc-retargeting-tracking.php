@@ -154,7 +154,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     "id": ' . $categories->term_id . ',
                     "name" : "' . htmlspecialchars($categories->name) . '",
                     "parent": false,
-                    "category_breadcrumb": []
+                    "breadcrumb": []
                 }
 
                 if (_ra.ready !== undefined) {
@@ -169,7 +169,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     "id": 1,
                     "name" : Root,
                     "parent": false,
-                    "category_breadcrumb": []
+                    "breadcrumb": []
                 }
 
                 if (_ra.ready !== undefined) {
