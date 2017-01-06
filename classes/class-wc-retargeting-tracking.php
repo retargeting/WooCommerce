@@ -242,7 +242,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                                     "id": ' . $cat['catid'] . ',
                                     "name": "' . $cat['cat'] . '",
                                     "parent": false,
-                                    breadcrumb: []
+                                    "breadcrumb": []
                                 }
                         ]
                     };
