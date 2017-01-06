@@ -2,10 +2,10 @@
 Contributors: retargeting
 Tags: retargeting, WooCommerce
 Requires at least: 3.8
-Tested up to: 4.6
-Stable tag: 4.6
+Tested up to: 4.7
+Stable tag: 4.7
 Requires WooCommerce at least: 2.2.6
-Tested WooCommerce up to: 2.6.4
+Tested WooCommerce up to: 2.6.11
 License: GPLv2
 
 Adds Retargeting tracking to WooCommerce.
@@ -20,7 +20,7 @@ Features
 
 Live Triggers
 
-When you have people in our online shop, if you see that someone's showing a lot of interest in one product, wouldn't you offer them a small discount to make sure they buy it? That's what we thought! 
+When you have people in your online shop, if you see that someone's showing a lot of interest in one product, wouldn't you offer them a small discount to make sure they buy it? That's what we thought! 
 
 With our personalized live triggers that's exactly what you'll do, just that you won't have to lift a finger.
 
@@ -44,7 +44,7 @@ Multitesting
 
 We love A/B testing so much that we created Multitesting, an improved and limitless version compared to other email marketing softwares.
 
-You can test as many different versions as you want and you only need one click to add a new one.Did we tell you that you can do this for any trigger, e-mail or live? The perfect marketing automation tool for your online shop!
+You can test as many different versions as you want and you only need one click to add a new one. Did we tell you that you can do this for any trigger, e-mail or live? The perfect marketing automation tool for your online shop!
 
 Contact
 
