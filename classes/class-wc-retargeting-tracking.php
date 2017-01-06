@@ -188,19 +188,38 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     {
         if (is_product()) {
             global $product;
-
+            
             $variation_id = get_post_meta($this->id, '_min_regular_price_variation_id', true);
 
-
             if ($product instanceof WC_Product && $product->is_type(self::$product_type)) {
+
+
+                // Prices
+
                 if (!$variation_id) {
-                    $price = $price = get_post_meta(get_the_ID(), '_min_variation_price', true);;
+                    $price = $price = get_post_meta(get_the_ID(), '_min_variation_price', true);
                 } else {
                     $price = get_post_meta($variation_id, '_regular_price', true);
                 }
                 if ($price == '') {
                     $price = $product->get_regular_price();
                 }
+
+                // Special Price
+
+                $productSpecialPrice = $product->get_sale_price();
+                if (empty($productSpecialPrice)) {
+                    $specialPrice = 0;
+                } else {
+                    $specialPrice = $product->get_sale_price();
+                }
+
+
+                if ($product->is_type('variable')) {
+                    $price = $product->get_variation_regular_price();
+                    $specialPrice = $product->get_variation_sale_price();
+                }
+
                 $image_url = wp_get_attachment_url(get_post_thumbnail_id());
                 $categories = get_the_terms($product->id, 'product_cat');
                 $cat = array();
@@ -215,12 +234,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     $cat['cat'] = "Root";
                     $cat['catparent'] = "false";
                 }
-                $dsp = $product->get_sale_price();
-                if (empty($dsp)) {
-                    $sp = 0;
-                } else {
-                    $sp = $product->get_sale_price();
-                }
+               
                 $stock = $product->is_in_stock() ? 1 : 0;
                 echo '
                 <script>
@@ -230,8 +244,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                         "name": "' . htmlspecialchars($product->get_title()) . '",
                         "url": "' . get_permalink() . '",
                         "img": "' . $image_url . '",
-                        "price": ' . $price . ',
-                        "promo": ' . $sp . ',
+                        "price": ' . number_format($price,2) . ',
+                        "promo": ' . number_format($specialPrice,2) . ',
                         "inventory": {
                                 "variations": false,
                                 "stock": ' . $stock . ',
