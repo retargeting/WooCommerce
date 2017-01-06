@@ -328,22 +328,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         global $product;
         echo '
             <script>
-                function _ra_helper_addLoadEvent(func){var oldonload = window.onload;
-                if (typeof window.onload != "function") {window.onload = func;}
-                else {window.onload = function() {if (oldonload) {oldonload();}func();}}}
-
-                function _ra_triggerClickImage() {
-                    if(typeof _ra.clickImage !== "undefined") _ra.clickImage("' . $product->id . '");
-                }
-                _ra_helper_addLoadEvent(function(){
-                if(document.getElementsByClassName("product-image images").length > 0){
-                    document.getElementsByClassName("product-image images")[0].onmouseover = _ra_triggerClickImage;
-                }
-
-                if(document.getElementsByClassName("product-image images").length > 0){
-                    document.getElementsByClassName("product-image images")[0].onmouseover = _ra_triggerClickImage;
-                }
-            });
+                jQuery(document).ready(function() {
+                    jQuery(".woocommerce-main-image").click(function() {
+                        _ra.clickImage("' . $product->id . '");
+                    });
+                });
             </script>
         ';
     }
