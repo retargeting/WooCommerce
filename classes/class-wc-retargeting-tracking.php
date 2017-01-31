@@ -194,7 +194,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             if ($product instanceof WC_Product && $product->is_type(self::$product_type)) {
 
 
-                // Prices
+                /* Prices */
 
                 if (!$variation_id) {
                     $price = $price = get_post_meta(get_the_ID(), '_min_variation_price', true);
@@ -205,7 +205,9 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     $price = $product->get_regular_price();
                 }
 
-                // Special Price
+                /* Special Price */ 
+
+                    /* Simple Products */
 
                 $productSpecialPrice = $product->get_sale_price();
                 if (empty($productSpecialPrice)) {
@@ -214,11 +216,22 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     $specialPrice = $product->get_sale_price();
                 }
 
+                    /* Variable Products on Sale */
+
+                if ($product->is_type('variable') && $product->is_on_sale() === false) {
+                    $price = (max($_ra_prices['sale_price']));
+                    $specialPrice = (min($_ra_prices['sale_price']));
+                }
+
+                    /* If product is on sale get the min and max prices value */
 
                 if ($product->is_type('variable')) {
-                    $price = $product->get_variation_regular_price();
-                    $specialPrice = $product->get_variation_sale_price();
+                    $_ra_prices = $product->get_variation_prices();
+                    $price = (max($_ra_prices['sale_price']));
+                    $specialPrice = (min($_ra_prices['sale_price']));
                 }
+
+                /* END Prices */
 
                 $image_url = wp_get_attachment_url(get_post_thumbnail_id());
                 $categories = get_the_terms($product->id, 'product_cat');
@@ -435,9 +448,9 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             "total" => $order->order_total
         );
         
-        if($this->domain_api_key && $this->domain_api_key != "" && $this->token && $this->token != '') {
+        if($this->token && $this->token != '') {
 
-            $orderClient = new Retargeting_REST_API_Client($this->domain_api_key, $this->token);
+            $orderClient = new Retargeting_REST_API_Client($this->token);
             $orderClient->setResponseFormat("json");
             $orderClient->setDecoding(false);
             $response = $orderClient->order->save($orderInfo, $data['line_items']); 
