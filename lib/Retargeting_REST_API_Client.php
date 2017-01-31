@@ -8,7 +8,7 @@ class Retargeting_REST_API_Client
 	 * Property: the uniform resource identifier for the current web request 
 	 * @var string
 	 */
-	protected $api_uri = "https://retargeting.ro/api";
+	protected $api_uri = "https://retargeting.biz/api";
 	
 	/**
 	 * Property: the API version
@@ -34,14 +34,7 @@ class Retargeting_REST_API_Client
 	 * @var unknown
 	 */
 	private $api_key = "";
-	
-	/**
-	 * Property: the USER TOKEN
-	 * @see Retargeting Administration Panel
-	 * @var unknown
-	 */
-	private $user_token = "";
-	
+
 	/**
 	 * Property: the API request path (/api/path)
 	 * @var array
@@ -57,19 +50,12 @@ class Retargeting_REST_API_Client
 	/**
 	 * Method: constructor method for Retargeting REST API Client class
 	 * @param string $api_key
-	 * @param mixed $user_token
 	 */
-	public function __construct($api_key, $user_token) {
+	public function __construct($api_key) {
 		if (is_string($api_key) || is_numeric($api_key)) {
 			$this->api_key = $api_key;
 		} else {
 			$this->_throwException("checkApiKey");
-		}
-		
-		if (is_string($user_token) || is_numeric($user_token)) {
-			$this->user_token = $user_token;
-		} else {
-			$this->_throwException("checkUserToken");
 		}
 	}
 	
@@ -154,8 +140,7 @@ class Retargeting_REST_API_Client
 		$this->api_path = array();
 
 		$api_parameters = array(
-			"api_key" => $this->api_key,
-			"token" => $this->user_token
+			"api_key" => $this->api_key
 		);
 		$api_parameters = http_build_query(array_merge($api_parameters, $this->api_parameters));
 		$this->api_parameters = array();
@@ -185,11 +170,10 @@ class Retargeting_REST_API_Client
 	 */
 	private function _throwException($message) {
 		$messages = array(
-			"checkApiKey" => "You need an API KEY to use Retargeting API. Please go to your Retargeting Administration Panel to set or check your API KEY.",
-			"checkUserToken" => "You need your USER TOKEN to use Retargeting API. Please go to your Retargeting Administration Panel to check your USER TOKEN.",
+			"checkApiKey" => "You need an API KEY to use Retargeting API. Please go to your Retargeting Administration Panel to set up or check your API KEY.",
 			"apiUriType" => "The API uri must be string",
-			"apiVersionType" => "The API version must be string",
-			"responseFormat" => "The response format can be json or serial (php serialize)",
+			"apiVersionType" => "The API version must be a string",
+			"responseFormat" => "The response format can only be json or serial (php serialize)",
 			"decodingMode" => "Decoding must be boolean",
 			"emptyApiPath" => "You API request"
 		);
