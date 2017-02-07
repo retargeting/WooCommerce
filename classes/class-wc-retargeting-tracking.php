@@ -431,9 +431,9 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             "total" => $order->order_total
         );
 
-        if ($this->domain_api_key && $this->domain_api_key != "" && $this->token && $this->token != '') {
+        if ($this->token && $this->token != '') {
 
-            $orderClient = new Retargeting_REST_API_Client($this->domain_api_key, $this->token);
+            $orderClient = new Retargeting_REST_API_Client($this->token);
             $orderClient->setResponseFormat("json");
             $orderClient->setDecoding(false);
             $response = $orderClient->order->save($orderInfo, $data['line_items']);
