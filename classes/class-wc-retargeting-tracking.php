@@ -101,7 +101,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     public function get_retargeting_tracking_code()
     {
-        echo '<!-- Retargeting Tracking Code 2.0.4-->
+        echo '<!-- Retargeting Tracking Code '. WC_Retargeting_Tracking::VERSION .'-->
        <script type="text/javascript">
         (function(){
         ra_key = "' . esc_js($this->domain_api_key) . '";
