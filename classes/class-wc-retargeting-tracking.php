@@ -207,7 +207,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                         break;
                     default:
                         $price = $product->get_regular_price();
-                        $specialPrice = (!empty($product->get_sale_price()) ? $product->get_sale_price() : 0);
+                        $salePrice = $product->get_sale_price();
+                        $specialPrice = (!empty($salePrice) ? $salePrice : 0);
                         break;
                 }
 
@@ -548,8 +549,10 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
      */
     private function getPricesForGroupedProducts($product)
     {
-        $price = (!empty($product->get_price()) ? $product->get_price() : 0);
-        $specialPrice = (!empty($product->get_sale_price()) ? $product->get_sale_price() : 0);
+        $getPrice = $product->get_price();
+        $price = (!empty($getPrice) ? $getPrice : 0);
+        $getSpecialPrice = $product->get_sale_price();
+        $specialPrice = (!empty($getSpecialPrice) ? $getSpecialPrice : 0);
         return array(
             (!empty($price) ? $price : 0),
             (!empty($specialPrice) ? $specialPrice : 0)
