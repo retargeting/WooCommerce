@@ -2,8 +2,8 @@
 /**
  * Plugin Name: WooCommerce Retargeting
  * Plugin URI: https://retargeting.biz/woocommerce-documentation
- * Description: Adds Retargeting Tracking code to WooCommerce.
- * Version: 2.0.4
+ * Description: Retargeting is a marketing automation tool that boosts the conversion rate and sales of your online store.
+ * Version: 2.0.6
  * Author: Retargeting Team
  * Author URI: http://retargeting.biz
  * License: GPL2
@@ -24,7 +24,7 @@ class WC_Retargeting_Tracking {
     /*
     * Plugin Version.
     */
-    const VERSION = '2.0.4';
+    const VERSION = '2.0.6';
     /*
     * Instance of this class
     */
@@ -66,7 +66,7 @@ class WC_Retargeting_Tracking {
     * Fallback notice
     */
     public function woocommerce_missing_notice(){
-	echo '<div class="error"><p>'.sprintf(__('WooCommerce Retargeting depends on the last version of %s to work!', 'woocommerce-retargeting-integration'), '<a href="http://www.woothemes.com/woocommerce/" target="_blank">' . __('WooCommerce', 'woocommerce-retargeting-integration') . '</a>').'</p></div>';
+	echo '<div class="error"><p>'.sprintf(__('WooCommerce Retargeting depends on the last version of %s to work!', 'woocommerce-retargeting-integration'), '<a href="http://www.woothemes.com/woocommerce/" target="_blank" rel="noopener noreferrer">' . __('WooCommerce', 'woocommerce-retargeting-integration') . '</a>').'</p></div>';
     }
     /*
     * Add new integration to WooCommerce

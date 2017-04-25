@@ -24,7 +24,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     {
         $this->id = 'retargeting';
         $this->method_title = "Retargeting";
-        $this->method_description = __('Retargeting and marketing automation for ecommerce.');
+        $this->method_description = __('Retargeting is a marketing automation tool that boosts the conversion rate and sales of your online store.');
 
         $this->init_form_fields();
         $this->init_settings();
@@ -77,13 +77,13 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->form_fields = array(
             'domain_api_key' => array(
                 'title' => __('Tracking API KEY'),
-                'description' => __('Insert retargeting TRACKING API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=5ac66ac466f3e1ec5e6fe5a040356997" target="_blank">Click here</a> to get your Domain API Key'),
+                'description' => __('Insert Retargeting TRACKING API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=5ac66ac466f3e1ec5e6fe5a040356997" target="_blank" rel="noopener noreferrer">Click here</a> to get your Domain API Key'),
                 'type' => 'text',
                 'default' => '',
             ),
             'token' => array(
                 'title' => __('REST API Key'),
-                'description' => __('Insert Retargeting REST API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=028e36488ab8dd68eaac58e07ef8f9bf" target="_blank">Click here</a> to get your Token'),
+                'description' => __('Insert Retargeting REST API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=028e36488ab8dd68eaac58e07ef8f9bf" target="_blank" rel="noopener noreferrer">Click here</a> to get your Token'),
                 'type' => 'text',
                 'default' => '',
             ),
@@ -217,7 +217,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     $image_url = site_url() . '/wp-content/plugins/woocommerce/assets/images/placeholder.png';
                 }
 
-                $categories = get_the_terms($product->id, 'product_cat');
+                $categories = get_the_terms($product->get_id(), 'product_cat');
                 $cat = array();
                 if ($categories) {
                     foreach ($categories as $category) {
@@ -236,7 +236,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 <script>
                     var _ra = _ra || {};
                     _ra.sendProductInfo = {
-                        "id": ' . $product->id . ',
+                        "id": ' . $product->get_id() . ',
                         "name": "' . htmlspecialchars($product->get_title()) . '",
                         "url": "' . get_permalink() . '",
                         "img": "' . $image_url . '",
@@ -279,7 +279,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     "stock": ' . $stock . '
                     };
                     }
-                    _ra.setVariation(' . $product->id . ', {
+                    _ra.setVariation(' . $product->get_id() . ', {
                     "code": _ra_vcode.join(\'-\'),
                     "details": _ra_vdetails
                     });
@@ -309,7 +309,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 <script>
                 jQuery(document).ready(function(){
                     jQuery(".single_add_to_cart_button").click(function(){
-                        _ra.addToCart("' . $product->id . '",1,false,function(){console.log("cart")});
+                        _ra.addToCart("' . $product->get_id() . '",1,false,function(){console.log("cart")});
                     });
                 });
                 </script>';
@@ -326,7 +326,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             <script>
                 jQuery(document).ready(function() {
                     jQuery(".woocommerce-main-image").click(function() {
-                        _ra.clickImage("' . $product->id . '");
+                        _ra.clickImage("' . $product->get_id() . '");
                     });
                 });
             </script>
@@ -342,7 +342,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         echo "<script>
             if (typeof FB != 'undefined') {
                 FB.Event.subscribe('edge.create', function () {
-                    _ra.likeFacebook(" . $product->id . ");
+                    _ra.likeFacebook(" . $product->get_id() . ");
                 });
             };
         </script>";

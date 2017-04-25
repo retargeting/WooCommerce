@@ -1,10 +1,10 @@
 # WooCommerce Retargeting #
 Author: Retargeting Team
 Tags: retargeting, WooCommerce
-Requires at least: 3.8
-Tested up to: 4.7.2
-Requires WooCommerce at least: 2.2.6
-Tested WooCommerce up to: 2.6.14
+Requires at least: 4.5
+Tested up to: 4.7.4
+Requires WooCommerce at least: 2.6
+Tested WooCommerce up to: 3.0.4
 
 Adds Retargeting tracking to WooCommerce.
 
