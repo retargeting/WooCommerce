@@ -45,6 +45,9 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         add_action('woocommerce_before_single_product', array($this, 'send_product'), 20, 0);
 
         add_action('woocommerce_after_add_to_cart_button', array($this, 'add_to_cart'));
+        
+        add_action( 'woocommerce_after_cart', array($this, 'remove_from_cart' ));
+        add_action( 'woocommerce_after_mini_cart', array($this, 'remove_from_cart' ));
 
         add_action('woocommerce_before_single_product', array($this, 'click_image'), 30, 0);
 
@@ -256,42 +259,42 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                                 }
                         ]
                     };
-                    //Set Variation
-                    jQuery(document).ready(function(){
-
-
-                    var _ra_sv = document.querySelectorAll("[data-attribute_name]");
-                    if (_ra_sv.length > 0) {
-                    for(var i = 0; i < _ra_sv.length; i ++) {
-                    _ra_sv[i].addEventListener("change", function() {
-                    var _ra_vcode = [], _ra_vdetails = {};
-                    var _ra_v = document.querySelectorAll("[data-attribute_name]");
-                    for(var i = 0; i < _ra_v.length; i ++) {
-                    var _ra_label = document.querySelector(\'[for="\' + _ra_v[i].getAttribute(\'id\') + \'"\');
-                    _ra_label = (_ra_label !== null ? _ra_label = document.querySelector(\'[for="\' + _ra_v[i].getAttribute(\'id\') + \'"\').textContent : _ra_v[i].getAttribute(\'data-option\') );
-                    var _ra_value = (typeof _ra_v[i].value !== \'undefined\' ? _ra_v[i].value : _ra_v[i].textContent);
-                    _ra_value = _ra_value.replace(/-/g, "_");
-                    _ra_vcode.push(_ra_value);
-                    _ra_vdetails[_ra_value] = {
-                    "category_name": _ra_label,
-                    "category": _ra_label,
-                    "value": _ra_value,
-                    "stock": ' . $stock . '
-                    };
-                    }
-                    _ra.setVariation(' . $product->get_id() . ', {
-                    "code": _ra_vcode.join(\'-\'),
-                    "details": _ra_vdetails
-                    });
-                    });
-                    }
-                    }
-                    });
-                    //set Variation
                     if (_ra.ready !== undefined) {
                         _ra.sendProduct(_ra.sendProductInfo);
-
                     }
+                    
+    //Set Variation
+          (function($) {
+
+            var _ra_sv = document.querySelectorAll("[data-attribute_name]");
+            if (_ra_sv.length > 0) {
+                for (var i = 0; i < _ra_sv.length; i++) {
+                    _ra_sv[i].addEventListener("change", function() {
+                                var _ra_vcode = [];
+                                var _ra_vdetails = {};
+                                var _ra_v = document.querySelectorAll("[data-attribute_name]");
+                                for (var i = 0; i < _ra_v.length; i++) {
+                                    var _ra_label = document.querySelector(\'[for="\' + _ra_v[i].getAttribute(\'id\') + \'"\');
+                                        _ra_label = (_ra_label !== null ? _ra_label = document.querySelector(\'[for="\' + _ra_v[i].getAttribute(\'id\') + \'"\').textContent : _ra_v[i].getAttribute(\'data-option\') );
+                                                var _ra_value = (typeof _ra_v[i].value !== \'undefined\' && _ra_v[i].value !== "" ? _ra_v[i].value : "Default");
+                                                    _ra_value = _ra_value.replace(/-/g, "_"); 
+                                                    _ra_vcode.push(_ra_value);
+                                                    _ra_vdetails[_ra_value] = {
+                                                        "category_name": _ra_label,
+                                                        "category": _ra_label,
+                                                        "value":  _ra_value
+                                                    };
+                                                }
+                                                _ra.setVariation(' . $product->get_id() . ', {
+                                                        "code": _ra_vcode.join(\'-\'),
+                                                        "stock": 1,
+                                                        "details": _ra_vdetails
+                                                        });
+                                                });
+                                        }
+                                    }                    
+          })(jQuery);
+
                     </script>';
 
             }
@@ -307,15 +310,33 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             global $product;
             echo '
                 <script>
-                jQuery(document).ready(function(){
-                    jQuery(".single_add_to_cart_button").click(function(){
+                (function($) {
+                    $(".single_add_to_cart_button").click(function(){
                         _ra.addToCart("' . $product->get_id() . '",1,false,function(){console.log("cart")});
                     });
-                });
+                })(jQuery);
                 </script>';
         }
     }
-
+    
+    /*
+    * removeFromCart
+    */
+    public function remove_from_cart()
+    {
+        echo '<script>
+                  (function($) {
+                    $(".remove").click(function() {
+                      var productId = ($(this).data(\'product_sku\')) ? ($(this).data(\'product_sku\')) : (\'#\' + $(this).data(\'product_id\'));
+                      var productQuantity = $(this).parent().parent().find( \'.qty\' ).val() ? $(this).parent().parent().find( \'.qty\' ).val() : \'1\';
+                        _ra.removeFromCart(productId, productQuantity, false, function() {
+                            console.log("Product removed from cart");
+                        });
+                    });                    
+                  })(jQuery);
+            </script>';
+    }
+    
     /*
     * ClickImage
     */
@@ -324,11 +345,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         global $product;
         echo '
             <script>
-                jQuery(document).ready(function() {
+                (function($) {
                     jQuery(".woocommerce-main-image").click(function() {
                         _ra.clickImage("' . $product->get_id() . '");
                     });
-                });
+                })(jQuery);
             </script>
         ';
     }
@@ -386,24 +407,25 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 }
                 $data['line_items'][] = $line_item;
             }
+            
 
             echo '<script>
                 var _ra = _ra || {};
                 _ra.saveOrderInfo = {
-                    "order_no": ' . $order->id . ',
-                    "lastname": "' . $order->billing_last_name . '",
-                    "firstname": "' . $order->billing_first_name . '",
-                    "email": "' . $order->billing_email . '",
-                    "phone": "' . $order->billing_phone . '",
-                    "state": "' . $order->billing_state . '",
-                    "city": "' . $order->billing_city . '",
-                    "address": "' . $order->billing_address_1 . " " . $order->billing_address_2 . '",
+                    "order_no": ' . $order->get_id() . ',
+                    "lastname": "' . $order->get_billing_last_name() . '",
+                    "firstname": "' . $order->get_billing_first_name() . '",
+                    "email": "' . $order->get_billing_email() . '",
+                    "phone": "' . $order->get_billing_phone() . '",
+                    "state": "' . $order->get_billing_state() . '",
+                    "city": "' . $order->get_billing_city() . '",
+                    "address": "' . $order->get_billing_address_1() . " " . $order->get_billing_address_2() . '",
                     "discount_code": "' . $coupons_list . '",
                     "discount": ' . (empty($order->get_discount) ? 0 : $order->get_discount) . ',
                     "shipping": ' . (empty($order->get_total_shipping) ? 0 : $order->get_total_shipping) . ',
                     "rebates": 0,
                     "fees": 0,
-                    "total": ' . $order->order_total . '
+                    "total": ' . $order->get_total() . '
                 };
                 _ra.saveOrderProducts =
                     ' . json_encode($data['line_items']) . '
@@ -418,18 +440,18 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         //REST API
 
         $orderInfo = array(
-            "order_no" => $order->id,
-            "lastname" => $order->billing_last_name,
-            "firstname" => $order->billing_first_name,
-            "email" => $order->billing_email,
-            "phone" => $order->billing_phone,
-            "state" => $order->billing_state,
-            "city" => $order->billing_city,
-            "address" => $order->billing_address_1 . " " . $order->billing_address_2,
+            "order_no" => $order->get_id(),
+            "lastname" => $order->get_billing_last_name(),
+            "firstname" => $order->get_billing_first_name(),
+            "email" => $order->get_billing_email(),
+            "phone" => $order->get_billing_phone(),
+            "state" => $order->get_billing_state(),
+            "city" => $order->get_billing_city(),
+            "address" => $order->get_billing_address_1() . " " . $order->get_billing_address_2(),
             "discount_code" => $coupons_list,
             "discount" => (empty($order->get_discount) ? 0 : $order->get_discount),
             "shipping" => (empty($order->get_total_shipping) ? 0 : $order->get_total_shipping),
-            "total" => $order->order_total
+            "total" => $order->get_total()
         );
 
         if ($this->token && $this->token != '') {

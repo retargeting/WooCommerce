@@ -2,13 +2,13 @@
 Contributors: retargeting
 Tags: retargeting, WooCommerce
 Requires at least: 4.5
-Tested up to: 4.7.4
-Stable tag: 4.7.4
+Tested up to: 4.7.5
+Stable tag: 4.7.5
 Requires WooCommerce at least: 2.6
-Tested WooCommerce up to: 3.0.4
+Tested WooCommerce up to: 3.0.7
 License: GPLv2
 
-Adds Retargeting tracking to WooCommerce.
+Retargeting is a marketing automation tool that boosts the conversion rate and sales of your online store.
 
 == Description ==
 
@@ -24,27 +24,27 @@ When you have people in your online shop, if you see that someone's showing a lo
 
 With our personalized live triggers that's exactly what you'll do, just that you won't have to lift a finger.
 
-[read more about live triggers](https://retargeting.biz/live-triggers-marketing)
+[Read more about live triggers](https://retargeting.biz/features#live)
 
-E-mail triggers & reminders
+E-mail Triggers & Reminders
 
-We all want to market someone when they're in a buying mood, but it's hard to get the right timing. But we found a secret formula and you'll have access to it through our e-mail marketing software. Someone leaves the site without finishing the order? We got your back!
+We all want to market someone when they're in a buying mood, but it's hard to get the right timing. We found a secret formula and you'll have access to it through our e-mail marketing software. Someone leaves the site without finishing the order? We got your back!
 
 Someone browsed the site, found interesting products but didn't press the buy button? We'll remind him about those cool products through a triggered email. And that's not all, we can do so much more with our personalized emails!
 
-[read more about email triggers](https://retargeting.biz/email-triggers-and-reminders)
+[Read more about Email Triggers](https://retargeting.biz/features#email)
 
 SMS Triggers
 
 Nowadays, with everyone checking their phones every 5 minutes, you can't go wrong with this, you're 100% sure that they will see your message. What better way to remind someone that they forgot to finish order a couple of hours ago?
 
-[read more about sms triggers](https://retargeting.biz/sms-triggers)
+[Read more about SMS Triggers](https://retargeting.biz/sms-triggers)
 
-Multitesting
+Analytics and Multitesting
 
-We love A/B testing so much that we created Multitesting, an improved and limitless version compared to other email marketing softwares.
+We love A/B testing so much that we created Multitesting, an improved and limitless version compared to other email marketing software providers.
 
-You can test as many different versions as you want and you only need one click to add a new one. Did we tell you that you can do this for any trigger, e-mail or live? The perfect marketing automation tool for your online shop!
+You can test as many different versions as you want and you only need one click to add a new one. Did we tell you that you can do this for any e-mail trigger? The perfect marketing automation tool for your online shop!
 
 Contact
 
