@@ -209,8 +209,9 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                         list($price, $specialPrice) = $this->getPricesForGroupedProducts($product);
                         break;
                     default:
-                        $price = $product->get_regular_price();
-                        $salePrice = $product->get_sale_price();
+                        $price = wc_get_price_including_tax( $product, array('price' => $product->get_regular_price() ) );
+                        $salePrice = wc_get_price_including_tax( $product, array('price' => $product->get_price() ) );
+                        $salePrice = $price == $salePrice ? 0 : $salePrice;
                         $specialPrice = (!empty($salePrice) ? $salePrice : 0);
                         break;
                 }
@@ -559,6 +560,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $max_price = end($prices['regular_price']);
         $price = $min_price !== $max_price ? $max_price : $min_price;
         $specialPrice = $min_price !== $max_price ? $min_price : 0;
+        $price = wc_get_price_including_tax( $product, array('price' => $price) );
+        $specialPrice = wc_get_price_including_tax( $product, array('price' => $specialPrice) );
         return array(
             (!empty($price) ? $price : 0),
             (!empty($specialPrice) ? $specialPrice : 0)
@@ -575,6 +578,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $price = (!empty($getPrice) ? $getPrice : 0);
         $getSpecialPrice = $product->get_sale_price();
         $specialPrice = (!empty($getSpecialPrice) ? $getSpecialPrice : 0);
+        $price = wc_get_price_including_tax( $product, array('price' => $price) );
+        $specialPrice = wc_get_price_including_tax( $product, array('price' => $specialPrice) );
         return array(
             (!empty($price) ? $price : 0),
             (!empty($specialPrice) ? $specialPrice : 0)
