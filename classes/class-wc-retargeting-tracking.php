@@ -328,7 +328,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         echo '<script>
                   (function($) {
                     $(".remove").click(function() {
-                      var productId = ($(this).data(\'product_sku\')) ? ($(this).data(\'product_sku\')) : (\'#\' + $(this).data(\'product_id\'));
+                      var productId = ($(this).data(\'product_sku\')) ? ($(this).data(\'product_sku\')) : ($(this).data(\'product_id\'));
                       var productQuantity = $(this).parent().parent().find( \'.qty\' ).val() ? $(this).parent().parent().find( \'.qty\' ).val() : \'1\';
                         _ra.removeFromCart(productId, productQuantity, false, function() {
                             console.log("Product removed from cart");
