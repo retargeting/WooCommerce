@@ -2,10 +2,10 @@
 Contributors: retargeting
 Tags: retargeting, WooCommerce
 Requires at least: 4.5
-Tested up to: 4.7.5
-Stable tag: 4.7.5
-Requires WooCommerce at least: 2.6
-Tested WooCommerce up to: 3.0.7
+Tested up to: 4.8
+Stable tag: 4.8
+Requires WooCommerce at least: 3.0.0
+Tested WooCommerce up to: 3.0.8
 License: GPLv2
 
 Retargeting is a marketing automation tool that boosts the conversion rate and sales of your online store.
@@ -38,7 +38,7 @@ SMS Triggers
 
 Nowadays, with everyone checking their phones every 5 minutes, you can't go wrong with this, you're 100% sure that they will see your message. What better way to remind someone that they forgot to finish order a couple of hours ago?
 
-[Read more about SMS Triggers](https://retargeting.biz/sms-triggers)
+[Read more about SMS Triggers](https://retargeting.biz/features#sms)
 
 Analytics and Multitesting
 
