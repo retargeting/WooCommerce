@@ -55,6 +55,8 @@ For help or more info, please contact [info@retargeting.biz](mailto:info@retarge
 1. Upload the entire 'woocommerce-retargeting' folder to the '/wp-content/plugins/' directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 
+If you are NOT using WooCommerce 3.0+ please e-mail us at (mailto:info@retargeting.biz) and we will help you set up the installation.
+
 == Screenshots ==
 
 1. Retargeting Dashboard
