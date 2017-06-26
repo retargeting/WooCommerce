@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Retargeting
  * Plugin URI: https://retargeting.biz/woocommerce-documentation
  * Description: Retargeting is a marketing automation tool that boosts the conversion rate and sales of your online store.
- * Version: 2.0.8
+ * Version: 2.0.10
  * Author: Retargeting Team
  * Author URI: http://retargeting.biz
  * License: GPL2
@@ -24,7 +24,7 @@ class WC_Retargeting_Tracking {
     /*
     * Plugin Version.
     */
-    const VERSION = '2.0.8';
+    const VERSION = '2.0.10';
     /*
     * Instance of this class
     */
@@ -35,7 +35,7 @@ class WC_Retargeting_Tracking {
     private function __construct(){
 	add_action('init', array($this, 'load_plugin_textdomain') );
 	//Check if WooCommerce is installed.
-	if(class_exists('WC_Integration') && defined('WOOCOMMERCE_VERSION') && version_compare(WOOCOMMERCE_VERSION, '2.1.6', '>=') ) {
+	if(class_exists('WC_Integration') && defined('WOOCOMMERCE_VERSION') && version_compare(WOOCOMMERCE_VERSION, '3.0.0', '>=') ) {
 	    include_once 'classes/class-wc-retargeting-tracking.php';
 	    
 	    //Register integration
@@ -66,7 +66,7 @@ class WC_Retargeting_Tracking {
     * Fallback notice
     */
     public function woocommerce_missing_notice(){
-	echo '<div class="error"><p>'.sprintf(__('WooCommerce Retargeting depends on the last version of %s to work!', 'woocommerce-retargeting-integration'), '<a href="http://www.woothemes.com/woocommerce/" target="_blank" rel="noopener noreferrer">' . __('WooCommerce', 'woocommerce-retargeting-integration') . '</a>').'</p></div>';
+	echo '<div class="error"><p>'.sprintf(__('<b>WooCommerce Retargeting</b> depends on the last version of %s to work! If you are <b>NOT</b> using <b>WooCommerce 3.0+</b> please e-mail us at info@retargeting.biz and we will help you set up the installation.', 'woocommerce-retargeting-integration'), '<a href="http://www.woothemes.com/woocommerce/" target="_blank" rel="noopener noreferrer">' . __('WooCommerce', 'woocommerce-retargeting-integration') . '</a>').'</p></div>';
     }
     /*
     * Add new integration to WooCommerce
