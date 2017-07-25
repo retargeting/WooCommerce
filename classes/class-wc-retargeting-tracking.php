@@ -84,13 +84,13 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->form_fields = array(
             'domain_api_key' => array(
                 'title' => __('Tracking API KEY'),
-                'description' => __('Insert Retargeting TRACKING API Key. <a href="https://retargeting.biz/admin/module/settings/docs-and-api" target="_blank" rel="noopener noreferrer">Click here</a> to get your Tracking API Key'),
+                'description' => __('Insert Retargeting TRACKING API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=5ac66ac466f3e1ec5e6fe5a040356997" target="_blank" rel="noopener noreferrer">Click here</a> to get your Tracking API Key'),
                 'type' => 'text',
                 'default' => '',
             ),
             'token' => array(
                 'title' => __('REST API Key'),
-                'description' => __('Insert Retargeting REST API Key. <a href="https://retargeting.biz/admin/module/settings/docs-and-api" target="_blank" rel="noopener noreferrer">Click here</a> to get your Rest API Key'),
+                'description' => __('Insert Retargeting REST API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=5ac66ac466f3e1ec5e6fe5a040356997" target="_blank" rel="noopener noreferrer">Click here</a> to get your Rest API Key'),
                 'type' => 'text',
                 'default' => '',
             ),
