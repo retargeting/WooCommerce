@@ -24,7 +24,7 @@ class WC_Retargeting_Tracking {
     /*
     * Plugin Version.
     */
-    const VERSION = '2.0.13';
+    const VERSION = '2.0.14';
     /*
     * Instance of this class
     */
