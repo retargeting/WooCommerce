@@ -31,7 +31,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
 
         $this->domain_api_key = $this->get_option('domain_api_key');
         $this->token = $this->get_option('token');
+        $this->add_to_cart_button_id = $this->get_option('add_to_cart_button_id');
+        $this->price_label_id = $this->get_option('price_label_id');
         $this->help_pages = $this->get_option('help_pages');
+        
+        add_action('init', array($this, 'ra_session_init'));
 
         add_action('woocommerce_update_options_integration_retargeting', array($this, 'process_admin_options'));
 
@@ -80,15 +84,27 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->form_fields = array(
             'domain_api_key' => array(
                 'title' => __('Tracking API KEY'),
-                'description' => __('Insert Retargeting TRACKING API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=5ac66ac466f3e1ec5e6fe5a040356997" target="_blank" rel="noopener noreferrer">Click here</a> to get your Domain API Key'),
+                'description' => __('Insert Retargeting TRACKING API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=5ac66ac466f3e1ec5e6fe5a040356997" target="_blank" rel="noopener noreferrer">Click here</a> to get your Tracking API Key'),
                 'type' => 'text',
                 'default' => '',
             ),
             'token' => array(
                 'title' => __('REST API Key'),
-                'description' => __('Insert Retargeting REST API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=028e36488ab8dd68eaac58e07ef8f9bf" target="_blank" rel="noopener noreferrer">Click here</a> to get your Token'),
+                'description' => __('Insert Retargeting REST API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=5ac66ac466f3e1ec5e6fe5a040356997" target="_blank" rel="noopener noreferrer">Click here</a> to get your Rest API Key'),
                 'type' => 'text',
                 'default' => '',
+            ),
+            'add_to_cart_button_id' => array(
+              'title' => __('Add To Cart Button'),
+              'description' => __('[Optional] CSS query selector for the button used to add a product to cart.'),
+              'type' => 'text',
+              'default' => '.entry-summary .single_add_to_cart_button'
+            ),
+            'price_label_id' => array(
+              'title' => __('Price Label'),
+              'description' => __('[Optional] CSS query selector for the main product price on a product page.'),
+              'type' => 'text',
+              'default' => '.entry-summary .woocommerce-Price-amount'
             ),
             'help_pages' => array(
                 'title' => __('Help Pages'),
@@ -98,7 +114,18 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             ),
         );
     }
-
+    
+    /*
+    *   Initialize WP session
+    */
+    function ra_session_init() 
+    {
+        if ( !session_id() ) {
+            session_start();
+        }
+        
+    }
+    
     /*
     * Retargeting Tracking Code V3
     */
@@ -109,8 +136,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         (function(){
         ra_key = "' . esc_js($this->domain_api_key) . '";
         ra_params = {
-        add_to_cart_button_id: "add_to_cart_button_id",
-        price_label_id: "price_label_id",
+        add_to_cart_button_id: "' . esc_js($this->add_to_cart_button_id) . '",
+        price_label_id: "' . esc_js($this->price_label_id) . '",
         };
         var ra = document.createElement("script"); ra.type ="text/javascript"; ra.async = true; ra.src = ("https:" ==
         document.location.protocol ? "https://" : "http://") + "tracking.retargeting.biz/v3/rajs/" + ra_key + ".js";
