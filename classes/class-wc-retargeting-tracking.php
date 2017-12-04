@@ -24,7 +24,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     {
         $this->id = 'retargeting';
         $this->method_title = "Retargeting";
-        $this->method_description = __('Retargeting is a marketing automation tool that boosts the conversion rate and sales of your online store.');
+        $this->method_description = __('Retargeting.Biz is a marketing automation tool that boosts the conversion rate and sales of your online store.');
 
         $this->init_form_fields();
         $this->init_settings();
@@ -84,7 +84,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->form_fields = array(
             'domain_api_key' => array(
                 'title' => __('Tracking API KEY'),
-                'description' => __('Insert Retargeting TRACKING API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=5ac66ac466f3e1ec5e6fe5a040356997" target="_blank" rel="noopener noreferrer">Click here</a> to get your Tracking API Key'),
+                'description' => __('Insert Retargeting Tracking API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=5ac66ac466f3e1ec5e6fe5a040356997" target="_blank" rel="noopener noreferrer">Click here</a> to get your Tracking API Key'),
                 'type' => 'text',
                 'default' => '',
             ),
@@ -127,7 +127,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
     
     /*
-    * Retargeting Tracking Code V3
+    * Retargeting Tracking Code
     */
     public function get_retargeting_tracking_code()
     {
@@ -136,8 +136,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         (function(){
         ra_key = "' . esc_js($this->domain_api_key) . '";
         ra_params = {
-        add_to_cart_button_id: "' . esc_js($this->add_to_cart_button_id) . '",
-        price_label_id: "' . esc_js($this->price_label_id) . '",
+            add_to_cart_button_id: "' . esc_js($this->add_to_cart_button_id) . '",
+            price_label_id: "' . esc_js($this->price_label_id) . '",
         };
         var ra = document.createElement("script"); ra.type ="text/javascript"; ra.async = true; ra.src = ("https:" ==
         document.location.protocol ? "https://" : "http://") + "tracking.retargeting.biz/v3/rajs/" + ra_key + ".js";
@@ -147,7 +147,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 
     /*
-    * SetEmail
+    * setEmail
     */
     public function set_email()
     {
@@ -158,11 +158,13 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             echo '
             <script>
                 var _ra = _ra || {};
+
                 _ra.setEmailInfo = {
-                "email": "' . $email['email'] . '"
+                    "email": "' . $email['email'] . '"
                 };
+
                 if(_ra.ready !== undefined) {
-                _ra.setEmail(_ra.setEmailInfo)
+                    _ra.setEmail(_ra.setEmailInfo)
                 }
             </script>';
             $_SESSION['set_email'] = $email['email'];
@@ -170,7 +172,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 
     /*
-    * SendCategory
+    * sendCategory
     */
     public function send_category()
     {
@@ -212,7 +214,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 
     /*
-     * SendProduct
+     * sendProduct
      * */
     public function send_product()
     {
@@ -274,8 +276,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                         "price": ' . $price . ',
                         "promo": ' . $specialPrice . ',
                         "inventory": {
-                                "variations": false,
-                                "stock": ' . $stock . ',
+                            "variations": false,
+                            "stock": ' . $stock . ',
                         },
                         "brand": false,
                         "category": [
@@ -330,7 +332,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 
     /*
-    * AddToCart
+    * addToCart
     */
     public function add_to_cart()
     {
@@ -366,7 +368,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
     
     /*
-    * ClickImage
+    * clickImage
     */
     public function click_image()
     {
@@ -374,7 +376,13 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         echo '
             <script>
                 (function($) {
-                    jQuery(".woocommerce-main-image").click(function() {
+                    if (document.getElementsByClassName(".woocommerce-main-image") > 0 ) {
+                        jQuery(".woocommerce-main-image").click(function() {
+                            _ra.clickImage("' . $product->get_id() . '");
+                        });
+                    }
+
+                    jQuery(".woocommerce-product-gallery__image").click(function() {
                         _ra.clickImage("' . $product->get_id() . '");
                     });
                 })(jQuery);
@@ -383,7 +391,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 
     /*
-    * LikeFacebook
+    * likeFacebook
     */
     public function like_facebook()
     {
@@ -398,7 +406,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 
     /*
-    * SaveOrder
+    * saveOrder
     */
     public function save_order($order_id)
     {
@@ -494,7 +502,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 
     /*
-    * VisitHelpPage
+    * visitHelpPage
     */
     public function help_pages()
     {
@@ -517,7 +525,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 
     /*
-    * CheckoutIds
+    * checkoutIds
     */
     public function checkout_ids()
     {
@@ -562,7 +570,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         if (isset($wp_query->query['retargeting']) && $wp_query->query['retargeting'] == 'discounts') {
             if (isset($wp_query->query['key']) && isset($wp_query->query['value']) && isset($wp_query->query['type']) && isset($wp_query->query['count'])) {
                 if ($wp_query->query['key'] != "" && $wp_query->query['key'] == $this->token && $wp_query->query['value'] != "" && $wp_query->query['type'] != "" && $wp_query->query['count'] != "") {
-                    //daca totul este ok, genereaza si afiseaza codurile de reducere
+                    // If everything is ok, generate and show the discount codes
                     echo generate_coupons($wp_query->query['count']);
                     exit;
                 } else {
@@ -614,7 +622,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 }
 
-//genereaza coduri de reducere random
+// Generate random discount codes
 
 function generate_coupons($count)
 {
@@ -655,7 +663,7 @@ function woocommerce_verify_discount($code)
 
 }
 
-//adauga coduri in woocommerce
+// Add discount codes into WooCommerce
 
 function woocommerce_add_discount($code, $discount, $type)
 {
