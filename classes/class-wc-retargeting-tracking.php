@@ -23,7 +23,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     public function __construct()
     {
         $this->id = 'retargeting';
-        $this->method_title = "Retargeting";
+        $this->method_title = "Retargeting Tracker";
         $this->method_description = __('Retargeting.Biz is a marketing automation tool that boosts the conversion rate and sales of your online store.');
 
         $this->init_form_fields();
