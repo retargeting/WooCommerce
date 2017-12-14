@@ -74,11 +74,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     function init_form_fields()
     {
-        //List all pages
+        // List all pages
         $allPages = get_pages();
         $pages = array();
-        $pages[] = 'None';
         foreach ($allPages as $key => $page) {
+            $pages['ra_none'] = 'None';
             $pages[$page->post_name] = $page->post_title;
         }
 
