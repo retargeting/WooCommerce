@@ -74,10 +74,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     function init_form_fields()
     {
-        //List all pages
-        $allpages = get_pages();
+        // List all pages
+        $allPages = get_pages();
         $pages = array();
-        foreach ($allpages as $key => $page) {
+        foreach ($allPages as $key => $page) {
+            $pages['ra_none'] = 'None';
             $pages[$page->post_name] = $page->post_title;
         }
 
@@ -108,7 +109,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             ),
             'help_pages' => array(
                 'title' => __('Help Pages'),
-                'description' => __('Select All Help Pages (e.g. How to order?, FAQ, How I get the products?)'),
+                'description' => __('Select All Help Pages (e.g. How to Order, FAQ, Delivery and Payment, Contact Us)'),
                 'type' => 'multiselect',
                 'options' => $pages
             ),
