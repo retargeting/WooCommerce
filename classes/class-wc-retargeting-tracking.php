@@ -42,7 +42,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
 
         add_action('wp_head', array($this, 'get_retargeting_tracking_code'), 999);
         add_action('wp_head', array($this, 'set_email'), 9999);
-        add_action('woocommerce_after_checkout_form', array($this, 'recom_engine_head'), 999);
+        add_action('woocommerce_after_checkout_form', array($this, 'recom_engine_checkout_form'), 999);
 
         add_action('woocommerce_before_main_content', array($this, 'send_category'), 30, 0);
 
@@ -74,10 +74,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     function init_form_fields()
     {
-        //List all pages
-        $allpages = get_pages();
+        // List all pages
+        $allPages = get_pages();
         $pages = array();
-        foreach ($allpages as $key => $page) {
+        foreach ($allPages as $key => $page) {
+            $pages['ra_none']        = 'None';
             $pages[$page->post_name] = $page->post_title;
         }
 
@@ -121,7 +122,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             ),
             'help_pages' => array(
                 'title' => __('Help Pages'),
-                'description' => __('Select All Help Pages (e.g. How to order?, FAQ, How I get the products?)'),
+                'description' => __('Select All Help Pages (e.g. How to Order, FAQ, Delivery and Payment, Contact Us)'),
                 'type' => 'multiselect',
                 'options' => $pages
             ),
@@ -166,9 +167,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 
 
-    public function recom_engine_head()
+    public function recom_engine_checkout_form()
     {
-        echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if (in_array('checkout_page', $this->recom_engine)) {
+            echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        }
     }
 
     /*
