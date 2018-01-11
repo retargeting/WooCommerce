@@ -19,7 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 **/
 
 if(!class_exists('WC_Retargeting_Tracking') ) :
+
 session_start();
+
 class WC_Retargeting_Tracking {
     /*
     * Plugin Version.

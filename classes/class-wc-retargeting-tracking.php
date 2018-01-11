@@ -35,6 +35,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->price_label_id = $this->get_option('price_label_id');
         $this->help_pages = $this->get_option('help_pages');
         $this->recom_engine = $this->get_option('recom_engine');
+        $this->recom_engine_test = $this->get_option('recom_engine_test');
         
         add_action('init', array($this, 'ra_session_init'));
 
@@ -132,10 +133,30 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 'options' => $pages
             ),
             'recom_engine' => array(
-                'title' => _('Recommendation Engine'),
+                'title' => __('Recommendation Engine'),
                 'description' => _('Select where to display products selected by A.I'),
                 'type' => 'multiselect',
                 'options' => $recomEngineArr
+            ),
+            'webshop_personalization' => array(
+                'title' => __( 'Webshop Personalization' ),
+                'description' => 'Placeholder Text',
+                'type' => 'title',
+            ),
+            'recom_engine_home_page' => array(
+                'title' => __('Recommendation Engine Test'),
+                'label' => __('Display Recommendation Engine on Home Page'),
+                'description' => __('Enables the display of Recommendation Engine Carousel on your Home page'),
+                'type' => 'checkbox',
+                'options' => array('test1' => 'sal1', 'test2' => 'sal2'),
+                'checkboxgroup' => 'start',
+                'default' => 'yes'
+            ),
+            'recom_engine_category_page' => array(
+                'label' => __("Display Recommendation Engine on Category page"),
+                'description' => __("Enables the display of Recommendation Engine Carousel on your Category page"),
+                'type' => 'select',
+                'options' => array('test1' => 'sal1', 'test2' => 'sal2'),
             ),
         );
     }
