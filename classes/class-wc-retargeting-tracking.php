@@ -34,15 +34,15 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->add_to_cart_button_id = $this->get_option('add_to_cart_button_id');
         $this->price_label_id = $this->get_option('price_label_id');
         $this->help_pages = $this->get_option('help_pages');
+        $this->recom_engine = $this->get_option('recom_engine');
         
         add_action('init', array($this, 'ra_session_init'));
 
         add_action('woocommerce_update_options_integration_retargeting', array($this, 'process_admin_options'));
 
         add_action('wp_head', array($this, 'get_retargeting_tracking_code'), 999);
-
         add_action('wp_head', array($this, 'set_email'), 9999);
-
+        add_action('woocommerce_after_checkout_form', array($this, 'recom_engine_head'), 999);
 
         add_action('woocommerce_before_main_content', array($this, 'send_category'), 30, 0);
 
@@ -74,13 +74,25 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     function init_form_fields()
     {
-        // List all pages
-        $allPages = get_pages();
+        //List all pages
+        $allpages = get_pages();
         $pages = array();
-        foreach ($allPages as $key => $page) {
-            $pages['ra_none'] = 'None';
+        foreach ($allpages as $key => $page) {
             $pages[$page->post_name] = $page->post_title;
         }
+
+        // Recommendation Engine customization areas
+        $recomEngineArr = array(
+            'none' => 'None',
+            'home_page' => 'Home Page',
+            'category_page' => 'Category Page',
+            'product_page' => 'Product Page',
+            'checkout_page' => 'Checkout Page',
+            'thank_you_page' => 'Thank You Page',
+            'out_of_stock' => 'Out of Stock Page',
+            'search_page' => 'Search Page',
+            '404_page' => '404 Page'
+        );
 
         $this->form_fields = array(
             'domain_api_key' => array(
@@ -109,9 +121,15 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             ),
             'help_pages' => array(
                 'title' => __('Help Pages'),
-                'description' => __('Select All Help Pages (e.g. How to Order, FAQ, Delivery and Payment, Contact Us)'),
+                'description' => __('Select All Help Pages (e.g. How to order?, FAQ, How I get the products?)'),
                 'type' => 'multiselect',
                 'options' => $pages
+            ),
+            'recom_engine' => array(
+                'title' => _('Recommendation Engine'),
+                'description' => _('Select where to display products selected by A.I'),
+                'type' => 'multiselect',
+                'options' => $recomEngineArr
             ),
         );
     }
@@ -145,6 +163,12 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ra,s);})();
         </script>
         <!-- Retargeting Tracking Code -->';
+    }
+
+
+    public function recom_engine_head()
+    {
+        echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
     }
 
     /*
