@@ -34,10 +34,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->add_to_cart_button_id = $this->get_option('add_to_cart_button_id');
         $this->price_label_id = $this->get_option('price_label_id');
         $this->help_pages = $this->get_option('help_pages');
-        $this->recom_engine_home_page = $this->get_option('recom_engine_home_page');
+        $this->recom_engine_home_category_page = $this->get_option('recom_engine_home_category_page');
+        $this->recom_engine_product_page = $this->get_option('recom_engine_product_page');
         $this->recom_engine_checkout_form = $this->get_option('recom_engine_checkout_form');
-        $this->recom_engine_category_page = $this->get_option('recom_engine_category_page');
-        var_dump($this->recom_engine_home_page);
+        $this->recom_engine_thank_you_page = $this->get_option('recom_engine_thank_you_page');
+        // var_dump($this->recom_engine_thank_you_page);
         
         add_action('init', array($this, 'ra_session_init'), 1);
 
@@ -50,21 +51,23 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         * Hooks used for Recommendation Engine
         */
 
-        // Home Page
-        add_action('woocommerce_before_main_content', array($this, 'recom_engine_before_main_content'), 999);
-        add_action('woocommerce_after_main_content', array($this, 'recom_engine_after_main_content'), 999);
+        // Home & Category Pages
         add_action('woocommerce_archive_description', array($this, 'recom_engine_archive_description'), 999);
         add_action('woocommerce_before_shop_loop', array($this, 'recom_engine_before_shop_loop'), 999);
         add_action('woocommerce_after_shop_loop', array($this, 'recom_engine_after_shop_loop'), 999);
 
-        // Category Page
-        add_action('woocommerce_after_subcategory', array($this, 'recom_engine_after_subcategory'), 999);
+        // Product Pages
+        add_action('woocommerce_before_single_product', array($this, 'recom_engine_before_single_product'), 999);
+        add_action('woocommerce_after_single_product', array($this, 'recom_engine_after_single_product'), 999);
 
         // Checkout Page
         add_action('woocommerce_before_checkout_form', array($this, 'recom_engine_before_checkout_form'), 999);
         add_action('woocommerce_after_checkout_form', array($this, 'recom_engine_after_checkout_form'), 999);
         add_action('woocommerce_before_checkout_registration_form', array($this, 'recom_engine_before_checkout_registration_form'), 999);
         add_action('woocommerce_after_checkout_registration_form', array($this, 'recom_engine_after_checkout_registration_form'), 999);
+
+        // Thank You Page
+        add_action('woocommerce_thankyou', array($this, 'recom_engine_thank_you_page'), 999);
 
         // Hooks used for JavaScript functions
         add_action('woocommerce_before_main_content', array($this, 'send_category'), 30, 0);
@@ -141,34 +144,30 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 'description' => 'Allows the display of customized products carousel on your website pages',
                 'type' => 'title',
             ),
-            'recom_engine_home_page' => array(
-                'title' => __('Home Page'),
-                'label' => __('Display on Home Page'),
+            'recom_engine_home_category_page' => array(
+                'title' => __('Home & Category Pages'),
                 'description' => __('Enables the display of Recommendation Engine Carousel on your Home page'),
                 'type' => 'select',
                 'options' => array(
                     'none' => 'None',
-                    'before_main_content' => 'Display before Main Content',
-                    'after_main_content' => 'Display after Main Content',
-                    'archive_description' => 'Display in Archive Description',
-                    'before_shop_loop' => 'Display before Shop Loop',
-                    'after_shop_loop' => 'Display after Shop Loop'
+                    'archive_description' => 'Display in Archive Description (above Products Box Listing',
+                    'before_shop_loop' => 'Display before Shop Loop (before Products Box Listing)',
+                    'after_shop_loop' => 'Display after Shop Loop (after Products Box Listing)'
                 ),
+                'default' => 'before_shop_loop',
             ),
-            'recom_engine_category_page' => array(
-                'title' => __('Category Page'),
-                'label' => __('Display Recommendation Engine on Category page'),
-                'description' => __('Enables the display of Recommendation Engine Carousel on your Category page'),
+            'recom_engine_product_page' => array(
+                'title' => __('Product Pages'),
+                'description' => __('Enables the display of Recommendation Engine Carousel on Checkout page'),
                 'type' => 'select',
                 'options' => array(
                     'none' => 'None',
-                    'after_subcategory' => 'Display after Subcategory', 
-                    'test2' => 'sal2'
+                    'before_single_product' => 'Display before Single Product',
+                    'after_single_product' => 'Display after Single Product'
                 ),
             ),
             'recom_engine_checkout_form' => array(
-                'title' => __('Checkout Page'),
-                'label' => __('Display Recommendation Engine on Checkout page'),
+                'title' => __('Checkout Pages'),
                 'description' => __('Enables the display of Recommendation Engine Carousel on Checkout page'),
                 'type' => 'select',
                 'options' => array(
@@ -178,6 +177,12 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     'before_checkout_registration_form' => 'Display before Checkout Registration Form',
                     'after_checkout_registration_form' => 'Display after Checkout Registration Form'
                 ),
+            ),
+            'recom_engine_thank_you_page' => array(
+                'title' => __('Thank You Page'),
+                'description' => __('Enables the display of Recommendation Engine Carousel on Thank You page'),
+                'type' => 'checkbox',
+                'default' => 'yes'
             ),
         );
     }
@@ -214,31 +219,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 
     /*
-    * Recommendation Engine for Before Main Content - Home Page
-    */
-    public function recom_engine_before_main_content()
-    {
-        if ( $this->recom_engine_home_page == 'before_main_content' ) {
-            echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
-        }
-    }
-
-    /*
-    * Recommendation Engine for Before Main Content - Home Page
-    */
-    public function recom_engine_after_main_content()
-    {
-        if ( $this->recom_engine_home_page == 'after_main_content' ) {
-            echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
-        }
-    }
-
-    /*
     * Recommendation Engine for After Shop Loop - Home Page
     */
     public function recom_engine_after_shop_loop()
     {
-        if ( $this->recom_engine_home_page == 'after_shop_loop' ) {
+        if ( $this->recom_engine_home_category_page == 'after_shop_loop' ) {
             echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
         }
     }
@@ -248,7 +233,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     public function recom_engine_before_shop_loop()
     {
-        if ( $this->recom_engine_home_page == 'before_shop_loop' ) {
+        if ( $this->recom_engine_home_category_page == 'before_shop_loop' ) {
             echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
         }
     }
@@ -258,18 +243,28 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     public function recom_engine_archive_description()
     {
-        if ( $this->recom_engine_home_page == 'archive_description' ) {
+        if ( $this->recom_engine_home_category_page == 'archive_description' ) {
             echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
         }
     }
 
     /*
-    * Recommendation Engine for After Subcategory
+    * Recommendation Engine for Before Single Product
     */
-    public function recom_engine_after_subcategory()
+    public function recom_engine_before_single_product()
     {
-        if ( $this->recom_engine_after_subcategory == 'after_subcategory' ) {
-            echo '<div id="retargeting-recommeng-category-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ( $this->recom_engine_product_page == 'before_single_product' ) {
+            echo '<div id="retargeting-recommeng-product-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        }
+    }
+
+    /*
+    * Recommendation Engine for Afer Single Product
+    */
+    public function recom_engine_after_single_product()
+    {
+        if ( $this->recom_engine_product_page == 'after_single_product' ) {
+            echo '<div id="retargeting-recommeng-product-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
         }
     }
 
@@ -296,7 +291,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     /*
     * Recommendation Engine for After Checkout Registration Form
     */
-    public function recom_engine_before_checkout_registration_form() {
+    public function recom_engine_before_checkout_registration_form()
+    {
         if ( $this->recom_engine_checkout_form == 'before_checkout_registration_form' ) {
             echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
         }
@@ -305,9 +301,20 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     /*
     * Recommendation Engine for After Checkout Registration Form
     */
-    public function recom_engine_after_checkout_registration_form() {
+    public function recom_engine_after_checkout_registration_form()
+    {
         if ( $this->recom_engine_checkout_form == 'after_checkout_registration_form' ) {
             echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        }
+    }
+
+    /*
+    * Recommendation Engine for Thank You Page
+    */
+    public function recom_engine_thank_you_page()
+    {
+        if ( $this->recom_engine_thank_you_page == 'yes') {
+            echo '<div id="retargeting-recommeng-thank-you-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
         }
     }
 
@@ -596,7 +603,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
 
             foreach ((array)$order->get_items() as $item_id => $item) {
                 $_product = apply_filters('woocommerce_order_item_product', $order->get_product_from_item($item), $item);
-                $item_meta = new WC_Order_Item_Meta($item['item_meta'], $_product);
+                $item_meta = new WC_Order_Item_Product($item['item_meta'], $_product);
                 if (apply_filters('woocommerce_order_item_visible', true, $item)) {
                     $line_item = array(
                         'id' => $item['product_id'],
