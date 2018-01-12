@@ -69,6 +69,9 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         // Thank You Page
         add_action('woocommerce_thankyou', array($this, 'recom_engine_thank_you_page'), 999);
 
+        // Search Form
+        add_action('woocommerce_pre_get_product_search_form', array($this, 'recom_engine_pre_get_product_search_form'), 999);
+
         // Hooks used for JavaScript functions
         add_action('woocommerce_before_main_content', array($this, 'send_category'), 30, 0);
 
@@ -80,8 +83,6 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         add_action( 'woocommerce_after_mini_cart', array($this, 'remove_from_cart' ));
 
         add_action('woocommerce_before_single_product', array($this, 'click_image'), 30, 0);
-
-        add_action('woocommerce_before_single_product', array($this, 'like_facebook'), 50, 0);
 
         add_action('wp_footer', array($this, 'help_pages'), 999, 0);
 
@@ -316,6 +317,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         if ( $this->recom_engine_thank_you_page == 'yes') {
             echo '<div id="retargeting-recommeng-thank-you-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
         }
+    }
+
+    public function recom_engine_pre_get_product_search_form()
+    {
+        echo '<div id="retargeting-recommeng-search-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
     }
 
     /*
@@ -563,21 +569,6 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 
     /*
-    * likeFacebook
-    */
-    public function like_facebook()
-    {
-        global $product;
-        echo "<script>
-            if (typeof FB != 'undefined') {
-                FB.Event.subscribe('edge.create', function () {
-                    _ra.likeFacebook(" . $product->get_id() . ");
-                });
-            };
-        </script>";
-    }
-
-    /*
     * saveOrder
     */
     public function save_order($order_id)
@@ -679,19 +670,21 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     public function help_pages()
     {
         global $post;
-        $page = $post->post_name;
-        if (!empty($this->help_pages)) {
-            if (in_array($page, $this->help_pages)) {
-                echo "<script>
-                    var _ra = _ra || {};
-                        _ra.visitHelpPageInfo = {
-                            'visit' : true
-                        }
-    
-                        if (_ra.ready !== undefined) {
-                            _ra.visitHelpPage();
-                        }
-                </script>";
+        if ($post) {
+            $page = $post->post_name;
+            if (!empty($this->help_pages)) {
+                if (in_array($page, $this->help_pages)) {
+                    echo "<script>
+                        var _ra = _ra || {};
+                            _ra.visitHelpPageInfo = {
+                                'visit' : true
+                            }
+        
+                            if (_ra.ready !== undefined) {
+                                _ra.visitHelpPage();
+                            }
+                    </script>";
+                }
             }
         }
     }
