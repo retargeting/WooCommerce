@@ -68,7 +68,7 @@ class WC_Retargeting_Tracking {
     * Fallback notice in case WooCommerce 3.0 is NOT installed
     */
     public function woocommerce_missing_notice(){
-	       echo '<div class="error"><p>'.sprintf(__('<b>WooCommerce Retargeting</b> depends on the last version of %s to work! If you are <b>NOT</b> using <b>WooCommerce 3.0+</b> please e-mail us at info@retargeting.biz and we will help you set up the installation.', 'woocommerce-retargeting-integration'), '<a href="http://www.woothemes.com/woocommerce/" target="_blank" rel="noopener noreferrer">' . __('WooCommerce', 'woocommerce-retargeting-integration') . '</a>').'</p></div>';
+	       echo '<div class="error"><p>'.sprintf(__('<b>WooCommerce Retargeting</b> depends on the last version of %s to work! If you are <b>NOT</b> using <b>WooCommerce 3.0+</b> please e-mail us at info@retargeting.biz and we will help you set up the installation.', 'woocommerce-retargeting-integration'), '<a href=' . esc_url('http://www.woothemes.com/woocommerce/') . ' ' . 'target="_blank" rel="noopener noreferrer">' . __('WooCommerce', 'woocommerce-retargeting-integration') . '</a>').'</p></div>';
     }
     /*
     * Add new integration to WooCommerce

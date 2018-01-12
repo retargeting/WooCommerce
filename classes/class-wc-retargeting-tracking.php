@@ -22,23 +22,22 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     public function __construct()
     {
-        $this->id = 'retargeting';
-        $this->method_title = "Retargeting Tracker";
+        $this->id                 = 'retargeting';
+        $this->method_title       = "Retargeting Tracker";
         $this->method_description = __('Retargeting.Biz is a marketing automation tool that boosts the conversion rate and sales of your online store.');
 
         $this->init_form_fields();
         $this->init_settings();
 
-        $this->domain_api_key = $this->get_option('domain_api_key');
-        $this->token = $this->get_option('token');
-        $this->add_to_cart_button_id = $this->get_option('add_to_cart_button_id');
-        $this->price_label_id = $this->get_option('price_label_id');
-        $this->help_pages = $this->get_option('help_pages');
+        $this->domain_api_key                  = $this->get_option('domain_api_key');
+        $this->token                           = $this->get_option('token');
+        $this->add_to_cart_button_id           = $this->get_option('add_to_cart_button_id');
+        $this->price_label_id                  = $this->get_option('price_label_id');
+        $this->help_pages                      = $this->get_option('help_pages');
         $this->recom_engine_home_category_page = $this->get_option('recom_engine_home_category_page');
-        $this->recom_engine_product_page = $this->get_option('recom_engine_product_page');
-        $this->recom_engine_checkout_form = $this->get_option('recom_engine_checkout_form');
-        $this->recom_engine_thank_you_page = $this->get_option('recom_engine_thank_you_page');
-        // var_dump($this->recom_engine_thank_you_page);
+        $this->recom_engine_product_page       = $this->get_option('recom_engine_product_page');
+        $this->recom_engine_checkout_form      = $this->get_option('recom_engine_checkout_form');
+        $this->recom_engine_thank_you_page     = $this->get_option('recom_engine_thank_you_page');
         
         add_action('init', array($this, 'ra_session_init'), 1);
 
@@ -68,9 +67,6 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
 
         // Thank You Page
         add_action('woocommerce_thankyou', array($this, 'recom_engine_thank_you_page'), 999);
-
-        // Search Form
-        add_action('woocommerce_pre_get_product_search_form', array($this, 'recom_engine_pre_get_product_search_form'), 999);
 
         // Hooks used for JavaScript functions
         add_action('woocommerce_before_main_content', array($this, 'send_category'), 30, 0);
@@ -112,13 +108,13 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->form_fields = array(
             'domain_api_key' => array(
                 'title' => __('Tracking API KEY'),
-                'description' => __('Insert Retargeting Tracking API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=5ac66ac466f3e1ec5e6fe5a040356997" target="_blank" rel="noopener noreferrer">Click here</a> to get your Tracking API Key'),
+                'description' => __('Insert Retargeting Tracking API Key. <a href=' . esc_url('https://retargeting.biz/') . ' ' . 'target="_blank" rel="noopener noreferrer">Click here</a> to get your Tracking API Key'),
                 'type' => 'text',
                 'default' => '',
             ),
             'token' => array(
                 'title' => __('REST API Key'),
-                'description' => __('Insert Retargeting REST API Key. <a href="https://retargeting.biz/admin?action=api_redirect&token=5ac66ac466f3e1ec5e6fe5a040356997" target="_blank" rel="noopener noreferrer">Click here</a> to get your Rest API Key'),
+                'description' => __('Insert Retargeting REST API Key. <a href=' . esc_url('https://retargeting.biz/') . ' ' . 'target="_blank" rel="noopener noreferrer">Click here</a> to get your Rest API Key'),
                 'type' => 'text',
                 'default' => '',
             ),
@@ -252,6 +248,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     /*
     * Recommendation Engine for Before Single Product
     */
+
     public function recom_engine_before_single_product()
     {
         if ( $this->recom_engine_product_page == 'before_single_product' ) {
@@ -317,11 +314,6 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         if ( $this->recom_engine_thank_you_page == 'yes') {
             echo '<div id="retargeting-recommeng-thank-you-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
         }
-    }
-
-    public function recom_engine_pre_get_product_search_form()
-    {
-        echo '<div id="retargeting-recommeng-search-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
     }
 
     /*
