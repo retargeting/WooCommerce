@@ -35,7 +35,8 @@ class WC_Retargeting_Tracking {
     * Init plugin
     */
     private function __construct(){
-      	add_action('init', array($this, 'load_plugin_textdomain') );
+      	add_action( 'init', array($this, 'load_plugin_textdomain') );
+        add_action('admin_enqueue_scripts', array($this, 'notice_dismiss'));
       	// Check if WooCommerce is installed.
       	if(class_exists('WC_Integration') && defined('WOOCOMMERCE_VERSION') && version_compare(WOOCOMMERCE_VERSION, '3.0.0', '>=') ) {
       	    include_once 'classes/class-wc-retargeting-tracking.php';
@@ -50,7 +51,8 @@ class WC_Retargeting_Tracking {
     /*
     * Return an instance of this class
     */
-    public static function get_instance(){
+    public static function get_instance() 
+    {
       	if(null == self::$instance) {
       	    self::$instance = new self;
       	}
@@ -59,7 +61,8 @@ class WC_Retargeting_Tracking {
     /*
     * Load the plugin text domain for translation
     */
-    public function load_plugin_textdomain(){
+    public function load_plugin_textdomain() 
+    {
       	$locale = apply_filters('plugin_locale', get_locale(), 'woocommerce-retargeting-integration');
       	load_textdomain('woocommerce-retargeting-integration', trailingslashit(WP_LANG_DIR) . 'woocommerce-retargeting-integration-' . $locale . '.mo');
       	load_plugin_textdomain ('woocommerce-retargeting-integration', false, dirname(plugin_basename( __FILE__ )) . '/languages/');
@@ -67,9 +70,16 @@ class WC_Retargeting_Tracking {
     /*
     * Fallback notice in case WooCommerce 3.0 is NOT installed
     */
-    public function woocommerce_missing_notice(){
-	       echo '<div class="error"><p>'.sprintf(__('<b>WooCommerce Retargeting</b> depends on the last version of %s to work! If you are <b>NOT</b> using <b>WooCommerce 3.0+</b> please e-mail us at info@retargeting.biz and we will help you set up the installation.', 'woocommerce-retargeting-integration'), '<a href=' . esc_url('http://www.woothemes.com/woocommerce/') . ' ' . 'target="_blank" rel="noopener noreferrer">' . __('WooCommerce', 'woocommerce-retargeting-integration') . '</a>').'</p></div>';
+    public function woocommerce_missing_notice() 
+    {
+          echo '<div id="retargeting-dismiss-notice" class="notice notice-error retargeting-dismiss-notice is-dismissible"><p>'.sprintf(__('<b>WooCommerce Retargeting</b> depends on the last version of %s to work! If you are <b>NOT</b> using <b>WooCommerce 3.0+</b> please e-mail us at info@retargeting.biz and we will help you set up the installation.', 'woocommerce-retargeting-integration'), '<a href=' . esc_url('http://www.woothemes.com/woocommerce/') . ' ' . 'target="_blank" rel="noopener noreferrer">' . __('WooCommerce', 'woocommerce-retargeting-integration') . '</a>').'</p></div>';
     }
+
+    function notice_dismiss()
+    {
+        wp_enqueue_script( 'my_custom_script', plugin_dir_url(__FILE__) . 'js/notice-dismiss.js', array('jquery'), '1.0');
+    }
+
     /*
     * Add new integration to WooCommerce
     */
