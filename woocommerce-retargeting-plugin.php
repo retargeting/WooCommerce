@@ -78,7 +78,7 @@ class WC_Retargeting_Tracking {
       	return $integrations;
     }
 }
-add_action('plugins_loaded', array('WC_Retargeting_Tracking', 'get_instance'),0);
+add_action('plugins_loaded', array('WC_Retargeting_Tracking', 'get_instance'), 0 );
 
 endif;
 

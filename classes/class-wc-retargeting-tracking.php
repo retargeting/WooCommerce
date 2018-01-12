@@ -35,7 +35,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->price_label_id = $this->get_option('price_label_id');
         $this->help_pages = $this->get_option('help_pages');
         $this->recom_engine_checkout_form = $this->get_option('recom_engine_checkout_form');
-        var_dump($this->recom_engine_checkout_form);
+        $this->recom_engine_category_page = $this->get_option('recom_engine_category_page');
+        var_dump($this->recom_engine_category_page);
         
         add_action('init', array($this, 'ra_session_init'));
 
@@ -44,9 +45,20 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         add_action('wp_head', array($this, 'get_retargeting_tracking_code'), 999);
         add_action('wp_head', array($this, 'set_email'), 9999);
 
-        // Hooks used for Recommendation Engine
+        /*
+        * Hooks used for Recommendation Engine
+        */
+
+        // Category Page
+        add_action('woocommerce_after_subcategory', array($this, 'recom_engine_after_subcategory'), 999);
+
+        // Checkout Page
         add_action('woocommerce_before_checkout_form', array($this, 'recom_engine_before_checkout_form'), 999);
         add_action('woocommerce_after_checkout_form', array($this, 'recom_engine_after_checkout_form'), 999);
+        add_action('woocommerce_before_checkout_billing_form', array($this, 'recom_engine_before_checkout_billing_form'), 999);
+        add_action('woocommerce_after_checkout_billing_form', array($this, 'recom_engine_after_checkout_billing_form'), 999);
+        add_action('woocommerce_before_checkout_registration_form', array($this, 'recom_engine_before_checkout_registration_form'), 999);
+        add_action('woocommerce_after_checkout_registration_form', array($this, 'recom_engine_after_checkout_registration_form'), 999);
 
         // Hooks used for JavaScript functions
         add_action('woocommerce_before_main_content', array($this, 'send_category'), 30, 0);
@@ -134,7 +146,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             ),
             'webshop_personalization' => array(
                 'title' => __( 'Webshop Personalization' ),
-                'description' => 'Allows you to display a customized products carousel',
+                'description' => 'Allows the display of customized products carousel on your website pages',
                 'type' => 'title',
             ),
             'recom_engine_home_page' => array(
@@ -153,7 +165,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 'type' => 'select',
                 'options' => array(
                     'none' => 'None',
-                    'test1' => 'sal1', 
+                    'after_subcategory' => 'Display after Subcategory', 
                     'test2' => 'sal2'
                 ),
             ),
@@ -166,6 +178,10 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     'none' => 'None',
                     'before_checkout_form' => 'Display before Checkout form',
                     'after_checkout_form' => 'Display after Checkout form',
+                    'before_checkout_billing_form' => 'Display before Checkout Billing Form',
+                    'after_checkout_billing_form' => 'Display after Checkout Billing Form',
+                    'before_checkout_registration_form' => 'Display before Checkout Registration Form',
+                    'after_checkout_registration_form' => 'Display after Checkout Registration Form'
                 ),
             ),
         );
@@ -203,6 +219,16 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 
     /*
+    * Recommendation Engine for After Subcategory
+    */
+    public function recom_engine_after_subcategory()
+    {
+        if ( $this->recom_engine_after_subcategory == 'after_subcategory' ) {
+            echo '<div id="retargeting-recommeng-category-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        }
+    }
+
+    /*
     * Recommendation Engine for Before Checkout Form
     */
     public function recom_engine_before_checkout_form()
@@ -218,6 +244,42 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     public function recom_engine_after_checkout_form()
     {
         if ( $this->recom_engine_checkout_form == 'after_checkout_form' ) {
+            echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        }
+    }
+
+    /*
+    * Recommendation Engine for Before Checkout Billing Form
+    */
+    public function recom_engine_before_checkout_billing_form() {
+        if ( $this->recom_engine_checkout_form == 'before_checkout_billing_form' ) {
+            echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        }
+    }
+
+    /*
+    * Recommendation Engine for After Checkout Billing Form
+    */
+    public function recom_engine_after_checkout_billing_form() {
+        if ( $this->recom_engine_checkout_form == 'after_checkout_billing_form' ) {
+            echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        }
+    }
+
+    /*
+    * Recommendation Engine for After Checkout Registration Form
+    */
+    public function recom_engine_before_checkout_registration_form() {
+        if ( $this->recom_engine_checkout_form == 'before_checkout_registration_form' ) {
+            echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        }
+    }
+
+    /*
+    * Recommendation Engine for After Checkout Registration Form
+    */
+    public function recom_engine_after_checkout_registration_form() {
+        if ( $this->recom_engine_checkout_form == 'after_checkout_registration_form' ) {
             echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
         }
     }
