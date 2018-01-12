@@ -34,8 +34,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->add_to_cart_button_id = $this->get_option('add_to_cart_button_id');
         $this->price_label_id = $this->get_option('price_label_id');
         $this->help_pages = $this->get_option('help_pages');
-        $this->recom_engine = $this->get_option('recom_engine');
-        $this->recom_engine_test = $this->get_option('recom_engine_test');
+        $this->recom_engine_checkout_form = $this->get_option('recom_engine_checkout_form');
+        var_dump($this->recom_engine_checkout_form);
         
         add_action('init', array($this, 'ra_session_init'));
 
@@ -132,20 +132,14 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 'type' => 'multiselect',
                 'options' => $pages
             ),
-            'recom_engine' => array(
-                'title' => __('Recommendation Engine'),
-                'description' => _('Select where to display products selected by A.I'),
-                'type' => 'multiselect',
-                'options' => $recomEngineArr
-            ),
             'webshop_personalization' => array(
                 'title' => __( 'Webshop Personalization' ),
-                'description' => 'Placeholder Text',
+                'description' => 'Allows you to display a customized products carousel',
                 'type' => 'title',
             ),
             'recom_engine_home_page' => array(
-                'title' => __('Recommendation Engine Test'),
-                'label' => __('Display Recommendation Engine on Home Page'),
+                'title' => __('Home Page'),
+                'label' => __('Display on Home Page'),
                 'description' => __('Enables the display of Recommendation Engine Carousel on your Home page'),
                 'type' => 'checkbox',
                 'options' => array('test1' => 'sal1', 'test2' => 'sal2'),
@@ -153,10 +147,26 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 'default' => 'yes'
             ),
             'recom_engine_category_page' => array(
+                'title' => __("Category Page"),
                 'label' => __("Display Recommendation Engine on Category page"),
                 'description' => __("Enables the display of Recommendation Engine Carousel on your Category page"),
                 'type' => 'select',
-                'options' => array('test1' => 'sal1', 'test2' => 'sal2'),
+                'options' => array(
+                    'none' => 'None',
+                    'test1' => 'sal1', 
+                    'test2' => 'sal2'
+                ),
+            ),
+            'recom_engine_checkout_form' => array(
+                'title' => __("Checkout Page"),
+                'label' => __("Display Recommendation Engine on Checkout page"),
+                'description' => __("Enables the display of Recommendation Engine Carousel on Checkout page"),
+                'type' => 'select',
+                'options' => array(
+                    'none' => 'None',
+                    'before_checkout_form' => 'Display before Checkout form',
+                    'after_checkout_form' => 'Display after Checkout form',
+                ),
             ),
         );
     }
@@ -197,8 +207,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     public function recom_engine_before_checkout_form()
     {
-        if (in_array('checkout_page_before_form', $this->recom_engine)) {
-            echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ( $this->recom_engine_checkout_form == 'before_checkout_form' ) {
+            echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
         }
     }
 
@@ -207,8 +217,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     public function recom_engine_after_checkout_form()
     {
-        if (in_array('checkout_page_after_form', $this->recom_engine)) {
-            echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ( $this->recom_engine_checkout_form == 'after_checkout_form' ) {
+            echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
         }
     }
 
