@@ -29,15 +29,15 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->init_form_fields();
         $this->init_settings();
 
-        $this->domain_api_key                  = $this->get_option('domain_api_key');
-        $this->token                           = $this->get_option('token');
-        $this->add_to_cart_button_id           = $this->get_option('add_to_cart_button_id');
-        $this->price_label_id                  = $this->get_option('price_label_id');
+        $this->domain_api_key                  = esc_attr( $this->get_option('domain_api_key') );
+        $this->token                           = esc_attr( $this->get_option('token') );
+        $this->add_to_cart_button_id           = esc_attr( $this->get_option('add_to_cart_button_id') );
+        $this->price_label_id                  = esc_attr( $this->get_option('price_label_id') );
         $this->help_pages                      = $this->get_option('help_pages');
-        $this->recom_engine_home_category_page = $this->get_option('recom_engine_home_category_page');
-        $this->recom_engine_product_page       = $this->get_option('recom_engine_product_page');
-        $this->recom_engine_checkout_form      = $this->get_option('recom_engine_checkout_form');
-        $this->recom_engine_thank_you_page     = $this->get_option('recom_engine_thank_you_page');
+        $this->recom_engine_home_category_page = esc_attr( $this->get_option('recom_engine_home_category_page') );
+        $this->recom_engine_product_page       = esc_attr( $this->get_option('recom_engine_product_page') );
+        $this->recom_engine_checkout_form      = esc_attr( $this->get_option('recom_engine_checkout_form') );
+        $this->recom_engine_thank_you_page     = esc_attr( $this->get_option('recom_engine_thank_you_page') );
         
         add_action('init', array($this, 'ra_session_init'), 1);
 

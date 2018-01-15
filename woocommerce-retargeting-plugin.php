@@ -34,7 +34,7 @@ class WC_Retargeting_Tracking {
     /*
     * Init plugin
     */
-    private function __construct(){
+    private function __construct() {
       	add_action( 'init', array($this, 'load_plugin_textdomain') );
         add_action('admin_enqueue_scripts', array($this, 'notice_dismiss'));
       	// Check if WooCommerce is installed.
@@ -61,7 +61,7 @@ class WC_Retargeting_Tracking {
     /*
     * Load the plugin text domain for translation
     */
-    public function load_plugin_textdomain() 
+    public function load_plugin_textdomain()
     {
       	$locale = apply_filters('plugin_locale', get_locale(), 'woocommerce-retargeting-integration');
       	load_textdomain('woocommerce-retargeting-integration', trailingslashit(WP_LANG_DIR) . 'woocommerce-retargeting-integration-' . $locale . '.mo');
@@ -72,7 +72,7 @@ class WC_Retargeting_Tracking {
     */
     public function woocommerce_missing_notice() 
     {
-          echo '<div id="retargeting-dismiss-notice" class="notice notice-error retargeting-dismiss-notice is-dismissible"><p>'.sprintf(__('<b>WooCommerce Retargeting</b> depends on the last version of %s to work! If you are <b>NOT</b> using <b>WooCommerce 3.0+</b> please e-mail us at info@retargeting.biz and we will help you set up the installation.', 'woocommerce-retargeting-integration'), '<a href=' . esc_url('http://www.woothemes.com/woocommerce/') . ' ' . 'target="_blank" rel="noopener noreferrer">' . __('WooCommerce', 'woocommerce-retargeting-integration') . '</a>').'</p></div>';
+          echo '<div id="retargeting-dismiss-notice" class="notice notice-error retargeting-dismiss-notice is-dismissible"><p>' . sprintf(__('<b>WooCommerce Retargeting</b> depends on the last version of %s to work! If you are <b>NOT</b> using <b>WooCommerce 3.0+</b> please e-mail us at info@retargeting.biz and we will help you set up the installation.', 'woocommerce-retargeting-integration'), '<a href=' . esc_url('http://www.woothemes.com/woocommerce/') . ' ' . 'target="_blank" rel="noopener noreferrer">' . __('WooCommerce', 'woocommerce-retargeting-integration') . '</a>').'</p></div>';
     }
 
     function notice_dismiss()
