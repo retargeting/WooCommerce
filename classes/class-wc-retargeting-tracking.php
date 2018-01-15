@@ -173,10 +173,10 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 'options' => array(
                     'none' => 'None',
                     'archive_description' => 'Display in Archive Description (above Products Box Listing',
-                    'before_shop_loop' => 'Display before Shop Loop (before Products Box Listing)',
-                    'after_shop_loop' => 'Display after Shop Loop (after Products Box Listing)',
+                    'category_before_shop_loop' => 'Display before Shop Loop (before Products Box Listing)',
+                    'category_after_shop_loop' => 'Display after Shop Loop (after Products Box Listing)',
                 ),
-                'default' => 'before_shop_loop',
+                'default' => 'category_before_shop_loop',
             ),
             'recom_engine_product_page' => array(
                 'title' => __('Product Pages'),
@@ -187,7 +187,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     'before_single_product' => 'Display before Single Product',
                     'after_single_product_summary' => 'Display after Single Product Summary',
                 ),
-                'default' => 'after_single_product',
+                'default' => 'after_single_product_summary',
             ),
             'recom_engine_cart_page' => array(
                 'title' => __('Cart Page'),
@@ -268,7 +268,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     public function recom_engine_before_shop_loop_home_page()
     {
-        if ( $this->recom_engine_home_page == 'before_shop_loop' && !is_product_category() ) {
+        if ( $this->recom_engine_home_page == 'category_before_shop_loop' && !is_product_category() ) {
             echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
         }
     }
@@ -278,7 +278,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     public function recom_engine_after_shop_loop_home_page()
     {
-        if ( $this->recom_engine_home_page == 'after_shop_loop' && !is_product_category() ) {
+        if ( $this->recom_engine_home_page == 'category_after_shop_loop' && !is_product_category() ) {
             echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
         }
     }
