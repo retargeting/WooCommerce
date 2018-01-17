@@ -50,8 +50,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
 
         add_action('woocommerce_after_add_to_cart_button', array($this, 'add_to_cart'));
         
-        add_action( 'woocommerce_after_cart', array($this, 'remove_from_cart' ));
-        add_action( 'woocommerce_after_mini_cart', array($this, 'remove_from_cart' ));
+        add_action('woocommerce_after_cart', array($this, 'remove_from_cart' ));
+        add_action('woocommerce_after_mini_cart', array($this, 'remove_from_cart' ));
 
         add_action('woocommerce_before_single_product', array($this, 'click_image'), 30, 0);
 
@@ -66,13 +66,12 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
 
         add_action('template_redirect', array($this, 'discount_api_template'));
         add_filter('query_vars', array($this, 'retargeting_api_add_query_vars'));
-
     }
 
     /*
     * Init admin form
     */
-    function init_form_fields()
+    public function init_form_fields()
     {
         // List all pages
         $allPages = get_pages();
@@ -119,12 +118,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     /*
     *   Initialize WP session
     */
-    function ra_session_init() 
+    public function ra_session_init()
     {
-        if ( !session_id() ) {
+        if (!session_id()) {
             session_start();
         }
-        
     }
     
     /*
@@ -239,8 +237,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                         list($price, $specialPrice) = $this->getPricesForGroupedProducts($product);
                         break;
                     default:
-                        $price = wc_get_price_including_tax( $product, array('price' => $product->get_regular_price() ) );
-                        $salePrice = wc_get_price_including_tax( $product, array('price' => $product->get_price() ) );
+                        $price = wc_get_price_including_tax($product, array('price' => $product->get_regular_price() ));
+                        $salePrice = wc_get_price_including_tax($product, array('price' => $product->get_price() ));
                         $salePrice = $price == $salePrice ? 0 : $salePrice;
                         $specialPrice = (!empty($salePrice) ? $salePrice : 0);
                         break;
@@ -327,7 +325,6 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
           })(jQuery);
 
                     </script>';
-
             }
         }
     }
@@ -492,14 +489,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         );
 
         if ($this->token && $this->token != '') {
-
             $orderClient = new Retargeting_REST_API_Client($this->token);
             $orderClient->setResponseFormat("json");
             $orderClient->setDecoding(false);
             $response = $orderClient->order->save($orderInfo, $data['line_items']);
-
         }
-
     }
 
     /*
@@ -554,7 +548,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     /*
      * URL DISCOUNT API
      */
-    function retargeting_api_add_query_vars($vars)
+    public function retargeting_api_add_query_vars($vars)
     {
         $vars[] = "retargeting";
         $vars[] = "key";
@@ -564,7 +558,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         return $vars;
     }
 
-    function discount_api_template($template)
+    public function discount_api_template($template)
     {
         global $wp_query;
 
@@ -596,8 +590,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $max_price = end($prices['regular_price']);
         $price = $min_price !== $max_price ? $max_price : $min_price;
         $specialPrice = $min_price !== $max_price ? $min_price : 0;
-        $price = wc_get_price_including_tax( $product, array('price' => $price) );
-        $specialPrice = wc_get_price_including_tax( $product, array('price' => $specialPrice) );
+        $price = wc_get_price_including_tax($product, array('price' => $price));
+        $specialPrice = wc_get_price_including_tax($product, array('price' => $specialPrice));
         return array(
             (!empty($price) ? $price : 0),
             (!empty($specialPrice) ? $specialPrice : 0)
@@ -614,8 +608,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $price = (!empty($getPrice) ? $getPrice : 0);
         $getSpecialPrice = $product->get_sale_price();
         $specialPrice = (!empty($getSpecialPrice) ? $getSpecialPrice : 0);
-        $price = wc_get_price_including_tax( $product, array('price' => $price) );
-        $specialPrice = wc_get_price_including_tax( $product, array('price' => $specialPrice) );
+        $price = wc_get_price_including_tax($product, array('price' => $price));
+        $specialPrice = wc_get_price_including_tax($product, array('price' => $specialPrice));
         return array(
             (!empty($price) ? $price : 0),
             (!empty($specialPrice) ? $specialPrice : 0)
@@ -634,19 +628,14 @@ function generate_coupons($count)
     for ($x = 0; $x < $count; $x++) {
         $couponCode = "";
         for ($i = 0; $i < 8; $i++) {
-
             $couponCode .= $couponChars[mt_rand(0, strlen($couponChars) - 1)];
-
         }
         if (woocommerce_verify_discount($couponCode)) {
-
             woocommerce_add_discount($couponCode, $wp_query->query['value'], $wp_query->query['type']);
             $couponCodes[] = $couponCode;
-
         } else {
             $x -= 1;
         }
-
     }
     return json_encode($couponCodes);
 }
@@ -658,10 +647,8 @@ function woocommerce_verify_discount($code)
     if ($o->exists == 1) {
         return false;
     } else {
-
         return true;
     }
-
 }
 
 // Add discount codes into WooCommerce
@@ -710,6 +697,4 @@ function woocommerce_add_discount($code, $discount, $type)
     update_post_meta($new_coupon_id, 'expiry_date', '');
     update_post_meta($new_coupon_id, 'apply_before_tax', 'yes');
     update_post_meta($new_coupon_id, 'free_shipping', 'no');
-
-
 }
