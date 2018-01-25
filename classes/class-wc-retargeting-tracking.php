@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once(dirname(__FILE__) . '/../lib/Retargeting_REST_API_Client.php');
+require_once dirname(__FILE__) . '/../lib/Retargeting_REST_API_Client.php';
 
 class WC_Integration_Retargeting_Tracking extends WC_Integration
 {
@@ -17,30 +17,30 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         'grouped'
     );
 
-    /*
-    * Construct
-    */
+    /**
+     * Constructor method.
+     */
     public function __construct()
     {
-        $this->id                 = 'retargeting';
-        $this->method_title       = "Retargeting Tracker";
+        $this->id = 'retargeting';
+        $this->method_title = 'Retargeting Tracker';
         $this->method_description = __('Retargeting.Biz is a marketing automation tool that boosts the conversion rate and sales of your online store.');
 
         $this->init_form_fields();
         $this->init_settings();
 
-        $this->domain_api_key                  = esc_attr( $this->get_option('domain_api_key') );
-        $this->token                           = esc_attr( $this->get_option('token') );
-        $this->add_to_cart_button_id           = esc_attr( $this->get_option('add_to_cart_button_id') );
-        $this->price_label_id                  = esc_attr( $this->get_option('price_label_id') );
-        $this->help_pages                      = $this->get_option('help_pages');
-        $this->recom_engine_home_page          = esc_attr( $this->get_option('recom_engine_home_page') );
-        $this->recom_engine_category_page      = esc_attr( $this->get_option('recom_engine_category_page') );
-        $this->recom_engine_product_page       = esc_attr( $this->get_option('recom_engine_product_page') );
-        $this->recom_engine_cart_page          = esc_attr( $this->get_option('recom_engine_cart_page'));
-        $this->recom_engine_checkout_form      = esc_attr( $this->get_option('recom_engine_checkout_form') );
-        $this->recom_engine_thank_you_page     = esc_attr( $this->get_option('recom_engine_thank_you_page') );
-        
+        $this->domain_api_key = esc_attr($this->get_option('domain_api_key'));
+        $this->token = esc_attr($this->get_option('token'));
+        $this->add_to_cart_button_id = esc_attr($this->get_option('add_to_cart_button_id'));
+        $this->price_label_id = esc_attr($this->get_option('price_label_id'));
+        $this->help_pages = $this->get_option('help_pages');
+        $this->recom_engine_home_page = esc_attr($this->get_option('recom_engine_home_page'));
+        $this->recom_engine_category_page = esc_attr($this->get_option('recom_engine_category_page'));
+        $this->recom_engine_product_page = esc_attr($this->get_option('recom_engine_product_page'));
+        $this->recom_engine_cart_page = esc_attr($this->get_option('recom_engine_cart_page'));
+        $this->recom_engine_checkout_form = esc_attr($this->get_option('recom_engine_checkout_form'));
+        $this->recom_engine_thank_you_page = esc_attr($this->get_option('recom_engine_thank_you_page'));
+
         add_action('init', array($this, 'ra_session_init'), 1);
 
         add_action('woocommerce_update_options_integration_retargeting', array($this, 'process_admin_options'));
@@ -87,9 +87,9 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         add_action('woocommerce_before_single_product', array($this, 'send_product'), 20, 0);
 
         add_action('woocommerce_after_add_to_cart_button', array($this, 'add_to_cart'));
-        
-        add_action( 'woocommerce_after_cart', array($this, 'remove_from_cart' ));
-        add_action( 'woocommerce_after_mini_cart', array($this, 'remove_from_cart' ));
+
+        add_action('woocommerce_after_cart', array($this, 'remove_from_cart'));
+        add_action('woocommerce_after_mini_cart', array($this, 'remove_from_cart'));
 
         add_action('woocommerce_before_single_product', array($this, 'click_image'), 30, 0);
 
@@ -102,19 +102,20 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
 
         add_action('template_redirect', array($this, 'discount_api_template'));
         add_filter('query_vars', array($this, 'retargeting_api_add_query_vars'));
-
     }
 
-    /*
-    * Init admin form
-    */
-    function init_form_fields()
+    /**
+     * Init admin form
+     *
+     * @return void
+     */
+    public function init_form_fields()
     {
         // List all pages
         $allPages = get_pages();
         $pages = array();
         foreach ($allPages as $key => $page) {
-            $pages['ra_none']        = 'None';
+            $pages['ra_none'] = 'None';
             $pages[$page->post_name] = $page->post_title;
         }
 
@@ -221,24 +222,27 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             ),
         );
     }
-    
-    /*
-    *   Initialize WP session
-    */
-    function ra_session_init() 
+
+    /**
+     * Initialize WP session
+     *
+     * @return void
+     */
+    public function ra_session_init()
     {
-        if ( !session_id() ) {
+        if (!session_id()) {
             session_start();
         }
-        
     }
-    
-    /*
-    * Retargeting Tracking Code
-    */
+
+    /**
+     * Retargeting Tracking Code
+     *
+     * @return void
+     */
     public function get_retargeting_tracking_code()
     {
-        echo '<!-- Retargeting Tracking Code '. WC_Retargeting_Tracking::VERSION .'-->
+        echo '<!-- Retargeting Tracking Code ' . WC_Retargeting_Tracking::VERSION . '-->
        <script type="text/javascript">
         (function(){
         ra_key = "' . esc_js($this->domain_api_key) . '";
@@ -253,154 +257,183 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         <!-- Retargeting Tracking Code -->';
     }
 
-    /*
-    * Recommendation Engine for Archive Description - Home Page
-    */
+    /**
+     * Recommendation Engine for Archive Description - Home Page
+     *
+     * @return void
+     */
     public function recom_engine_archive_description_home_page()
     {
-        if ( $this->recom_engine_home_page == 'archive_description' && !is_product_category() ) {
-            echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>'; 
+        if ($this->recom_engine_home_page == 'archive_description' && !is_product_category()) {
+            echo '<div id="retargeting-recommeng-home-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for Before Shop Loop - Home Page
-    */
+    /**
+     * Recommendation Engine for Before Shop Loop - Home Page
+     *
+     * @return void
+     */
     public function recom_engine_before_shop_loop_home_page()
     {
-        if ( $this->recom_engine_home_page == 'category_before_shop_loop' && !is_product_category() ) {
-            echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_home_page == 'category_before_shop_loop' && !is_product_category()) {
+            echo '<div id="retargeting-recommeng-home-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for After Shop Loop - Home Page
-    */
+    /**
+     * Recommendation Engine for After Shop Loop - Home Page
+     *
+     * @return void
+     */
     public function recom_engine_after_shop_loop_home_page()
     {
-        if ( $this->recom_engine_home_page == 'category_after_shop_loop' && !is_product_category() ) {
-            echo '<div id="retargeting-recommeng-home-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_home_page == 'category_after_shop_loop' && !is_product_category()) {
+            echo '<div id="retargeting-recommeng-home-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for After Shop Loop - Category Page
-    */
+    /**
+     * Recommendation Engine for After Shop Loop - Category Page
+     *
+     * @return void
+     */
     public function recom_engine_after_shop_loop_category_page()
     {
-        if ( $this->recom_engine_category_page == 'after_shop_loop' && is_product_category() ) {
-            echo '<div id="retargeting-recommeng-category-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_category_page == 'after_shop_loop' && is_product_category()) {
+            echo '<div id="retargeting-recommeng-category-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for Before Shop Loop - Category Page
-    */
+    /**
+     * Recommendation Engine for Before Shop Loop - Category Page
+     *
+     * @return void
+     */
     public function recom_engine_before_shop_loop_category_page()
     {
-        if ( $this->recom_engine_category_page == 'before_shop_loop' && is_product_category() ) {
-            echo '<div id="retargeting-recommeng-category-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_category_page == 'before_shop_loop' && is_product_category()) {
+            echo '<div id="retargeting-recommeng-category-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for Archive Description - Category Page
-    */
+    /**
+     * Recommendation Engine for Archive Description - Category Page
+     *
+     * @return void
+     */
     public function recom_engine_archive_description_category_page()
     {
-        if ( $this->recom_engine_category_page == 'archive_description' && is_product_category() ) {
-            echo '<div id="retargeting-recommeng-category-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_category_page == 'archive_description' && is_product_category()) {
+            echo '<div id="retargeting-recommeng-category-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for Before Single Product
-    */
-
+    /**
+     * Recommendation Engine for Before Single Product
+     *
+     * @return void
+     */
     public function recom_engine_before_single_product()
     {
-        if ( $this->recom_engine_product_page == 'before_single_product' ) {
-            echo '<div id="retargeting-recommeng-product-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_product_page == 'before_single_product') {
+            echo '<div id="retargeting-recommeng-product-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for Afer Single Product
-    */
+    /**
+     * Recommendation Engine for Afer Single Product
+     *
+     * @return void
+     */
     public function recom_engine_after_single_product_summary()
     {
-        if ( $this->recom_engine_product_page == 'after_single_product_summary' ) {
-            echo '<div id="retargeting-recommeng-product-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_product_page == 'after_single_product_summary') {
+            echo '<div id="retargeting-recommeng-product-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for before Cart Table - Cart Page
-    */
+    /**
+     * Recommendation Engine for before Cart Table - Cart Page
+     *
+     * @return void
+     */
     public function recom_engine_before_cart_table()
     {
-        if ( $this->recom_engine_cart_page == 'before_cart_table' ) {
-            echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_cart_page == 'before_cart_table') {
+            echo '<div id="retargeting-recommeng-checkout-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for before Cart Contents - Cart Page
-    */
+    /**
+     * Recommendation Engine for before Cart Contents - Cart Page
+     *
+     * @return void
+     */
     public function recom_engine_cart_contents()
     {
-        if ( $this->recom_engine_cart_page == 'after_cart_contents' ) {
-            echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_cart_page == 'after_cart_contents') {
+            echo '<div id="retargeting-recommeng-checkout-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for Before Checkout Form
-    */
+    /**
+     * Recommendation Engine for Before Checkout Form
+     *
+     * @return void
+     */
     public function recom_engine_before_checkout_form()
     {
-        if ( $this->recom_engine_checkout_form == 'before_checkout_form' ) {
-            echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_checkout_form == 'before_checkout_form') {
+            echo '<div id="retargeting-recommeng-checkout-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for After Checkout Form
-    */
+    /**
+     * Recommendation Engine for After Checkout Form
+     *
+     * @return void
+     */
     public function recom_engine_after_checkout_form()
     {
-        if ( $this->recom_engine_checkout_form == 'after_checkout_form' ) {
-            echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_checkout_form == 'after_checkout_form') {
+            echo '<div id="retargeting-recommeng-checkout-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for After Checkout Registration Form
-    */
+    /**
+     * Recommendation Engine for After Checkout Registration Form
+     *
+     * @return void
+     */
     public function recom_engine_before_checkout_registration_form()
     {
-        if ( $this->recom_engine_checkout_form == 'before_checkout_registration_form' ) {
-            echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_checkout_form == 'before_checkout_registration_form') {
+            echo '<div id="retargeting-recommeng-checkout-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for After Checkout Registration Form
-    */
+    /**
+     * Recommendation Engine for After Checkout Registration Form
+     *
+     * @return void
+     */
     public function recom_engine_after_checkout_registration_form()
     {
-        if ( $this->recom_engine_checkout_form == 'after_checkout_registration_form' ) {
-            echo '<div id="retargeting-recommeng-checkout-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_checkout_form == 'after_checkout_registration_form') {
+            echo '<div id="retargeting-recommeng-checkout-page"></div>';
         }
     }
 
-    /*
-    * Recommendation Engine for Thank You Page
-    */
+    /**
+     * Recommendation Engine for Thank You Page
+     *
+     * @return void
+     */
     public function recom_engine_thank_you_page()
     {
-        if ( $this->recom_engine_thank_you_page == 'yes') {
-            echo '<div id="retargeting-recommeng-thank-you-page"><img src="https://nastyhobbit.org/data/media/3/happy-panda.jpg"></div>';
+        if ($this->recom_engine_thank_you_page == 'yes') {
+            echo '<div id="retargeting-recommeng-thank-you-page"></div>';
         }
     }
 
@@ -410,7 +443,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     // public function recom_engine_search_page( $content )
     // {
     //     global $wp_query;
-        
+
     //     if ( isset($wp_query->query) && is_search() ) {
     //         return $content . '<p>RETARGETING - I\'m filtering the content inside the main loop</p>';
     //     }
@@ -418,9 +451,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     //     return $content;
     // }
 
-    /*
-    * setEmail
-    */
+    /**
+     * setEmail
+     *
+     * @return void
+     */
     public function set_email()
     {
         global $woocommerce;
@@ -443,9 +478,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         }
     }
 
-    /*
-    * sendCategory
-    */
+    /**
+     * sendCategory
+     *
+     * @return void
+     */
     public function send_category()
     {
         if (is_product_category()) {
@@ -485,9 +522,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         }
     }
 
-    /*
+    /**
      * sendProduct
-     * */
+     *
+     * @return void
+     */
     public function send_product()
     {
         if (is_product()) {
@@ -496,8 +535,6 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             $variation_id = get_post_meta($this->id, '_min_regular_price_variation_id', true);
 
             if ($product instanceof WC_Product && $product->is_type(self::$product_type)) {
-
-
                 // Prices
 
                 // Simple product type
@@ -510,8 +547,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                         list($price, $specialPrice) = $this->getPricesForGroupedProducts($product);
                         break;
                     default:
-                        $price = wc_get_price_including_tax( $product, array('price' => $product->get_regular_price() ) );
-                        $salePrice = wc_get_price_including_tax( $product, array('price' => $product->get_price() ) );
+                        $price = wc_get_price_including_tax($product, array('price' => $product->get_regular_price()));
+                        $salePrice = wc_get_price_including_tax($product, array('price' => $product->get_price()));
                         $salePrice = $price == $salePrice ? 0 : $salePrice;
                         $specialPrice = (!empty($salePrice) ? $salePrice : 0);
                         break;
@@ -532,8 +569,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     }
                 } else {
                     $cat['catid'] = 1;
-                    $cat['cat'] = "Root";
-                    $cat['catparent'] = "false";
+                    $cat['cat'] = 'Root';
+                    $cat['catparent'] = 'false';
                 }
 
                 $stock = $product->is_in_stock() ? 1 : 0;
@@ -598,14 +635,15 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
           })(jQuery);
 
                     </script>';
-
             }
         }
     }
 
-    /*
-    * addToCart
-    */
+    /**
+     * addToCart
+     *
+     * @return void
+     */
     public function add_to_cart()
     {
         if (is_product()) {
@@ -620,10 +658,12 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 </script>';
         }
     }
-    
-    /*
-    * removeFromCart
-    */
+
+    /**
+     * removeFromCart
+     *
+     * @return void
+     */
     public function remove_from_cart()
     {
         echo '<script>
@@ -638,10 +678,12 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                   })(jQuery);
             </script>';
     }
-    
-    /*
-    * clickImage
-    */
+
+    /**
+     * clickImage
+     *
+     * @return void
+     */
     public function click_image()
     {
         global $product;
@@ -662,9 +704,12 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         ';
     }
 
-    /*
-    * saveOrder
-    */
+    /**
+     * saveOrder
+     *
+     * @param [string] $order_id
+     * @return void
+     */
     public function save_order($order_id)
     {
         if (is_numeric($order_id) && $order_id > 0) {
@@ -695,12 +740,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                         'name' => $item['name'],
                         'price' => $item['line_subtotal'],
                         'quantity' => $item['qty'],
-                        'variation_code' => ($item['variation_id'] == 0) ? "" : $item['variation_id']
+                        'variation_code' => ($item['variation_id'] == 0) ? '' : $item['variation_id']
                     );
                 }
                 $data['line_items'][] = $line_item;
             }
-            
 
             echo '<script>
                 var _ra = _ra || {};
@@ -712,7 +756,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     "phone": "' . $order->get_billing_phone() . '",
                     "state": "' . $order->get_billing_state() . '",
                     "city": "' . $order->get_billing_city() . '",
-                    "address": "' . $order->get_billing_address_1() . " " . $order->get_billing_address_2() . '",
+                    "address": "' . $order->get_billing_address_1() . ' ' . $order->get_billing_address_2() . '",
                     "discount_code": "' . $coupons_list . '",
                     "discount": ' . (empty($order->get_discount) ? 0 : $order->get_discount) . ',
                     "shipping": ' . (empty($order->get_total_shipping) ? 0 : $order->get_total_shipping) . ',
@@ -733,34 +777,33 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         //REST API
 
         $orderInfo = array(
-            "order_no" => $order->get_id(),
-            "lastname" => $order->get_billing_last_name(),
-            "firstname" => $order->get_billing_first_name(),
-            "email" => $order->get_billing_email(),
-            "phone" => $order->get_billing_phone(),
-            "state" => $order->get_billing_state(),
-            "city" => $order->get_billing_city(),
-            "address" => $order->get_billing_address_1() . " " . $order->get_billing_address_2(),
-            "discount_code" => $coupons_list,
-            "discount" => (empty($order->get_discount) ? 0 : $order->get_discount),
-            "shipping" => (empty($order->get_total_shipping) ? 0 : $order->get_total_shipping),
-            "total" => $order->get_total()
+            'order_no' => $order->get_id(),
+            'lastname' => $order->get_billing_last_name(),
+            'firstname' => $order->get_billing_first_name(),
+            'email' => $order->get_billing_email(),
+            'phone' => $order->get_billing_phone(),
+            'state' => $order->get_billing_state(),
+            'city' => $order->get_billing_city(),
+            'address' => $order->get_billing_address_1() . ' ' . $order->get_billing_address_2(),
+            'discount_code' => $coupons_list,
+            'discount' => (empty($order->get_discount) ? 0 : $order->get_discount),
+            'shipping' => (empty($order->get_total_shipping) ? 0 : $order->get_total_shipping),
+            'total' => $order->get_total()
         );
 
         if ($this->token && $this->token != '') {
-
             $orderClient = new Retargeting_REST_API_Client($this->token);
-            $orderClient->setResponseFormat("json");
+            $orderClient->setResponseFormat('json');
             $orderClient->setDecoding(false);
             $response = $orderClient->order->save($orderInfo, $data['line_items']);
-
         }
-
     }
 
-    /*
-    * visitHelpPage
-    */
+    /**
+     * visitHelpPage
+     *
+     * @return void
+     */
     public function help_pages()
     {
         global $post;
@@ -783,9 +826,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         }
     }
 
-    /*
-    * checkoutIds
-    */
+    /**
+     * checkoutIds
+     *
+     * @return void
+     */
     public function checkout_ids()
     {
         global $woocommerce;
@@ -809,42 +854,52 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         }
     }
 
-    /*
-     * URL DISCOUNT API
+    /**
+     * URL DISCOUNT API.
+     *
+     * @param [array] $vars
+     * @return void
      */
-    function retargeting_api_add_query_vars($vars)
+    public function retargeting_api_add_query_vars($vars)
     {
-        $vars[] = "retargeting";
-        $vars[] = "key";
-        $vars[] = "value";
-        $vars[] = "type";
-        $vars[] = "count";
+        $vars[] = 'retargeting';
+        $vars[] = 'key';
+        $vars[] = 'value';
+        $vars[] = 'type';
+        $vars[] = 'count';
         return $vars;
     }
 
-    function discount_api_template($template)
+    /**
+     * URL Discount Template.
+     *
+     * @param [mixed] $template
+     * @return void
+     */
+    public function discount_api_template($template)
     {
         global $wp_query;
 
         if (isset($wp_query->query['retargeting']) && $wp_query->query['retargeting'] == 'discounts') {
             if (isset($wp_query->query['key']) && isset($wp_query->query['value']) && isset($wp_query->query['type']) && isset($wp_query->query['count'])) {
-                if ($wp_query->query['key'] != "" && $wp_query->query['key'] == $this->token && $wp_query->query['value'] != "" && $wp_query->query['type'] != "" && $wp_query->query['count'] != "") {
+                if ($wp_query->query['key'] != '' && $wp_query->query['key'] == $this->token && $wp_query->query['value'] != '' && $wp_query->query['type'] != '' && $wp_query->query['count'] != '') {
                     // If everything is ok, generate and show the discount codes
                     echo generate_coupons($wp_query->query['count']);
                     exit;
                 } else {
-                    echo json_encode(array("status" => false, "error" => "0002: Invalid Parameters!"));
+                    echo json_encode(array('status' => false, 'error' => '0002: Invalid Parameters!'));
                     exit;
                 }
             } else {
-                echo json_encode(array("status" => false, "error" => "0001: Missing Parameters!"));
+                echo json_encode(array('status' => false, 'error' => '0001: Missing Parameters!'));
                 exit;
             }
         }
     }
 
     /**
-     * @param $product
+     * Processes prices for variable products.
+     * @param [object] $product
      * @return array
      */
     private function getPricesForVariableProducts($product)
@@ -854,8 +909,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $max_price = end($prices['regular_price']);
         $price = $min_price !== $max_price ? $max_price : $min_price;
         $specialPrice = $min_price !== $max_price ? $min_price : 0;
-        $price = wc_get_price_including_tax( $product, array('price' => $price) );
-        $specialPrice = wc_get_price_including_tax( $product, array('price' => $specialPrice) );
+        $price = wc_get_price_including_tax($product, array('price' => $price));
+        $specialPrice = wc_get_price_including_tax($product, array('price' => $specialPrice));
         return array(
             (!empty($price) ? $price : 0),
             (!empty($specialPrice) ? $specialPrice : 0)
@@ -863,7 +918,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 
     /**
-     * @param $product
+     * Processes prices for grouped products.
+     * @param [object] $product
      * @return array
      */
     private function getPricesForGroupedProducts($product)
@@ -872,8 +928,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $price = (!empty($getPrice) ? $getPrice : 0);
         $getSpecialPrice = $product->get_sale_price();
         $specialPrice = (!empty($getSpecialPrice) ? $getSpecialPrice : 0);
-        $price = wc_get_price_including_tax( $product, array('price' => $price) );
-        $specialPrice = wc_get_price_including_tax( $product, array('price' => $specialPrice) );
+        $price = wc_get_price_including_tax($product, array('price' => $price));
+        $specialPrice = wc_get_price_including_tax($product, array('price' => $specialPrice));
         return array(
             (!empty($price) ? $price : 0),
             (!empty($specialPrice) ? $specialPrice : 0)
@@ -881,34 +937,39 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     }
 }
 
-// Generate random discount codes
-
+/**
+ * Generate random discount codes.
+ *
+ * @param [integer] $count
+ * @return void
+ */
 function generate_coupons($count)
 {
     global $wp_query;
 
-    $couponChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $couponChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $couponCodes = array();
     for ($x = 0; $x < $count; $x++) {
-        $couponCode = "";
+        $couponCode = '';
         for ($i = 0; $i < 8; $i++) {
-
             $couponCode .= $couponChars[mt_rand(0, strlen($couponChars) - 1)];
-
         }
         if (woocommerce_verify_discount($couponCode)) {
-
             woocommerce_add_discount($couponCode, $wp_query->query['value'], $wp_query->query['type']);
             $couponCodes[] = $couponCode;
-
         } else {
             $x -= 1;
         }
-
     }
     return json_encode($couponCodes);
 }
 
+/**
+ * Verifies the discount code.
+ *
+ * @param [string] $code
+ * @return void
+ */
 function woocommerce_verify_discount($code)
 {
     global $woocommerce;
@@ -916,14 +977,18 @@ function woocommerce_verify_discount($code)
     if ($o->exists == 1) {
         return false;
     } else {
-
         return true;
     }
-
 }
 
-// Add discount codes into WooCommerce
-
+/**
+ * Add discount codes into WooCommerce
+ *
+ * @param [string] $code
+ * @param [string] $discount
+ * @param [string] $type
+ * @return void
+ */
 function woocommerce_add_discount($code, $discount, $type)
 {
     global $wp_query;
@@ -968,6 +1033,4 @@ function woocommerce_add_discount($code, $discount, $type)
     update_post_meta($new_coupon_id, 'expiry_date', '');
     update_post_meta($new_coupon_id, 'apply_before_tax', 'yes');
     update_post_meta($new_coupon_id, 'free_shipping', 'no');
-
-
 }
