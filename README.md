@@ -1,16 +1,41 @@
-# WooCommerce Retargeting #
-Author: Retargeting Team
-Tags: retargeting, WooCommerce
-Requires at least: 4.6
-Tested up to: 4.9.1
-Requires WooCommerce at least: 3.0.0
-Tested WooCommerce up to: 3.2.6
+![Retargeting.Biz Logo](https://s3.amazonaws.com/techpluto/wp-content/uploads/2017/06/29185746/techp_1194697.png)
 
-Retargeting is a marketing automation tool that boosts the conversion rate and sales of your online store.
+Retargeting Tracker for WooCommerce
+=======================
+Retargeting Tracker extension installs the required tagging for [Retargeting.Biz](https://Retargeting.biz)'s features in WooCommerce based online shops, providing your eCommerce business with all the necessary tools to build a strong conversion rate optimization strategy.
 
-# Installation #
+In order to implement the Retargeting Tracker extension you need to setup a [Retargeting.Biz](https://Retargeting.biz) account.
 
-1. Upload the entire 'woocommerce-retargeting' folder to the '/wp-content/plugins/' directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
+Requirements
+=======================
+WordPress: at least **4.6**
 
-If you are NOT using WooCommerce 3.0+ please e-mail us at (mailto:info@retargeting.biz) and we will help you set up the installation.
+Tested up to: WordPress **4.9.2**
+
+WooCommerce: at least **3.0.0**
+
+Tested up to: WooCommerce **3.2.6**
+
+
+Install
+=======================
+##### 1. via WordPress Plugin Installation System
+- Log into your website's Administrator account
+- Go to `Plugins -> Add New` and search for `WooCommerce Retargeting` and click `Install`
+- Go to `WooCommerce -> Settings -> Integration` and click on the `Retargeting Tracker` tab
+- Insert your unique `Tracking API Key` and `REST API Key` (can be found inside your Retargeting.Biz account settings)
+- Click the `Save changes` button on the bottom of the page
+
+##### 2. via File Transfer Protocol (FTP)
+- Download [Retargeting Tracker](https://github.com/retargeting/WooCommerce/archive/master.zip)
+- Unarchive `WooCommerce-master.zip`
+- Copy and paste the `woocommerce-retargeting` folder into your `WordPressFolder/wp-content/plugins/`
+- Log into your website's Administrator account
+- Go to `Plugins -> Add New` and search for `WooCommerce Retargeting` and click `Install`
+- Go to `WooCommerce -> Settings -> Integration` and click on the `Retargeting Tracker` tab
+- Insert your unique `Tracking API Key` and `REST API Key` (can be found inside your Retargeting.Biz account settings)
+- Click the `Save changes` button on the bottom of the page
+
+Troubleshoot
+=======================
+Please contact us at info@retargeting.biz
