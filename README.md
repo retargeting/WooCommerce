@@ -10,11 +10,11 @@ Requirements
 =======================
 WordPress: at least **4.6**
 
-Tested up to: WordPress **4.9.2**
+Tested up to: WordPress **4.9.4**
 
 WooCommerce: at least **3.0.0**
 
-Tested up to: WooCommerce **3.2.6**
+Tested up to: WooCommerce **3.3.1**
 
 
 Install
