@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Retargeting
  * Plugin URI: https://retargeting.biz/woocommerce-documentation
  * Description: Retargeting is a marketing automation tool that boosts the conversion rate and sales of your online store.
- * Version: 2.0.20
+ * Version: 2.0.21
  * Author: Retargeting Team
  * Author URI: http://retargeting.biz
  * License: GPL2
