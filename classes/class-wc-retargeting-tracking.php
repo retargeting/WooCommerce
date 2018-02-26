@@ -595,9 +595,15 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $min_price = current($prices['sale_price']);
         $max_price = end($prices['regular_price']);
         $price = $min_price !== $max_price ? $max_price : $min_price;
-        $specialPrice = $min_price !== $max_price ? $min_price : 0;
-        $price = wc_get_price_including_tax( $product, array('price' => $price) );
-        $specialPrice = wc_get_price_including_tax( $product, array('price' => $specialPrice) );
+        $specialPrice = 0;
+
+        if ($product->is_on_sale()) {
+            $specialPrice = $product->get_sale_price();
+        }
+
+        $price = wc_get_price_including_tax($product, array('price' => $price));
+        $specialPrice = wc_get_price_including_tax($product, array('price' => $specialPrice));
+        
         return array(
             (!empty($price) ? $price : 0),
             (!empty($specialPrice) ? $specialPrice : 0)
@@ -616,6 +622,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $specialPrice = (!empty($getSpecialPrice) ? $getSpecialPrice : 0);
         $price = wc_get_price_including_tax( $product, array('price' => $price) );
         $specialPrice = wc_get_price_including_tax( $product, array('price' => $specialPrice) );
+        
         return array(
             (!empty($price) ? $price : 0),
             (!empty($specialPrice) ? $specialPrice : 0)
