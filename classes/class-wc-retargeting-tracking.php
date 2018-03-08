@@ -274,8 +274,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                         "name": "' . htmlspecialchars($product->get_title()) . '",
                         "url": "' . get_permalink() . '",
                         "img": "' . $image_url . '",
-                        "price": ' . $price . ',
-                        "promo": ' . $specialPrice . ',
+                        "price": "' . $price . '",
+                        "promo": "' . $specialPrice . '",
                         "inventory": {
                             "variations": false,
                             "stock": ' . $stock . ',
