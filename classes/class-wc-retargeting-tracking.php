@@ -1033,7 +1033,7 @@ function woocommerce_add_discount($code, $discount, $type)
     // Add meta
     update_post_meta($new_coupon_id, 'discount_type', $discount_type);
     update_post_meta($new_coupon_id, 'coupon_amount', $amount);
-    update_post_meta($new_coupon_id, 'individual_use', 'no');
+    update_post_meta($new_coupon_id, 'individual_use', 'yes');
     update_post_meta($new_coupon_id, 'product_ids', '');
     update_post_meta($new_coupon_id, 'exclude_product_ids', '');
     update_post_meta($new_coupon_id, 'usage_limit', '');
