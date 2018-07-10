@@ -415,7 +415,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             $order = new WC_Order($order_id);
             $coupons_list = '';
             if ($order->get_used_coupons()) {
-                $coupons_count = count($order->get_used_coupons());
+                $coupons_count = is_array($order->get_used_coupons()) ? count($order->get_used_coupons()) : 0;
                 $i = 1;
                 foreach ($order->get_used_coupons() as $coupon) {
                     $coupons_list .= $coupon;
@@ -531,7 +531,10 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     public function checkout_ids()
     {
         global $woocommerce;
-        if ($woocommerce->cart instanceof WC_Cart && count($woocommerce->cart->get_cart() > 0)) {
+
+        $cartProducts = is_array($woocommerce->cart->get_cart()) ? count($woocommerce->cart->get_cart()) : 0;
+
+        if ($woocommerce->cart instanceof WC_Cart && $cartProducts > 0) {
             $cart_items = $woocommerce->cart->get_cart();
             $line_items = array();
             foreach ($cart_items as $cart_item) {
