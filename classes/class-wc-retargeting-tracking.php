@@ -413,12 +413,15 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     {
         if (is_numeric($order_id) && $order_id > 0) {
             $order = new WC_Order($order_id);
+            var_dump($order);
             $coupons_list = '';
+            $discount = '';
             if ($order->get_used_coupons()) {
                 $coupons_count = count($order->get_used_coupons());
                 $i = 1;
                 foreach ($order->get_used_coupons() as $coupon) {
                     $coupons_list .= $coupon;
+                    $discount += $order->discount_total;
                     if ($i < $coupons_count) {
                         $coupons_list .= ', ';
                         $i++;
@@ -434,10 +437,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 $_product = apply_filters('woocommerce_order_item_product', $order->get_product_from_item($item), $item);
                 $item_meta = new WC_Order_Item_Meta($item['item_meta'], $_product);
                 if (apply_filters('woocommerce_order_item_visible', true, $item)) {
+                    //var_dump($order->disco);
                     $line_item = array(
-                        'id' => $item['product_id'],
-                        'name' => $item['name'],
-                        'price' => $item['line_subtotal'],
+                        'id' => $_product->id,
+                        'name' => $_product->name,
+                        'price' => $_product->price,
                         'quantity' => $item['qty'],
                         'variation_code' => ($item['variation_id'] == 0) ? "" : $item['variation_id']
                     );
@@ -458,8 +462,8 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     "city": "' . $order->get_billing_city() . '",
                     "address": "' . $order->get_billing_address_1() . " " . $order->get_billing_address_2() . '",
                     "discount_code": "' . $coupons_list . '",
-                    "discount": ' . (empty($order->get_discount) ? 0 : $order->get_discount) . ',
-                    "shipping": ' . (empty($order->get_total_shipping) ? 0 : $order->get_total_shipping) . ',
+                    "discount": ' . (empty($discount) ? 0 : $discount) . ',
+                    "shipping": ' . (empty($order->get_shipping_total()) ? 0 : $order->get_shipping_total()) . ',
                     "rebates": 0,
                     "fees": 0,
                     "total": ' . $order->get_total() . '
