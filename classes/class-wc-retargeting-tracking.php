@@ -413,7 +413,6 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     {
         if (is_numeric($order_id) && $order_id > 0) {
             $order = new WC_Order($order_id);
-            var_dump($order);
             $coupons_list = '';
             $discount = '';
             if ($order->get_used_coupons()) {
@@ -437,7 +436,6 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 $_product = apply_filters('woocommerce_order_item_product', $order->get_product_from_item($item), $item);
                 $item_meta = new WC_Order_Item_Meta($item['item_meta'], $_product);
                 if (apply_filters('woocommerce_order_item_visible', true, $item)) {
-                    //var_dump($order->disco);
                     $line_item = array(
                         'id' => $_product->id,
                         'name' => $_product->name,
