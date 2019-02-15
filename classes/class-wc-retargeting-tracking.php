@@ -414,13 +414,11 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         if (is_numeric($order_id) && $order_id > 0) {
             $order = new WC_Order($order_id);
             $coupons_list = '';
-            $discount = '';
             if ($order->get_used_coupons()) {
                 $coupons_count = count($order->get_used_coupons());
                 $i = 1;
                 foreach ($order->get_used_coupons() as $coupon) {
                     $coupons_list .= $coupon;
-                    $discount += $order->discount_total;
                     if ($i < $coupons_count) {
                         $coupons_list .= ', ';
                         $i++;
@@ -447,7 +445,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 $data['line_items'][] = $line_item;
             }
             
-
+           
             echo '<script>
                 var _ra = _ra || {};
                 _ra.saveOrderInfo = {
@@ -460,7 +458,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     "city": "' . $order->get_billing_city() . '",
                     "address": "' . $order->get_billing_address_1() . " " . $order->get_billing_address_2() . '",
                     "discount_code": "' . $coupons_list . '",
-                    "discount": ' . (empty($discount) ? 0 : $discount) . ',
+                    "discount": ' . (isset($order->discount_total) ? 0 : $order->discount_total) . ',
                     "shipping": ' . (empty($order->get_shipping_total()) ? 0 : $order->get_shipping_total()) . ',
                     "rebates": 0,
                     "fees": 0,
@@ -475,7 +473,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 }
             </script>';
         }
-
+        
         //REST API
 
         $orderInfo = array(
@@ -488,10 +486,12 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             "city" => $order->get_billing_city(),
             "address" => $order->get_billing_address_1() . " " . $order->get_billing_address_2(),
             "discount_code" => $coupons_list,
-            "discount" => (empty($order->get_discount) ? 0 : $order->get_discount),
-            "shipping" => (empty($order->get_total_shipping) ? 0 : $order->get_total_shipping),
+            "discount" => (isset($order->discount_total) ? 0 : $order->discount_total),
+            "shipping" => (empty($order->get_shipping_total()) ? 0 : $order->get_shipping_total()),
             "total" => $order->get_total()
         );
+
+       
 
         if ($this->token && $this->token != '') {
 
