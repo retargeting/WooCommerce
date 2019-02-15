@@ -489,7 +489,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             "discount" => (isset($order->discount_total) ? 0 : $order->discount_total),
             "shipping" => (empty($order->get_shipping_total()) ? 0 : $order->get_shipping_total()),
             "total" => $order->get_total()
-        );
+        ); 
 
        
 
