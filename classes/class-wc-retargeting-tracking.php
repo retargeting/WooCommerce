@@ -435,9 +435,9 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                 $item_meta = new WC_Order_Item_Meta($item['item_meta'], $_product);
                 if (apply_filters('woocommerce_order_item_visible', true, $item)) {
                     $line_item = array(
-                        'id' => $_product->id,
-                        'name' => $_product->name,
-                        'price' => $_product->price,
+                        'id' => $_product->get_id(),
+                        'name' => $_product->get_name(),
+                        'price' => $_product->get_price(),
                         'quantity' => $item['qty'],
                         'variation_code' => ($item['variation_id'] == 0) ? "" : $item['variation_id']
                     );
@@ -458,7 +458,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     "city": "' . $order->get_billing_city() . '",
                     "address": "' . $order->get_billing_address_1() . " " . $order->get_billing_address_2() . '",
                     "discount_code": "' . $coupons_list . '",
-                    "discount": ' . (isset($order->discount_total) ? 0 : $order->discount_total) . ',
+                    "discount": ' . $order->get_discount_total() . ',
                     "shipping": ' . (empty($order->get_shipping_total()) ? 0 : $order->get_shipping_total()) . ',
                     "rebates": 0,
                     "fees": 0,
@@ -486,7 +486,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
             "city" => $order->get_billing_city(),
             "address" => $order->get_billing_address_1() . " " . $order->get_billing_address_2(),
             "discount_code" => $coupons_list,
-            "discount" => (isset($order->discount_total) ? 0 : $order->discount_total),
+            "discount" => $order->get_discount_total(),
             "shipping" => (empty($order->get_shipping_total()) ? 0 : $order->get_shipping_total()),
             "total" => $order->get_total()
         ); 
@@ -533,14 +533,18 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     public function checkout_ids()
     {
         global $woocommerce;
-        if ($woocommerce->cart instanceof WC_Cart && count($woocommerce->cart->get_cart() > 0)) {
+        
+        $line_items = array();
+
+        if ($woocommerce->cart instanceof WC_Cart) {
             $cart_items = $woocommerce->cart->get_cart();
             $line_items = array();
             foreach ($cart_items as $cart_item) {
-                $product = $cart_item['data'];
                 $line_item = (int)$cart_item['product_id'];
                 $line_items[] = $line_item;
             }
+        }
+        if(count($line_items) > 0) {
             echo '
             <script>
                 var _ra = _ra || {};
