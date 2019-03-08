@@ -9,6 +9,11 @@ if (!defined('ABSPATH')) {
 
  class WC_Retargeting_Pages_Scripts {
 
+    /**
+     *  Creates an array with all parameters 
+     *  available for pages
+     */
+
     public function init_retargeting_form_fields()
     {
         // List all pages
@@ -53,6 +58,11 @@ if (!defined('ABSPATH')) {
         );
     }
 
+    /**
+     *  Creates a script with visit parameter assigned to true
+     */
+
+
     public function help_retargeting_pages($object)
     {
         $page = $object->post_name;
@@ -72,12 +82,18 @@ if (!defined('ABSPATH')) {
             }
         }
     }
-    public function checkout_retargeting_ids($woocommerce) {
+
+    /**
+     * Takes all item ids, creates an array with them 
+     * and assigns this array to a js property checkoutIdsInfo 
+     */
+    
+     public function checkout_retargeting_ids($woocommerce) {
         if ($woocommerce->cart instanceof WC_Cart) {
             $cart_items = $woocommerce->cart->get_cart();
             $line_items = array();
             foreach ($cart_items as $cart_item) {
-                $product = $cart_item['data'];
+                //$product = $cart_item['data'];
                 $line_item = (int)$cart_item['product_id'];
                 $line_items[] = $line_item;
             }

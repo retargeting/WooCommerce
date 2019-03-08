@@ -7,7 +7,14 @@ if (!defined('ABSPATH')) {
 }
  class WC_Retargeting_Product_Scripts {
     
-    
+    public const INVALIDPARAMS = '0002: Invalid Parameters!';
+    public const MISSINGPARAMS = '0001: Missing Parameters!';
+
+
+    /**
+     *  Returns all existent categories
+     */
+
     public function get_retargeting_product_categories($product) {
         $categories = get_the_terms($product->get_id(), 'product_cat');
         $cat = array();
@@ -24,12 +31,17 @@ if (!defined('ABSPATH')) {
         }
         return $cat;
     }
-    public function send_category($query) {
+
+    /**
+     * Assigns category name and id to a javascript object
+     */
+
+    public function send_category($wp_query) {
         if (is_product_category()) {
-            global $$query;
-            $categories = $query->get_queried_object();
+            $categories = $wp_query->get_queried_object();
+            $categoryScript = '';
             if ($categories) {
-                $categoryScript = '<script type="text/javascript">
+                $categoryScript = '<script type="text/javscript">
                 var _ra = _ra || {};
                 _ra.sendCategoryInfo = {
                     "id": ' . $categories->term_id . ',
@@ -63,9 +75,12 @@ if (!defined('ABSPATH')) {
         }
     }
 
+    /**
+     *  Sends product info inside a javascript object
+     */
+
     public function send_retargeting_product($product, $image_url, $price, $specialPrice, $stock, $cat){
-                $scriptProduct = '
-                <script>
+                $scriptProduct = '<script type="text/javascript">
                     var _ra = _ra || {};
                     _ra.sendProductInfo = {
                         "id": ' . $product->get_id() . ',
@@ -128,7 +143,11 @@ if (!defined('ABSPATH')) {
                     return $scriptProduct;
     }
 
-    public function getPricesForVariableProduct() {
+    /**
+     * Returns an array which includes product price and specialPrice
+     */
+
+    public function getPricesForVariableProduct($product) {
         $prices = $product->get_variation_prices();
         $min_price = current($prices['sale_price']);
         $max_price = end($prices['regular_price']);
@@ -148,7 +167,12 @@ if (!defined('ABSPATH')) {
             );
     }
 
-    public function getPricesForGroupedProducts() {
+    /**
+     *  Returns an array which includes prices 
+     *  and special prices for grouped products
+     */
+
+    public function getPricesForGroupedProducts($product) {
         $getPrice = $product->get_price();
         $price = (!empty($getPrice) ? $getPrice : 0);
         $getSpecialPrice = $product->get_sale_price();
@@ -162,7 +186,11 @@ if (!defined('ABSPATH')) {
             );
     }
 
-    public function discount_retargeting_api_template($template, $wp_query) {
+    /**
+     *  Generates a discount code or displays an error 
+     */
+
+    public function discount_retargeting_api_template($wp_query) {
         if (isset($wp_query->query['retargeting']) && $wp_query->query['retargeting'] == 'discounts') {
             if (isset($wp_query->query['key']) && isset($wp_query->query['value']) && isset($wp_query->query['type']) && isset($wp_query->query['count'])) {
                 if ($wp_query->query['key'] != "" && $wp_query->query['key'] == $this->token && $wp_query->query['value'] != "" && $wp_query->query['type'] != "" && $wp_query->query['count'] != "") {
@@ -170,16 +198,21 @@ if (!defined('ABSPATH')) {
                     echo $this->generate_retargeting_coupons($wp_query->query['count']);
                     exit;
                 } else {
-                    echo json_encode(array("status" => false, "error" => "0002: Invalid Parameters!"));
+                    echo json_encode(array("status" => false, "error" => self::INVALIDPARAMS));
                     exit;
                 }
             } else {
-                echo json_encode(array("status" => false, "error" => "0001: Missing Parameters!"));
+                echo json_encode(array("status" => false, "error" => self::MISSINGPARAMS));
                 exit;
             }
         }
     }
-    public function generate_retargeting_coupons($query) {
+
+    /**
+     * Generate discount coupons and returns them in a json format
+     */
+
+    public function generate_retargeting_coupons($count, $wp_query) {
         $couponChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         $couponCodes = array();
         for ($x = 0; $x < $count; $x++) {
@@ -197,8 +230,11 @@ if (!defined('ABSPATH')) {
         return json_encode($couponCodes);
     }
 
+    /**
+     * Verifies product discount
+     */
+
     public function woocommerce_verify_discount($code) {
-        global $woocommerce;
         $o = new WC_Coupon($code);
         if ($o->exists == 1) {
             return false;
@@ -208,9 +244,13 @@ if (!defined('ABSPATH')) {
         }
     }
 
+    /**
+     * Verifies product type, get product code and apply a discount
+     * for product selected
+     */
+
     public function woocommerce_add_discount($code, $discount, $type)
     {
-        global $wp_query;
 
         //Retargeting discount Types
         /*

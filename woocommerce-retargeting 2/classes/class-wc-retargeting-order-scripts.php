@@ -11,21 +11,25 @@ if (!defined('ABSPATH')) {
     private $coupons_list;
 
     private function get_retargeting_coupon($order, $order_id) {
-        $coupons_list = '';
+        $this->coupons_list = '';
         if ($order->get_used_coupons()) {
             $coupons_count = count($order->get_used_coupons());
             $i = 1;
             foreach ($order->get_used_coupons() as $coupon) {
-                $coupons_list .= $coupon;
+                $this->coupons_list .= $coupon;
                 if ($i < $coupons_count) {
-                    $coupons_list .= ', ';
+                    $this->coupons_list .= ', ';
                     $i++;
                 }
             }
             
         }
-        return $coupons_list;
+        return $this->coupons_list;
     }
+    
+    /**
+     * Creates an array with ordered products
+     */
 
     private function get_retargeting_items($order_id, $order, $data) {
         foreach ((array)$order->get_items() as $item_id => $item) {
@@ -45,8 +49,12 @@ if (!defined('ABSPATH')) {
         return $data;
     }
 
-    private function get_retargeting_order_script($order, $data) {
-        $orderScript = '<script>
+    /**
+     * Saves order info in a javascript object
+     */
+    
+     public function get_retargeting_order_script($order, $data) {
+        $orderScript = '<script type="text/javascript">
                 var _ra = _ra || {};
                 _ra.saveOrderInfo = {
                     "order_no": ' . $order->get_id() . ',
@@ -75,7 +83,14 @@ if (!defined('ABSPATH')) {
             return $orderScript;
     }
 
-    private function get_retargeting_order_info($order, $object, $data) {
+    /**
+     *  Creates an associative array with order data
+     *  uses this array as parameter for api_client constructor
+     *  and save it in a json format.
+     */
+
+
+    public function get_retargeting_order_info($order, $object, $data) {
         $orderInfo = array(
             "order_no" => $order->get_id(),
             "lastname" => $order->get_billing_last_name(),
@@ -99,7 +114,12 @@ if (!defined('ABSPATH')) {
             $response = $orderClient->order->save($orderInfo, $data['line_items']);
 
         }
+        return $orderInfo;
     }
+
+    /**
+     * Takes order id and based on it also coupon, items and info
+     */
 
      public function save_retargeting_order($order_id, $object) {
         $order = new WC_Order($order_id);

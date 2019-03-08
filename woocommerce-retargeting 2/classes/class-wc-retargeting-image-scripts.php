@@ -11,23 +11,32 @@ if (!defined('ABSPATH')) {
 
  class WC_Retargeting_Image_Scripts {
 
-     public function click_retaregeting_image($product) {
-        global $product;
-        $imageScript = '
-            <script type="text/javascript">
-                (function($) {
-                    if (document.getElementsByClassName(".woocommerce-main-image") > 0 ) {
-                        jQuery(".woocommerce-main-image").click(function() {
-                            _ra.clickImage("' . $product->get_id() . '");
-                        });
-                    }
+    
+      //Get product id when user clicks on an image
+     
 
-                    jQuery(".woocommerce-product-gallery__image").click(function() {
+     public function click_retaregeting_image($product) {
+        
+        $imageScript = '<script type="text/javascript">
+            var _ra = _ra || {};
+
+            var mainImg = document.getElementsByClassName("woocommerce-main-image");
+            if(mainImg.length > 0) {
+                for(var i = 0; i < mainImg.length; i++) {
+                    mainImg[i].onclick = function(e) {
                         _ra.clickImage("' . $product->get_id() . '");
-                    });
-                })(jQuery);
-            </script>
-        ';
+                    }
+                }
+            }
+
+            var img = document.getElementsByClassName("woocommerce-product-gallery__image");
+                for(var i = 0; i < img.length; i++) {
+                    img[i].onclick = function(e) {
+                        _ra.clickImage("' . $product->get_id() . '");
+                    }
+                }
+        </script>
+    ';
         return $imageScript;
      }
  }

@@ -26,11 +26,12 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     protected $retargetingPage;
     protected $retargetingProduct;
 
-    protected static $product_type = array(
-        'simple',
-        'variable',
-        'grouped'
-    );
+    protected $wpquery;
+    protected $woocommerce;
+    protected $wcproduct;
+    //protected $wp_post;
+
+    protected static $product_type = array('simple', 'variable', 'grouped');
 
     /*
     * Construct
@@ -49,6 +50,9 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->price_label_id = $this->get_option('price_label_id');
         $this->help_pages = $this->get_option('help_pages');
 
+        /**
+         *  Retargeting objects 
+         */
 
         $this->retargetingTracking = new WC_Retargeting_Tracking_Scripts();
         $this->retargetingCartScript = new WC_Retargeting_Cart_Scripts();
@@ -58,6 +62,15 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         $this->retargetingOrder = new WC_Retargeting_Order_Scripts();
         $this->retargetingPage = new WC_Retargeting_Pages_Scripts();
         $this->retargetingProduct = new WC_Retargeting_Product_Scripts();
+        
+        /**
+         *  global objects 
+         */
+
+        $this->wp_query = new WP_Query();
+        $this->woocommerce = new Woocommerce();
+        $this->wcproduct = new WC_Product_Simple();
+        
         
         add_action('init', array($this, 'ra_session_init'));
 
@@ -125,8 +138,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     public function set_email()
     {
-        global $woocommerce;
-        $script = $this->retargetingEmail->set_retargeting_email($woocommerce);
+        $script = $this->retargetingEmail->set_retargeting_email($this->woocommerce);
     }
 
     /*
@@ -134,8 +146,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     public function send_category()
     {
-        global $wp_query;
-        $script = $this->retargetingProduct->send_category($wp_query);
+        $script = $this->retargetingProduct->send_category($this->wp_query);
         echo $script;
     }
 
@@ -145,22 +156,22 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     public function send_product()
     {
         if (is_product()) {
-            global $product;
+            //global $product;
 
             $variation_id = get_post_meta($this->id, '_min_regular_price_variation_id', true);
 
-            if ($product instanceof WC_Product && $product->is_type(self::$product_type)) {
+            if ($this->wcproduct instanceof WC_Product && $this->wcproduct->is_type(self::$product_type)) {
 
-                switch ($product->get_type()) {
+                switch ($this->wcproduct->get_type()) {
                     case 'variable':
-                        list($price, $specialPrice) = $this->retargetingProduct->getPricesForVariableProducts($product);
+                        list($price, $specialPrice) = $this->retargetingProduct->getPricesForVariableProducts($this->wcproduct);
                         break;
                     case 'grouped':
-                        list($price, $specialPrice) = $this->retargetingProduct->getPricesForGroupedProducts($product);
+                        list($price, $specialPrice) = $this->retargetingProduct->getPricesForGroupedProducts($this->wcproduct);
                         break;
                     default:
-                        $price = wc_get_price_including_tax( $product, array('price' => $product->get_regular_price() ) );
-                        $salePrice = wc_get_price_including_tax( $product, array('price' => $product->get_price() ) );
+                        $price = wc_get_price_including_tax( $this->wcproduct, array('price' => $this->wcproduct->get_regular_price() ) );
+                        $salePrice = wc_get_price_including_tax( $this->wcproduct, array('price' => $this->wcproduct->get_price() ) );
                         $salePrice = $price == $salePrice ? 0 : $salePrice;
                         $specialPrice = (!empty($salePrice) ? $salePrice : 0);
                         break;
@@ -171,10 +182,10 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
                     $image_url = site_url() . '/wp-content/plugins/woocommerce/assets/images/placeholder.png';
                 }
 
-                $cat = $this->retargetingProduct->get_retargeting_product_categories($product);
+                $cat = $this->retargetingProduct->get_retargeting_product_categories($this->wcproduct);
 
-                $stock = $product->is_in_stock() ? 1 : 0;
-                $script = $this->retargetingProduct->send_retargeting_product($product, $image_url, $price, $specialPrice, $stock, $cat);
+                $stock = $this->wcproduct->is_in_stock() ? 1 : 0;
+                $script = $this->retargetingProduct->send_retargeting_product($this->wcproduct, $image_url, $price, $specialPrice, $stock, $cat);
             }
         }
     }
@@ -184,8 +195,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     public function add_to_cart()
     {
-        global $product;
-        $script = $this->retargetingCartScript->add_to_retargeting_cart($product); 
+        $script = $this->retargetingCartScript->add_to_retargeting_cart($this->wcproduct); 
         echo $script;
     }
     
@@ -204,7 +214,9 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     public function click_image()
     {
         global $product;
+        //echo(get_class($product));
         $this->retargetingImage->click_retaregeting_image($product);
+        
     }
 
     /*
@@ -212,8 +224,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     */
     public function like_facebook()
     {
-        global $product;
-        $this->retargetingMedia->like_retargeting_facebook($product);
+        $this->retargetingMedia->like_retargeting_facebook($this->wcproduct);
     }
 
     /*
@@ -230,6 +241,7 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
     public function help_pages()
     {
         global $post;
+        //echo(get_class($post));
         $script = $this->retargetingPage->help_retargeting_pages($post);
         echo $script;
     }
@@ -257,18 +269,16 @@ class WC_Integration_Retargeting_Tracking extends WC_Integration
         return $vars;
     }
 
-    public function discount_api_template($template)
+    public function discount_api_template()
     {
-        global $wp_query;
-        $this->retargetingProduct->discount_retargeting_api_template($template, $wp_query);
+        $this->retargetingProduct->discount_retargeting_api_template($this->wp_query);
     }
 
     // Generate random discount codes
 
     public function generate_coupons($count)
     {
-        global $wp_query;
-        $script = $this->retargetingProduct->generate_retargeting_coupons($wp_query);
+        $script = $this->retargetingProduct->generate_retargeting_coupons($this->wp_query);
         echo $script;
     }
 }
