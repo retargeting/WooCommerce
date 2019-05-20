@@ -157,7 +157,7 @@ class WooCommerceRTGTracker
 
         if (!empty($cartItem))
         {
-            echo '<pre>'; print_r($cartItem); die;
+            $this->RTGJSBuilder->addToCart($cartItem['product_id'], $cartItem['quantity'], new \RetargetingSDK\Variation());
         }
     }
 
@@ -172,7 +172,7 @@ class WooCommerceRTGTracker
 
         if (!empty($cartItem))
         {
-            echo '<pre>'; print_r($cartItem); die;
+            $this->RTGJSBuilder->removeFromCart($cartItem['product_id'], $cartItem['quantity'], new \RetargetingSDK\Variation());
         }
     }
 
