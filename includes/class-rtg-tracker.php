@@ -76,7 +76,9 @@ class WooCommerceRTGTracker
      */
     public function load_scripts()
     {
-        wp_enqueue_script( 'rtg-tracker', plugin_dir_url( RTG_TRACKER_DIR . '/woocommerce-retargeting.php' ) . '/assets/js/rtg-tracker.js', [ 'jquery' ] );
+        $pluginURL = plugin_dir_url( RTG_TRACKER_DIR . '/woocommerce-retargeting.php' );
+
+        wp_enqueue_script( 'rtg-tracker',  $pluginURL . '/assets/js/rtg-tracker.js', [ 'jquery' ] );
     }
 
     /**
