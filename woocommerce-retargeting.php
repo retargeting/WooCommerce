@@ -11,19 +11,19 @@
  * Text Domain:             woo-rtg-tracking
  * Domain Path:             /i18n/languages/
  * WC requires at least:    3.0.0
- * WC tested up to:         3.6.2
+ * WC tested up to:         3.6.3
  *
  * @package WooRetargeting
  */
 
-defined( 'ABSPATH' ) OR exit('No direct script access allowed');
+defined('ABSPATH') OR exit('No direct script access allowed');
 
 if (!defined('RTG_TRACKER_DIR'))
 {
     define('RTG_TRACKER_DIR', dirname(__FILE__));
 }
 
-if ( ! class_exists( 'WooCommerceRTG' ) )
+if (!class_exists('WooCommerceRTG'))
 {
     include_once RTG_TRACKER_DIR . '/includes/class-rtg.php';
 }
