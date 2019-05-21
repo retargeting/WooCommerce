@@ -57,6 +57,8 @@ class WooCommerceRTGTracker
             $this->helpPagesIds = $options['rtg_help_pages'];
         }
 
+        add_action('wp_enqueue_scripts', [ $this, 'load_scripts' ]);
+
         add_action('wp_head',   [ $this, 'header_hook' ]);
         add_action('wp_footer', [ $this, 'footer_hook' ], 9999);
 
@@ -67,6 +69,14 @@ class WooCommerceRTGTracker
         add_action('woocommerce_after_cart',                [ $this, 'cart_hook' ]);
         add_action('woocommerce_after_checkout_form',       [ $this, 'checkout_hook' ]);
         add_action('woocommerce_thankyou',                  [ $this, 'order_hook' ]);
+    }
+
+    /**
+     * Load scripts hook
+     */
+    public function load_scripts()
+    {
+        wp_enqueue_script( 'rtg-tracker', plugin_dir_url( RTG_TRACKER_DIR . '/woocommerce-retargeting.php' ) . '/assets/js/rtg-tracker.js', [ 'jquery' ] );
     }
 
     /**
