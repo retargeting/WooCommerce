@@ -29,11 +29,6 @@
 class WooCommerceRTGCategoryModel extends \RetargetingSDK\Category
 {
     /**
-     * @var bool
-     */
-    private $_hasCategoryData = false;
-
-    /**
      * WooCommerceRTGCategoryModel constructor.
      * @param $category
      * @throws Exception
@@ -54,8 +49,6 @@ class WooCommerceRTGCategoryModel extends \RetargetingSDK\Category
 
         if ($category instanceof WP_Term && !empty($category->term_id))
         {
-            $this->_hasCategoryData = true;
-
             $this->_setCategoryData($category);
         }
     }
@@ -97,13 +90,5 @@ class WooCommerceRTGCategoryModel extends \RetargetingSDK\Category
                 $this->setBreadcrumb($breadcrumbs);
             }
         }
-    }
-
-    /**
-     * @return bool
-     */
-    public function _hasCategoryData()
-    {
-        return $this->_hasCategoryData;
     }
 }

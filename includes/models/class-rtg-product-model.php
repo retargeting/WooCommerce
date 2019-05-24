@@ -29,11 +29,6 @@
 class WooCommerceRTGProductModel extends \RetargetingSDK\Product
 {
     /**
-     * @var bool
-     */
-    private $_hasProductData = false;
-
-    /**
      * WooCommerceRTGProductModel constructor.
      * @param null $product
      * @throws Exception
@@ -52,8 +47,6 @@ class WooCommerceRTGProductModel extends \RetargetingSDK\Product
 
         if ($product instanceof WC_Product && !empty($product->get_id()))
         {
-            $this->_hasProductData = true;
-
             $this->_setProductData($product);
         }
     }
@@ -67,7 +60,7 @@ class WooCommerceRTGProductModel extends \RetargetingSDK\Product
         $this->setId($product->get_id());
         $this->setName($product->get_name());
         $this->setUrl($product->get_permalink());
-        $this->_setProductPrices($product->get_regular_price(), $product->get_sale_price());
+        $this->_setProductPrices($product);
         $this->_setProductImages($product->get_image_id(), $product->get_gallery_image_ids());
         $this->_setProductCategories($product->get_category_ids());
 
@@ -78,17 +71,55 @@ class WooCommerceRTGProductModel extends \RetargetingSDK\Product
     }
 
     /**
-     * @param $regularPrice
-     * @param $salePrice
+     * @param WC_Product $product
      * @throws Exception
      */
-    private function _setProductPrices($regularPrice, $salePrice)
+    private function _setProductPrices($product)
     {
-        $this->setPrice($regularPrice);
-
-        if($regularPrice != $salePrice)
+        if ($product->is_type([ 'simple', 'external' ]))
         {
-            $this->setPromo($salePrice);
+            $regularPrice = (float)$product->get_regular_price();
+            $salePrice    = (float)$product->get_sale_price();
+
+            $this->setPrice($regularPrice);
+
+            if($regularPrice != $salePrice)
+            {
+                $this->setPromo($salePrice);
+            }
+        }
+        elseif ($product->is_type('variable'))
+        {
+            $regularPrice = (float)$product->get_price();
+            $salePrice    = 0;
+
+            $product    = new WC_Product_Variable($product->get_id());
+            $variations = $product->get_available_variations();
+
+            if (is_array($variations) && !empty($variations[0]['display_price']) && !empty($variations[0]['display_regular_price']))
+            {
+                $variationRegularPrice = (float)$variations[0]['display_regular_price'];
+                $variationSalePrice    = (float)$variations[0]['display_price'];
+
+                if (!empty($variationRegularPrice) && !empty($variationSalePrice))
+                {
+                    $regularPrice = $variationRegularPrice;
+                    $salePrice    = $variationSalePrice;
+                }
+            }
+
+            $this->setPrice($regularPrice);
+
+            if ($salePrice > 0)
+            {
+                $this->setPromo($salePrice);
+            }
+        }
+        else
+        {
+            $regularPrice = (float)$product->get_price();
+
+            $this->setPrice($regularPrice);
         }
     }
 
@@ -160,7 +191,7 @@ class WooCommerceRTGProductModel extends \RetargetingSDK\Product
             {
                 $RTGCategory = new WooCommerceRTGCategoryModel($categoryId);
 
-                if ($RTGCategory->_hasCategoryData())
+                if (!empty($RTGCategory->getId()))
                 {
                     $categories[] = $RTGCategory->getData(false);
                 }
@@ -171,13 +202,5 @@ class WooCommerceRTGProductModel extends \RetargetingSDK\Product
                 $this->setCategory($categories);
             }
         }
-    }
-
-    /**
-     * @return bool
-     */
-    public function _hasProductData()
-    {
-        return $this->_hasProductData;
     }
 }

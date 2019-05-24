@@ -54,13 +54,13 @@ class WooCommerceRTGIntegration extends WC_Integration
             '</a>'
         ],
         'products-feed' => [
-            '<a href="https://retargeting.biz/general-implementation-abandoned-cart#javascript-tracking-code" target="_blank" rel="noopener noreferrer">',
-            'https://retargeting.biz/general-implementation-abandoned-cart#javascript-tracking-code',
+            '<a href="[url]" target="_blank" rel="noopener noreferrer">',
+            '[url]',
             '</a>'
         ],
         'customers-feed' => [
-            '<a href="https://retargeting.biz/general-implementation-abandoned-cart#javascript-tracking-code" target="_blank" rel="noopener noreferrer">',
-            'https://retargeting.biz/general-implementation-abandoned-cart#javascript-tracking-code',
+            '<a href="[url]" target="_blank" rel="noopener noreferrer">',
+            '[url]',
             '</a>'
         ]
     ];
@@ -117,6 +117,9 @@ class WooCommerceRTGIntegration extends WC_Integration
      */
     public function init_form_fields()
     {
+        $customersFeedURL = get_site_url() . '?rtg-feed=customers';
+        $productsFeedURL  = get_site_url() . '?rtg-feed=products';
+
         $this->form_fields = [
             'rtg_tracking_key' => [
                 'title'         => __('Tracking API Key', 'woo-rtg-tracker'),
@@ -156,7 +159,7 @@ class WooCommerceRTGIntegration extends WC_Integration
             'rtg_products_feed' => [
                 'title'         => __('Products Feed', 'woo-rtg-tracker'),
                 'type'          => 'checkbox',
-                'description'   => __( 'URL:', 'woo-rtg-tracker' ) . ' ' . implode('', $this->rtgLinks['products-feed']),
+                'description'   => __( 'URL:', 'woo-rtg-tracker' ) . ' ' . str_replace('[url]', $productsFeedURL, implode('', $this->rtgLinks['products-feed'])),
                 'desc_tip'      => false,
                 'label'         => __( 'Enable products feed', 'woo-rtg-tracker' ),
                 'default'       => 'no'
@@ -164,7 +167,7 @@ class WooCommerceRTGIntegration extends WC_Integration
             'rtg_customers_feed' => [
                 'title'         => __('Customers Feed', 'woo-rtg-tracker'),
                 'type'          => 'checkbox',
-                'description'   => __( 'URL:', 'woo-rtg-tracker' ) . ' ' . implode('', $this->rtgLinks['customers-feed']),
+                'description'   => __( 'URL:', 'woo-rtg-tracker' ) . ' ' . str_replace('[url]', $productsFeedURL, implode('', $this->rtgLinks['customers-feed'])),
                 'desc_tip'      => false,
                 'label'         => __( 'Enable customers feed', 'woo-rtg-tracker' ),
                 'default'       => 'no'

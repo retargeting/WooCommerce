@@ -133,7 +133,7 @@ class WooCommerceRTGTracker
 
         $RTGCategory = new WooCommerceRTGCategoryModel();
 
-        if($RTGCategory->_hasCategoryData())
+        if(!empty($RTGCategory->getId()))
         {
             $this->RTGJSBuilder->sendCategory($RTGCategory);
         }
@@ -151,7 +151,7 @@ class WooCommerceRTGTracker
 
         $RTGProduct = new WooCommerceRTGProductModel();
 
-        if($RTGProduct->_hasProductData())
+        if(!empty($RTGProduct->getId()))
         {
             $this->RTGJSBuilder->sendProduct($RTGProduct);
             $this->RTGJSBuilder->likeFacebook($RTGProduct->getId());

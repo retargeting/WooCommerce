@@ -33,7 +33,8 @@ class WooCommerceRTG
      */
     public function __construct()
     {
-        add_action( 'plugins_loaded', [ $this, 'init'] );
+        add_action( 'plugins_loaded', [ $this, 'init' ] );
+        add_action( 'template_redirect', [ $this, 'templateRedirect' ] );
     }
 
     /**
@@ -41,7 +42,7 @@ class WooCommerceRTG
      */
     public function init()
     {
-        if (class_exists('WC_Integration'))
+        if (class_exists('WC_Integration') && !$this->isFeed())
         {
             require_once 'class-rtg-integration.php';
 
@@ -50,6 +51,8 @@ class WooCommerceRTG
     }
 
     /**
+     * WooCommerce integrations hook
+     *
      * @param $integrations
      * @return array
      */
@@ -58,5 +61,28 @@ class WooCommerceRTG
         $integrations[] = 'WooCommerceRTGIntegration';
 
         return $integrations;
+    }
+
+    /**
+     * Template redirect hook
+     */
+    public function templateRedirect()
+    {
+        if ($this->isFeed())
+        {
+            require_once 'class-rtg-feed.php';
+
+            exit(0);
+        }
+    }
+
+    /**
+     * Check for feed query string
+     *
+     * @return bool
+     */
+    private function isFeed()
+    {
+        return isset($_GET['rtg-feed']) && in_array($_GET['rtg-feed'], [ 'customers', 'products' ]);
     }
 }
