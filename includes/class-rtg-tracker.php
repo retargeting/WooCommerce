@@ -36,6 +36,11 @@ class WooCommerceRTGTracker
     private $RTGJSBuilder;
 
     /**
+     * @var \RetargetingSDK\RecommendationEngine
+     */
+    private $RTGRecEng;
+
+    /**
      * @var array
      */
     private $helpPagesIds = [];
@@ -51,6 +56,8 @@ class WooCommerceRTGTracker
         $this->RTGJSBuilder->setRestApiKey($options['rtg_rest_key']);
         $this->RTGJSBuilder->setAddToCardId($options['rtg_cart_btn_id']);
         $this->RTGJSBuilder->setPriceLabelId($options['rtg_price_label_id']);
+
+        $this->RTGRecEng = new \RetargetingSDK\RecommendationEngine();
 
         if (is_array($options['rtg_help_pages']))
         {
@@ -106,6 +113,7 @@ class WooCommerceRTGTracker
             }
             elseif ($itemId == get_option('page_on_front'))
             {
+                $this->RTGRecEng->markHomePage();
                 $this->RTGJSBuilder->visitHomePage();
             }
         }
@@ -115,11 +123,12 @@ class WooCommerceRTGTracker
 
             if (!empty($searchQuery))
             {
+                $this->RTGRecEng->markSearchPage();
                 $this->RTGJSBuilder->sendSearchTerm($searchQuery);
             }
         }
 
-        echo $this->RTGJSBuilder->generate();
+        echo $this->RTGRecEng->generateTags() . $this->RTGJSBuilder->generate();
     }
 
     /**
@@ -133,9 +142,10 @@ class WooCommerceRTGTracker
 
         $RTGCategory = new WooCommerceRTGCategoryModel();
 
-        if(!empty($RTGCategory->getId()))
+        if($RTGCategory->getId() != '-1')
         {
             $this->RTGJSBuilder->sendCategory($RTGCategory);
+            $this->RTGRecEng->markCategoryPage();
         }
     }
 
@@ -155,6 +165,7 @@ class WooCommerceRTGTracker
         {
             $this->RTGJSBuilder->sendProduct($RTGProduct);
             $this->RTGJSBuilder->likeFacebook($RTGProduct->getId());
+            $this->RTGRecEng->markProductPage();
         }
     }
 
@@ -218,6 +229,8 @@ class WooCommerceRTGTracker
         {
             $this->RTGJSBuilder->checkoutIds($RTGCheckout);
         }
+
+        $this->RTGRecEng->markCheckoutPage();
     }
 
     /**
@@ -234,6 +247,7 @@ class WooCommerceRTGTracker
         if (!empty($RTGOrder->getOrderNo()))
         {
             $this->RTGJSBuilder->saveOrder($RTGOrder);
+            $this->RTGRecEng->markThankYouPage();
         }
     }
 }
