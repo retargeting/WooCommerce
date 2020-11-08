@@ -2,9 +2,9 @@
 Author: Retargeting Team
 Tags: retargeting, WooCommerce
 Requires at least: 4.6
-Tested up to: 4.9.4
-Requires WooCommerce at least: 3.0.0
-Tested WooCommerce up to: 3.3.3
+Tested up to: 5.4
+Requires WooCommerce at least: 4.0.0
+Tested WooCommerce up to: 4.3.0
 
 Retargeting is a marketing automation tool that boosts the conversion rate and sales of your online store.
 
