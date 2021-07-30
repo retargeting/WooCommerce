@@ -277,10 +277,13 @@ class WooCommerceRTGFeed
     protected function getProductVariations($productId)
     {
         $variable = (new WC_Product_Variable($productId))->get_children();
+
         $productVariations = [];
 
         foreach ($variable as $value) {
             $single_variation = new WC_Product_Variation($value);
+            var_dump($single_variation);
+            die();
 
             if ($single_variation->get_stock_quantity() === null) {
                 continue;
@@ -371,35 +374,34 @@ class WooCommerceRTGFeed
     }
 
     public function productsCSV($type = 'doLive') {
+        /*
         header( 'Content-Disposition: attachment; filename=' . $this->fileName );
         header( 'Content-Type: text/csv' );
-
-        if ($type === 'doStatic' && !file_exists($this->filePath)) {
+        */
+        if ($type === 'doStatic' && !file_exists($this->filePath[$type])) {
             $type = 'doCron';
         }
 
         $upstream = fopen($this->filePath[$type], $this->fileRule[$type]);
 
-        if ($type !== 'doLive' && FALSE === $upstream) {
+        if (FALSE === $upstream) {
             exit("Failed to open stream to URL, Check File Permission of " . RTG_TRACKER_DIR);
         }
 
-        ob_start();
-
-        fputcsv($upstream, array(
-            'product id',
-            'product name',
-            'product url',
-            'image url',
-            'stock',
-            'price',
-            'sale price',
-            'brand',
-            'category',
-            'extra data'
-        ), ',', '"');
-
         if ($type !== 'doStatic') {
+            fputcsv($upstream, array(
+                'product id',
+                'product name',
+                'product url',
+                'image url',
+                'stock',
+                'price',
+                'sale price',
+                'brand',
+                'category',
+                'extra data'
+            ), ',', '"');
+
             foreach ( $this->getProductData( true ) as $data ) {
                 $this->writeCSVData( $upstream, $data );
             }
@@ -409,19 +411,13 @@ class WooCommerceRTGFeed
             }
         }
 
-        $outPut = ob_get_clean();
-
         fclose($upstream);
 
-        rename($this->filePath[$type], $this->filePath['doStatic']);
+        $type === 'doCron' && rename( $this->filePath[$type], $this->filePath['doStatic'] );
 
         if ( $type === 'doCron' && !isset($_GET['isCronInternal']) ) {
-
-            header('Content-Type: text/json');
-            echo json_encode(['status'=>'succes']);
-
-        }else if( $type !== 'doCron' ){
-            echo $outPut;
+            header( 'Content-Type: text/json' );
+            echo json_encode( ['status' => 'success'] );
         }
 
         return true;

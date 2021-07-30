@@ -129,7 +129,7 @@ class WooCommerceRTG
                 case 'products-cron':
                 case 'products-cron-now':
                     $this->doOption('rtg_products_feed_cron', [
-                        $RTGFeed, 'productsCSV','doCorn'
+                        $RTGFeed, 'productsCSV','doCron'
                     ]);
                     break;
                 case 'products-static':
