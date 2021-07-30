@@ -21,7 +21,9 @@ class WooCommerceRTGIntegration extends WC_Integration
         'rtg_help_pages',
         'rtg_products_feed',
         'rtg_products_feed_cron',
-        'rtg_customers_feed'
+        'rtg_customers_feed',
+        'rtg_tax_rate'
+
     ];
 
     /**
@@ -115,6 +117,11 @@ class WooCommerceRTGIntegration extends WC_Integration
                 'type'          => 'text',
                 'description'   => str_replace( ['[link]', '[/link]'], $this->rtgLinks['implementation-general'], __( 'For more info check [link]documentation[/link].', 'woo-rtg-tracker' ) ),
                 'desc_tip'      => false,
+                'default'       => ''
+            ],
+            'rtg_tax_rate' => [
+                'title'         => __('Set Tax Rate', 'woo-rtg-tracker'),
+                'type'          => 'text',
                 'default'       => ''
             ],
             'rtg_help_pages' => [

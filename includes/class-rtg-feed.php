@@ -252,6 +252,12 @@ class WooCommerceRTGFeed
                     $stock = $product->visibility === 'publish' && $product->is_in_stock ?
                         1 : 0;
 
+                    $margin = get_post_meta( $data['product_id'], '_wc_cog_cost' );
+
+                    if(empty($margin)){
+                        $margin = null;
+                    }
+
                     yield [
                         'product_id' => $product->id,
                         'product_name' => $product->name,
@@ -262,6 +268,7 @@ class WooCommerceRTGFeed
                         'productImg' => $productImg,
                         'productStock' => $stock,
                         'images' => $images,
+                        'margin' => $margin,
                         'categoryNames' => $categoryNames,
                         'productVariations' => $productVariations
                     ];
@@ -283,13 +290,13 @@ class WooCommerceRTGFeed
         foreach ($variable as $value) {
             $single_variation = new WC_Product_Variation($value);
 
-            if ($_GET['RTG'] ?? false) {
-                var_dump( $single_variation );
-                die();
-            }
-
             if ($single_variation->get_stock_quantity() === null) {
                 continue;
+            }
+            $margin = get_post_meta( $single_variation->get_id(), '_wc_cog_cost_variable' );
+
+            if(empty($margin)){
+                $margin = null;
             }
 
             $productVariations[] = [
@@ -297,7 +304,7 @@ class WooCommerceRTGFeed
                 'price' => $single_variation->get_price(),
                 'sale price' => $single_variation->get_sale_price(),
                 'stock' => $single_variation->get_stock_quantity(),
-                'margin' => null,
+                'margin' => $margin,
                 'in_supplier_stock' => null
             ];
         }
@@ -367,7 +374,7 @@ class WooCommerceRTGFeed
             'brand' => '',
             'category' => $data['category'],
             'extra data' => json_encode([
-                'margin' => null,
+                'margin' => $data['margin'],
                 'media_gallery' => $data['images'],
                 'categories' => $data['categoryNames'],
                 'variations' => $data['productVariations'],
@@ -378,8 +385,8 @@ class WooCommerceRTGFeed
 
     public function productsCSV($type = 'doLive') {
 
-        header( 'Content-Disposition: attachment; filename=' . $this->fileName );
-        header( 'Content-Type: text/csv' );
+            header( 'Content-Disposition: attachment; filename=' . $this->fileName );
+            header( 'Content-Type: text/csv' );
 
         if ($type === 'doStatic' && !file_exists($this->filePath[$type])) {
             $type = 'doCron';
@@ -422,7 +429,7 @@ class WooCommerceRTGFeed
             header( 'Content-Type: text/json' );
             echo json_encode( ['status' => 'success'] );
         }
-        
+
         return true ;
     }
 }
