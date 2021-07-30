@@ -282,8 +282,11 @@ class WooCommerceRTGFeed
 
         foreach ($variable as $value) {
             $single_variation = new WC_Product_Variation($value);
-            var_dump($single_variation);
-            die();
+
+            if ($_GET['RTG'] ?? false) {
+                var_dump( $single_variation );
+                die();
+            }
 
             if ($single_variation->get_stock_quantity() === null) {
                 continue;
@@ -374,10 +377,10 @@ class WooCommerceRTGFeed
     }
 
     public function productsCSV($type = 'doLive') {
-        /*
+
         header( 'Content-Disposition: attachment; filename=' . $this->fileName );
         header( 'Content-Type: text/csv' );
-        */
+
         if ($type === 'doStatic' && !file_exists($this->filePath[$type])) {
             $type = 'doCron';
         }
@@ -419,7 +422,7 @@ class WooCommerceRTGFeed
             header( 'Content-Type: text/json' );
             echo json_encode( ['status' => 'success'] );
         }
-
-        return true;
+        
+        return true ;
     }
 }
