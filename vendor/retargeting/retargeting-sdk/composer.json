@@ -1,0 +1,39 @@
+{
+  "name": "retargeting/retargeting-sdk",
+  "description": "Retargeting SDK",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Retargeting Team",
+      "email": "info@retargeting.biz"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.0",
+    "ext-json": "*",
+    "ext-openssl": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "RetargetingSDK\\": "lib"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "8.0",
+    "mockery/mockery": "^1.0",
+    "fzaninotto/faker": "^1.4"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true,
+    "platform": {
+      "php": "5.6.0"
+    }
+  }
+}
