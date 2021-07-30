@@ -1,0 +1,14 @@
+{
+    "name": "retargeting/tracker",
+    "description": "Retargeting is a marketing automation tool that boosts the conversion rate and sales of your online store.",
+    "type": "wordpress-plugin",
+    "authors": [
+        {
+            "name": "retargeting-biz",
+            "email": "info@retargeting.biz"
+        }
+    ],
+    "require": {
+        "retargeting/retargeting-sdk": "dev-development"
+    }
+}

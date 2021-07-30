@@ -186,35 +186,32 @@ class WooCommerceRTGFeed
 
     public function outputProductsCSV()
     {
-        // Feed URL
-        if(get_site_url() . '?rtg-feed=products')
+
+        header('Content-Disposition: attachment; filename=retargeting.csv');
+        header('Content-Type: text/csv');
+        $outstream = fopen("php://output", "w");
+
+        fputcsv($outstream, array(
+            'product id',
+            'product name',
+            'product url',
+            'image url',
+            'stock',
+            'price',
+            'sale price',
+            'brand',
+            'category',
+            'extra data'
+        ), ',', '"');
+
+        $hasProductsInPage = true;
+
+        foreach($this->getProductData($hasProductsInPage) as $data)
         {
-            header('Content-Disposition: attachment; filename='. $this->fName);
-            header('Content-Type: text/csv');
-            $outstream = fopen("php://output", "w");
-
-            fputcsv($outstream, array(
-                'product id',
-                'product name',
-                'product url',
-                'image url',
-                'stock',
-                'price',
-                'sale price',
-                'brand',
-                'category',
-                'extra data'
-            ), ',', '"');
-
-            $hasProductsInPage = true;
-
-            foreach($this->getProductData($hasProductsInPage) as $data)
-            {
-                $this->writeCSVData($outstream, $data);
-            }
-
-            fclose($outstream);
+            $this->writeCSVData($outstream, $data);
         }
+
+        fclose($outstream);
     }
 
     /**
