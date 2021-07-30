@@ -119,11 +119,6 @@ class WooCommerceRTGIntegration extends WC_Integration
                 'desc_tip'      => false,
                 'default'       => ''
             ],
-            'rtg_tax_rate' => [
-                'title'         => __('Set Tax Rate', 'woo-rtg-tracker'),
-                'type'          => 'text',
-                'default'       => ''
-            ],
             'rtg_help_pages' => [
                 'title'         => __('Price label id', 'woo-rtg-tracker'),
                 'type'          => 'multiselect',

@@ -2,11 +2,14 @@
 class WooCommerceRTG
 {
     private $getList = [ 'customers', 'products', 'products-cron','products-cron-now', 'products-static'];
+    private $option;
     /**
      * WooCommerceRTG constructor.
      */
     public function __construct()
     {
+        $this->option = get_option('woocommerce_rtg_tracker_settings');
+
         if($this->getOption('rtg_products_feed_cron')){
             /* RTG CRON START */
             $CRON = wp_next_scheduled( 'RTG_CRON_FEED' );
@@ -108,12 +111,11 @@ class WooCommerceRTG
 
     function genFeed(){
         include_once RTG_TRACKER_DIR . '/includes/class-rtg-feed.php';
-
         /**
          * Initialise feed
          */
-        
         $RTGFeed = new WooCommerceRTGFeed();
+
         try
         {
             switch ($_GET['rtg-feed'])
@@ -148,22 +150,18 @@ class WooCommerceRTG
 
     function doOption($opt, array $action)
     {
-        $option = get_option('woocommerce_rtg_tracker_settings');
-        
-        $option[$opt] = $option[$opt] ?? 'yes';
-        return $option[$opt] == 'yes' ? $action[0]->{$action[1]}($action[2]) : false;
+        $this->option[$opt] = isset( $this->option[$opt] ) ? $this->option[$opt] : 'yes';
+        return $this->option[$opt] == 'yes' ? $action[0]->{$action[1]}($action[2]) : false;
     }
 
     function getOption($opt, $type = true)
     {
-        $option = get_option('woocommerce_rtg_tracker_settings');
-
         if ($type) {
-            $option[$opt] = $option[$opt] ?? 'yes';
-            return $option[$opt] == 'yes' ? true : false;
+            $this->option[$opt] = isset( $this->option[$opt] ) ? $this->option[$opt] : 'yes';
+            return $this->option[$opt] == 'yes';
         }
 
-        return $option[$opt] ?? '';
+        return isset( $this->option[$opt] ) ? $this->option[$opt] : '';
     }
 
     /**

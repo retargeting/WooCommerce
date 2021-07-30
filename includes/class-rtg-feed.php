@@ -46,7 +46,7 @@ class WooCommerceRTGFeed
      */
     public function __construct()
     {
-        $this->token = $_GET['token'] ?? null;
+        $this->token = isset( $_GET['token'] ) ? $_GET['token'] : null;
 
         $this->fileName = 'retargeting.csv';
 
@@ -200,6 +200,20 @@ class WooCommerceRTGFeed
         echo $this->feed->getData();
     }
 
+    function get_primary_taxonomy_term($prod){
+        $cat = $prod->category[0];
+        if ( class_exists('WPSEO_Primary_Term') )
+        {
+            $taxonomy = 'product_cat';
+            $primary_cat_id = get_post_meta($prod->id,'_yoast_wpseo_primary_' . $taxonomy, true);
+            if(!empty($primary_cat_id)){
+                $primary_cat = get_term($primary_cat_id, $taxonomy);
+                if(isset($primary_cat->name))
+                    $cat = $primary_cat;
+            }
+        }
+        return $cat->name;
+    }
     /**
      * @param $hasProductsInPage
      * @return Generator
@@ -240,8 +254,7 @@ class WooCommerceRTGFeed
                     // Check if product sale is 0
                     $this->checkPromoPrice($product);
 
-                    // Get product categories
-                    $categoryNames = str_replace(',', ' |', strip_tags(wc_get_product_category_list($product->id)));
+
 
                     // Get product images
                     $images = $this->getProductImages($product);
@@ -252,11 +265,21 @@ class WooCommerceRTGFeed
                     $stock = $product->visibility === 'publish' && $product->is_in_stock ?
                         1 : 0;
 
-                    $margin = get_post_meta( $data['product_id'], '_wc_cog_cost' );
+                    $margin = get_post_meta( $product->id, '_wc_cog_cost' );
+                    if(empty($margin)) {
+                        $margin = get_post_meta( $product->id, '_alg_wc_cog_cost' );
+                    }
 
                     if(empty($margin)){
                         $margin = null;
+                    }else {
+                        $margin = is_array($margin) ? $margin[0] : $margin;
                     }
+
+                    $category = $this->get_primary_taxonomy_term($product);
+                    // Get product categories
+
+                    $categoryNames = str_replace(',', ' |', strip_tags(wc_get_product_category_list($product->id)));
 
                     yield [
                         'product_id' => $product->id,
@@ -264,7 +287,7 @@ class WooCommerceRTGFeed
                         'product_url' => $product->url,
                         'price' => number_format((float)$product->price, 2, '.', ''),
                         'sale_price' => number_format((float)$product->promo, 2, '.', ''),
-                        'category' => $product->category[0]->name,
+                        'category' => $category,
                         'productImg' => $productImg,
                         'productStock' => $stock,
                         'images' => $images,
@@ -294,7 +317,9 @@ class WooCommerceRTGFeed
                 continue;
             }
             $margin = get_post_meta( $single_variation->get_id(), '_wc_cog_cost_variable' );
-
+            if(empty($margin)) {
+                $margin = get_post_meta( $single_variation->get_id(), '_alg_wc_cog_cost' );
+            }
             if(empty($margin)){
                 $margin = null;
             }

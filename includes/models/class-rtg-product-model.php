@@ -78,8 +78,13 @@ class WooCommerceRTGProductModel extends \RetargetingSDK\Product
     {
         if ($product->is_type([ 'simple', 'external' ]))
         {
-            $regularPrice = (float)$product->get_regular_price();
-            $salePrice    = (float)$product->get_sale_price();
+            if(wc_tax_enabled()){
+                $regularPrice = (float)wc_get_price_including_tax( $product, array('price' => $product->get_regular_price() ) );
+                $salePrice    = (float)wc_get_price_including_tax( $product, array('price' => $product->get_sale_price() ) );
+            } else {
+                $regularPrice = (float)$product->get_regular_price();
+                $salePrice    = (float)$product->get_sale_price();
+            }
 
             $this->setPrice($regularPrice);
 
@@ -90,8 +95,13 @@ class WooCommerceRTGProductModel extends \RetargetingSDK\Product
         }
         elseif ($product->is_type('variable'))
         {
-            $regularPrice = (float)$product->get_price();
-            $salePrice    = 0;
+            if(wc_tax_enabled()){
+                $regularPrice = (float)wc_get_price_including_tax( $product, array('price' => $product->get_price()) );
+                $salePrice    = 0;
+            } else {
+                $regularPrice = (float)$product->get_price();
+                $salePrice    = 0;
+            }
 
             $product    = new WC_Product_Variable($product->get_id());
             $variations = $product->get_available_variations();
