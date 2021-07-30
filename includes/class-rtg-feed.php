@@ -39,12 +39,32 @@ class WooCommerceRTGFeed
 
     private $fName = 'retargeting.csv';
 
+    private $doStatic;
+    private $doCron;
+    private $doLive;
+
     /**
      * WooCommerceRTGFeed constructor.
      */
     public function __construct()
     {
-        $this->validateReqParams();
+        $this->token = $_GET['token'] ?? null;
+
+        $this->doStatic = [
+            RTG_TRACKER_DIR . '/' . $this->fName,
+            'rb'
+        ];
+
+        $this->doCron = [
+            RTG_TRACKER_DIR . '/' . $this->fName . '.tmp',
+            'w+'
+        ];
+
+        $this->doLive = [
+            'php://output',
+            'w'
+        ];
+
     }
 
     /**
@@ -184,36 +204,6 @@ class WooCommerceRTGFeed
         echo $this->feed->getData();
     }
 
-    public function outputProductsCSV()
-    {
-
-        header('Content-Disposition: attachment; filename=retargeting.csv');
-        header('Content-Type: text/csv');
-        $outstream = fopen("php://output", "w");
-
-        fputcsv($outstream, array(
-            'product id',
-            'product name',
-            'product url',
-            'image url',
-            'stock',
-            'price',
-            'sale price',
-            'brand',
-            'category',
-            'extra data'
-        ), ',', '"');
-
-        $hasProductsInPage = true;
-
-        foreach($this->getProductData($hasProductsInPage) as $data)
-        {
-            $this->writeCSVData($outstream, $data);
-        }
-
-        fclose($outstream);
-    }
-
     /**
      * @param $hasProductsInPage
      * @return Generator
@@ -281,36 +271,6 @@ class WooCommerceRTGFeed
                     ];
                 }
             }
-        }
-    }
-
-    /**
-     * Validate request params
-     */
-    private function validateReqParams()
-    {
-        // Current page
-        $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 0;
-
-        if($currentPage > 0)
-        {
-            $this->currentPage = $currentPage;
-        }
-
-        // Per page
-        $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 0;
-
-        if($perPage > 0 && $perPage <= $this->maxPerPage)
-        {
-            $this->perPage = $perPage;
-        }
-
-        // Token
-        $token = isset($_GET['token']) ? $_GET['token'] : null;
-
-        if(!empty($token))
-        {
-            $this->token = $token;
         }
     }
 
@@ -414,8 +374,49 @@ class WooCommerceRTGFeed
         ), ',', '"');
     }
 
+    public function productsCSV($type = 'doLive') {
+        header( 'Content-Disposition: attachment; filename=' . $this->fName );
+        header('Content-Type: text/csv');
+        $outstream = fopen($this->$type, "w");
+
+        fputcsv($outstream, array(
+            'product id',
+            'product name',
+            'product url',
+            'image url',
+            'stock',
+            'price',
+            'sale price',
+            'brand',
+            'category',
+            'extra data'
+        ), ',', '"');
+
+        $hasProductsInPage = true;
+
+        foreach($this->getProductData($hasProductsInPage) as $data)
+        {
+            $this->writeCSVData($outstream, $data);
+        }
+
+        fclose($outstream);
+    }
+
+
+
+
+
+
+
+
     public function staticProductsCSV()
     {
+
+        if ($type === 'doStatic') {
+            if (!file_exists($this->doStatic)) {
+                $this->productsCSVCron();
+            }
+        }
 
         header('Content-Disposition: attachment; filename=' . $this->fName);
         header('Content-Type: text/csv');
@@ -423,35 +424,30 @@ class WooCommerceRTGFeed
         $filename = RTG_TRACKER_DIR . '/' . $this->fName;
 
         if (!file_exists($filename)) {
-            $this->productsCSV(false);
+            $this->productsCSVCron(false);
         }
 
         $outstream = fopen($filename, "rb");
+
         if (FALSE === $outstream) {
             exit("Failed to open stream to URL");
         }
+
         $contents = '';
         while (!feof($outstream)) {
             $contents .= fread($outstream, filesize($filename));
         }
+
         fclose($outstream);
+
         echo $contents;
     }
 
-    public function productsCSV($status = true){
-        //shell_exec('cd '. ABSPATH .'; php -n -s index.php rtg-feed=products-cron-now > /dev/null;');
-        $this->productsCSVCron($status);
-    }
-
-    public function productsCSVCron($status = true)
+    public function productsCSVCron()
     {
         $filename = RTG_TRACKER_DIR . '/' . $this->fName;
 
         $outstream = fopen($filename.'.tmp', 'w+');
-
-        /*if ($_GET['chmod'] ?? false) {
-            chmod($filename.'.tmp', 0755);
-        }*/
 
         ob_start();
 
@@ -480,16 +476,44 @@ class WooCommerceRTGFeed
         fclose($outstream);
 
         rename ($filename.'.tmp', $filename);
-        
-        /*if ($_GET['chmod'] ?? false) {
-            chmod($filename, 0755);
-        }*/
 
-        if($status && !isset($_GET['isCronInternal'])) {
+        if(!isset($_GET['isCronInternal'])) {
             header('Content-Type: text/json');
             echo json_encode(['status'=>'succes']);
             return ;
         }
         return ;
+    }
+
+
+
+    public function outputProductsCSV()
+    {
+
+        header('Content-Disposition: attachment; filename=retargeting.csv');
+        header('Content-Type: text/csv');
+        $outstream = fopen("php://output", "w");
+
+        fputcsv($outstream, array(
+            'product id',
+            'product name',
+            'product url',
+            'image url',
+            'stock',
+            'price',
+            'sale price',
+            'brand',
+            'category',
+            'extra data'
+        ), ',', '"');
+
+        $hasProductsInPage = true;
+
+        foreach($this->getProductData($hasProductsInPage) as $data)
+        {
+            $this->writeCSVData($outstream, $data);
+        }
+
+        fclose($outstream);
     }
 }

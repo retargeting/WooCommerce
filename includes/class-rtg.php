@@ -88,6 +88,7 @@ class WooCommerceRTG
 
         wp_clear_scheduled_hook('RTG_CRON_SCHEDULES');
     }
+
     function rtgInstall(){
         if($this->getOption('rtg_products_feed_cron') && !wp_next_scheduled( 'RTG_CRON_FEED' )){
             wp_schedule_event( time(), 'RTG_CRON_SCHEDULES', 'RTG_CRON_FEED' );
@@ -118,19 +119,23 @@ class WooCommerceRTG
             switch ($_GET['rtg-feed'])
             {
                 case 'customers':
-                    $this->doOption('rtg_customers_feed',[ $RTGFeed, 'getCustomers' ]);
+                    $this->doOption('rtg_customers_feed',[ $RTGFeed, 'getCustomers', null]);
                     break;
                 case 'products':
-                    $this->doOption('rtg_products_feed',[ $RTGFeed, 'outputProductsCSV' ]);
+                    $this->doOption('rtg_products_feed',[
+                        $RTGFeed, 'productsCSV','doLive'
+                    ]);
                     break;
                 case 'products-cron':
-                    $this->doOption('rtg_products_feed_cron',[ $RTGFeed, 'productsCSV' ]);
-                    break;
                 case 'products-cron-now':
-                    $this->doOption('rtg_products_feed_cron',[ $RTGFeed, 'productsCSV' ]);
+                    $this->doOption('rtg_products_feed_cron', [
+                        $RTGFeed, 'productsCSV','doCorn'
+                    ]);
                     break;
                 case 'products-static':
-                    $this->doOption('rtg_products_feed_cron',[ $RTGFeed, 'staticProductsCSV' ]);
+                    $this->doOption('rtg_products_feed_cron',[
+                        $RTGFeed, 'productsCSV','doStatic'
+                    ]);
                     break;
             }
         }
@@ -146,7 +151,7 @@ class WooCommerceRTG
         $option = get_option('woocommerce_rtg_tracker_settings');
         
         $option[$opt] = $option[$opt] ?? 'yes';
-        return $option[$opt] == 'yes' ? $action[0]->{$action[1]}() : false;
+        return $option[$opt] == 'yes' ? $action[0]->{$action[1]}($action[2]) : false;
     }
 
     function getOption($opt, $type = true)
