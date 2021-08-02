@@ -41,6 +41,9 @@ class WooCommerceRTGFeed
     private $filePath;
     private $fileRule;
 
+    private $marginMeta = null;
+    private $wpSeo = null;
+
     /**
      * WooCommerceRTGFeed constructor.
      */
@@ -199,10 +202,15 @@ class WooCommerceRTGFeed
 
         echo $this->feed->getData();
     }
-
-    function get_primary_taxonomy_term($prod){
+    function getMainCategory($prod){
         $cat = $prod->category[0];
-        if ( class_exists('WPSEO_Primary_Term') )
+        if ( $this->wpSeo === null && class_exists('WPSEO_Primary_Term') ) {
+            $this->wpSeo = true;
+        }else if ( $this->wpSeo === null ) {
+            $this->wpSeo = false;
+        }
+
+        if ( $this->wpSeo )
         {
             $taxonomy = 'product_cat';
             $primary_cat_id = get_post_meta($prod->id,'_yoast_wpseo_primary_' . $taxonomy, true);
@@ -213,6 +221,32 @@ class WooCommerceRTGFeed
             }
         }
         return $cat->name;
+    }
+
+    protected function getMargin($product){
+        if ($this->marginMeta === null) {
+            $margin = get_post_meta( $product, '_wc_cog_cost' );
+            $this->marginMeta = '_wc_cog_cost';
+
+            if (empty($margin)) {
+                $margin = get_post_meta( $product, '_alg_wc_cog_cost' );
+                $this->marginMeta = '_alg_wc_cog_cost';
+            }
+
+            if(empty($margin) ){
+                $this->marginMeta = false;
+            }
+        } else if ($this->marginMeta !== null && $this->marginMeta !== false) {
+            $margin = get_post_meta( $product, $this->marginMeta );
+        }
+
+        if(empty($margin) ){
+            $margin = null;
+        }else {
+            $margin = is_array($margin) ? $margin[0] : $margin;
+        }
+
+        return $margin;
     }
     /**
      * @param $hasProductsInPage
@@ -265,18 +299,10 @@ class WooCommerceRTGFeed
                     $stock = $product->visibility === 'publish' && $product->is_in_stock ?
                         1 : 0;
 
-                    $margin = get_post_meta( $product->id, '_wc_cog_cost' );
-                    if(empty($margin)) {
-                        $margin = get_post_meta( $product->id, '_alg_wc_cog_cost' );
-                    }
+                    $margin = $this->getMargin($product->id);
 
-                    if(empty($margin)){
-                        $margin = null;
-                    }else {
-                        $margin = is_array($margin) ? $margin[0] : $margin;
-                    }
 
-                    $category = $this->get_primary_taxonomy_term($product);
+                    $category = $this->getMainCategory($product);
                     // Get product categories
 
                     $categoryNames = str_replace(',', ' |', strip_tags(wc_get_product_category_list($product->id)));
@@ -316,13 +342,8 @@ class WooCommerceRTGFeed
             if ($single_variation->get_stock_quantity() === null) {
                 continue;
             }
-            $margin = get_post_meta( $single_variation->get_id(), '_wc_cog_cost_variable' );
-            if(empty($margin)) {
-                $margin = get_post_meta( $single_variation->get_id(), '_alg_wc_cog_cost' );
-            }
-            if(empty($margin)){
-                $margin = null;
-            }
+
+            $margin = $this->getMargin($single_variation->get_id());
 
             $productVariations[] = [
                 'id' => $single_variation->get_id(),
@@ -409,9 +430,10 @@ class WooCommerceRTGFeed
     }
 
     public function productsCSV($type = 'doLive') {
-
+        if ( $type !== 'doCron' ) {
             header( 'Content-Disposition: attachment; filename=' . $this->fileName );
-            header( 'Content-Type: text/csv' );
+        }
+        header( 'Content-Type: text/csv' );
 
         if ($type === 'doStatic' && !file_exists($this->filePath[$type])) {
             $type = 'doCron';
