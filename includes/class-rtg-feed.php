@@ -244,7 +244,8 @@ class WooCommerceRTGFeed
             $margin = null;
         }else {
             $margin = is_array($margin) ? $margin[0] : $margin;
-            $margin = number_format((float) $margin, 2, '.', '');
+            $margin = (int) $margin;
+
         }
 
         return $margin;
@@ -312,8 +313,8 @@ class WooCommerceRTGFeed
                         'product_id' => $product->id,
                         'product_name' => $product->name,
                         'product_url' => $product->url,
-                        'price' => number_format((float)$product->price, 2, '.', ''),
-                        'sale_price' => number_format((float)$product->promo, 2, '.', ''),
+                        'price' => number_format((float) $product->price, 2, '.', ''),
+                        'sale_price' => number_format((float) $product->promo, 2, '.', ''),
                         'category' => $category,
                         'productImg' => $productImg,
                         'productStock' => $stock,
@@ -433,8 +434,8 @@ class WooCommerceRTGFeed
     public function productsCSV($type = 'doLive') {
         if ( $type !== 'doCron' ) {
             header( 'Content-Disposition: attachment; filename=' . $this->fileName );
+            header( 'Content-Type: text/csv' );
         }
-        header( 'Content-Type: text/csv' );
 
         if ($type === 'doStatic' && !file_exists($this->filePath[$type])) {
             $type = 'doCron';

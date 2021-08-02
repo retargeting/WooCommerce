@@ -79,27 +79,27 @@ class WooCommerceRTGProductModel extends \RetargetingSDK\Product
         if ($product->is_type([ 'simple', 'external' ]))
         {
             if(wc_tax_enabled()){
-                $regularPrice = (float)wc_get_price_including_tax( $product, array('price' => $product->get_regular_price() ) );
-                $salePrice    = (float)wc_get_price_including_tax( $product, array('price' => $product->get_sale_price() ) );
+                $regularPrice = (float) wc_get_price_including_tax( $product, array('price' => $product->get_regular_price() ) );
+                $salePrice    = (float) wc_get_price_including_tax( $product, array('price' => $product->get_sale_price() ) );
             } else {
-                $regularPrice = (float)$product->get_regular_price();
-                $salePrice    = (float)$product->get_sale_price();
+                $regularPrice = (float) $product->get_regular_price();
+                $salePrice    = (float) $product->get_sale_price();
             }
 
-            $this->setPrice(number_format($regularPrice, 2, '.', ''));
+            $this->setPrice((float) number_format($regularPrice, 2, '.', ''));
 
             if($regularPrice != $salePrice)
             {
-                $this->setPromo(number_format($salePrice, 2, '.', ''));
+                $this->setPromo((float) number_format($salePrice, 2, '.', ''));
             }
         }
         elseif ($product->is_type('variable'))
         {
             if(wc_tax_enabled()){
-                $regularPrice = (float)wc_get_price_including_tax( $product, array('price' => $product->get_price()) );
+                $regularPrice = (float) wc_get_price_including_tax( $product, array('price' => $product->get_price()) );
                 $salePrice    = 0;
             } else {
-                $regularPrice = (float)$product->get_price();
+                $regularPrice = (float) $product->get_price();
                 $salePrice    = 0;
             }
 
@@ -122,12 +122,12 @@ class WooCommerceRTGProductModel extends \RetargetingSDK\Product
 
             if ($salePrice > 0)
             {
-                $this->setPromo(number_format($salePrice, 2, '.', ''));
+                $this->setPromo(number_format((float) $salePrice, 2, '.', ''));
             }
         }
         else
         {
-            $regularPrice = (float)$product->get_price();
+            $regularPrice = (float) $product->get_price();
 
             $this->setPrice(number_format($regularPrice, 2, '.', ''));
         }
