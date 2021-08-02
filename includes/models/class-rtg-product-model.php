@@ -86,11 +86,11 @@ class WooCommerceRTGProductModel extends \RetargetingSDK\Product
                 $salePrice    = (float)$product->get_sale_price();
             }
 
-            $this->setPrice($regularPrice);
+            $this->setPrice(number_format($regularPrice, 2, '.', ''));
 
             if($regularPrice != $salePrice)
             {
-                $this->setPromo($salePrice);
+                $this->setPromo(number_format($salePrice, 2, '.', ''));
             }
         }
         elseif ($product->is_type('variable'))
@@ -118,18 +118,18 @@ class WooCommerceRTGProductModel extends \RetargetingSDK\Product
                 }
             }
 
-            $this->setPrice($regularPrice);
+            $this->setPrice(number_format($regularPrice, 2, '.', ''));
 
             if ($salePrice > 0)
             {
-                $this->setPromo($salePrice);
+                $this->setPromo(number_format($salePrice, 2, '.', ''));
             }
         }
         else
         {
             $regularPrice = (float)$product->get_price();
 
-            $this->setPrice($regularPrice);
+            $this->setPrice(number_format($regularPrice, 2, '.', ''));
         }
     }
 

@@ -244,6 +244,7 @@ class WooCommerceRTGFeed
             $margin = null;
         }else {
             $margin = is_array($margin) ? $margin[0] : $margin;
+            $margin = number_format((float) $margin, 2, '.', '');
         }
 
         return $margin;
