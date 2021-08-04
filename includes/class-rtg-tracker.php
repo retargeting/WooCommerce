@@ -29,6 +29,10 @@ class WooCommerceRTGTracker
      */
     public function __construct($options)
     {
+
+        require_once RTG_TRACKER_DIR . '/includes/models/class-rtg-category-model.php';
+        require_once RTG_TRACKER_DIR . '/includes/models/class-rtg-product-model.php';
+
         $this->options = $options;
         $this->RTGJSBuilder = new \RetargetingSDK\Javascript\Builder();
 
