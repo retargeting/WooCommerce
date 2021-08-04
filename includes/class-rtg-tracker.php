@@ -55,7 +55,7 @@ class WooCommerceRTGTracker
         add_action('woocommerce_before_main_content',       [ $this, 'category_hook' ]);
         add_action('woocommerce_before_single_product',     [ $this, 'product_hook' ], 2);
 
-        add_action('woocommerce_after_single_product',      [ $this, 'add_to_cart_v2_hook']);
+        add_action('wp_footer',      [ $this, 'add_to_cart_v2_hook']);
         add_action('woocommerce_remove_cart_item',          [ $this, 'remove_from_cart_hook' ]);
         add_action('woocommerce_after_cart',                [ $this, 'cart_hook' ]);
         add_action('woocommerce_after_checkout_form',       [ $this, 'checkout_hook' ]);
