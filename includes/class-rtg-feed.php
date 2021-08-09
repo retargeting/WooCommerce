@@ -287,6 +287,8 @@ class WooCommerceRTGFeed
                         continue;
                     }
 
+					$brand = wp_get_post_terms( $product->id, 'pa_brand', array('orderby'=>'name', 'fields' => 'names'));
+                    
                     // Check if product sale is 0
                     $this->checkPromoPrice($product);
 
@@ -315,6 +317,7 @@ class WooCommerceRTGFeed
                         'product_url' => $product->url,
                         'price' => number_format((float) $product->price, 2, '.', ''),
                         'sale_price' => number_format((float) $product->promo, 2, '.', ''),
+						'brand' => $brand[0] ?? '',
                         'category' => $category,
                         'productImg' => $productImg,
                         'productStock' => $stock,
@@ -419,7 +422,7 @@ class WooCommerceRTGFeed
             'stock' => $data['productStock'],
             'price' => $data['price'],
             'sale price' => $data['sale_price'],
-            'brand' => '',
+            'brand' => $data['brand'],
             'category' => $data['category'],
             'extra data' => json_encode([
                 'margin' => $data['margin'],
