@@ -43,6 +43,7 @@ class WooCommerceRTGFeed
 
     private $marginMeta = null;
     private $wpSeo = null;
+    private $check = '';
 
     /**
      * WooCommerceRTGFeed constructor.
@@ -202,24 +203,34 @@ class WooCommerceRTGFeed
 
         echo $this->feed->getData();
     }
+
     function getMainCategory($prod){
         $cat = $prod->category[0];
+        $taxonomy = 'product_cat';
+        $this->check = '';
+        
         if ( $this->wpSeo === null && class_exists('WPSEO_Primary_Term') ) {
+            $this->check = '_yoast_wpseo_primary_' . $taxonomy;
             $this->wpSeo = true;
-        }else if ( $this->wpSeo === null ) {
-            $this->wpSeo = false;
+            
+        }else if ( $this->wpSeo === null && class_exists('RankMath')) {
+            $this->check = 'rank_math_primary_category';
+            $this->wpSeo = true;
         }
 
-        if ( $this->wpSeo )
+        if ($this->wpSeo !== null)
         {
-            $taxonomy = 'product_cat';
-            $primary_cat_id = get_post_meta($prod->id,'_yoast_wpseo_primary_' . $taxonomy, true);
+            $primary_cat_id = get_post_meta($prod->id, $this->check, true);
             if(!empty($primary_cat_id)){
                 $primary_cat = get_term($primary_cat_id, $taxonomy);
+
                 if(isset($primary_cat->name))
+                {
                     $cat = $primary_cat;
+                }   
             }
         }
+
         return $cat->name;
     }
 
