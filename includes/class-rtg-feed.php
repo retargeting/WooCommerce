@@ -224,7 +224,7 @@ class WooCommerceRTGFeed
             if(!empty($primary_cat_id)){
                 $primary_cat = get_term($primary_cat_id, $taxonomy);
 
-                if(isset($primary_cat->name))
+                if(!empty($primary_cat->name))
                 {
                     $cat = $primary_cat;
                 }   
