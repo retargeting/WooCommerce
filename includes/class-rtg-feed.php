@@ -267,6 +267,8 @@ class WooCommerceRTGFeed
      */
     protected function getProductData($hasProductsInPage)
     {
+        wp_cache_flush();
+        
         while($hasProductsInPage)
         {
             $productsBatch = $this->getProducts()->data;
@@ -280,8 +282,7 @@ class WooCommerceRTGFeed
 
                 foreach ($productsBatch as $product)
                 {
-                    wp_cache_flush();
-
+                    
                     $product = json_decode($product);
 
                     // Check product stock, url and categories
