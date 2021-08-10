@@ -334,7 +334,7 @@ class WooCommerceRTGFeed
                         'product_url' => $product->url,
                         'price' => number_format((float) $product->price, 2, '.', ''),
                         'sale_price' => number_format((float) $product->promo, 2, '.', ''),
-						'brand' => $brand[0] ?? '',
+						'brand' => $brand ?? '',
                         'category' => $category,
                         'productImg' => $productImg,
                         'productStock' => $stock,
