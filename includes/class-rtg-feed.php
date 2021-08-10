@@ -223,9 +223,7 @@ class WooCommerceRTGFeed
             $primary_cat_id = get_post_meta($prod->id, $this->check, true);
             if(!empty($primary_cat_id)){
                 $primary_cat = get_term($primary_cat_id, $taxonomy);
-
-                if(!empty($primary_cat->name))
-                {
+				if($primary_cat instanceof WP_Error && !empty($primary_cat->name)){
                     $cat = $primary_cat;
                 }   
             }
@@ -288,6 +286,7 @@ class WooCommerceRTGFeed
                     // Check product stock, url and categories
                     if ( !$product->url ||
                         $product->price == 0 ||
+                        $product->visibility === 'private' ||
                         !wc_get_product_cat_ids($product->id)
                     ) {
                         continue;
