@@ -299,13 +299,18 @@ class WooCommerceRTGFeed
                         continue;
                     }
 
+
 					$brand = wp_get_post_terms( $product->id, 'pa_brand', array('orderby'=>'name', 'fields' => 'names'));
-                    
+
+                    if($brand instanceof WP_Error){
+                        $brand = '';
+                    }else {
+                        $brand = $brand[0];
+                    }
+
                     // Check if product sale is 0
                     $this->checkPromoPrice($product);
-
-
-
+                    
                     // Get product images
                     $images = $this->getProductImages($product);
 
