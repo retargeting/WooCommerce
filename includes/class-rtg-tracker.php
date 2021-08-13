@@ -87,7 +87,7 @@ class WooCommerceRTGTracker
 
         echo "
                 <script>
-                window.onload = 
+                window.addEventListener(\"load\",
                 function(){
                     if(_ra === undefined) {
                         _ra = _ra || {};
@@ -96,17 +96,18 @@ class WooCommerceRTGTracker
                     _ra.addToCartInfo = $addToCart;
 
                     if($quantitySelector !== null) {
-                        $quantitySelector.onchange = function() {
+                        $quantitySelector.addEventListener(\"change\", function() {
                             _ra.addToCartInfo.quantity = this.value;
-                        }
+                        });
                     }
                     if($addToCartSelector !== null) {
-                        $addToCartSelector.onclick = function(){
+                        $addToCartSelector.addEventListener(\"click\",function(){
 
                             _ra.addToCart(_ra.addToCartInfo.product_id, _ra.addToCartInfo.quantity, _ra.addToCartInfo.variation);
-                        }}
+                        });
+                    }
                     
-                }
+                });
                 </script>
                     ";
     }
