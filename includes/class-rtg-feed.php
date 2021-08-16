@@ -50,6 +50,8 @@ class WooCommerceRTGFeed
      */
     public function __construct()
     {
+        set_time_limit(300);
+        
         $this->token = isset( $_GET['token'] ) ? $_GET['token'] : null;
 
         $this->fileName = 'retargeting.csv';
