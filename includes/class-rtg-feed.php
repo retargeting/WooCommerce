@@ -290,6 +290,7 @@ class WooCommerceRTGFeed
                         empty($product->name) ||
                         $product->price == 0 ||
                         $product->visibility === 'private' ||
+						$product->visibility === 'trash' ||
                         !wc_get_product_cat_ids($product->id)
                     ) {
                         continue;
