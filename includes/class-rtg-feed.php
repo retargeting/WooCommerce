@@ -149,7 +149,7 @@ class WooCommerceRTGFeed
             $productData['is_in_stock'] = $product->is_in_stock();
             $productData['visibility'] = $product->get_status();
 
-            $this->feed->addProduct(json_encode($productData, JSON_PRETTY_PRINT));
+            $this->feed->addProduct(json_encode($productData, JSON_UNESCAPED_UNICODE));
         }
         return json_decode($this->feed->getData());
     }
@@ -287,6 +287,7 @@ class WooCommerceRTGFeed
 
                     // Check product stock, url and categories
                     if ( !$product->url ||
+                        empty($product->name) ||
                         $product->price == 0 ||
                         $product->visibility === 'private' ||
                         !wc_get_product_cat_ids($product->id)
@@ -448,7 +449,7 @@ class WooCommerceRTGFeed
                 'categories' => $data['categoryNames'],
                 'variations' => $data['productVariations'],
                 'in_supplier_stock' => null
-            ])
+            ], JSON_UNESCAPED_UNICODE)
         ), ',', '"');
     }
 
