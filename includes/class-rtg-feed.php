@@ -234,7 +234,7 @@ class WooCommerceRTGFeed
         return $cat->name;
     }
 
-    protected function getMargin($product){
+    protected function getCost($product){
         if ($this->marginMeta === null) {
             $margin = get_post_meta( $product, '_wc_cog_cost' );
             $this->marginMeta = '_wc_cog_cost';
@@ -323,8 +323,11 @@ class WooCommerceRTGFeed
                     $stock = $product->visibility === 'publish' && $product->is_in_stock ?
                         1 : 0;
 
-                    $margin = $this->getMargin($product->id);
+                    $acp = $this->getCost($product->id);
 
+                    $margin = empty($acp) ? null : (
+                        $acp / ( empty($product->promo) ? $product->price : $product->promo )
+                    ) * 100;
 
                     $category = $this->getMainCategory($product);
                     // Get product categories
@@ -342,6 +345,7 @@ class WooCommerceRTGFeed
                         'productImg' => $productImg,
                         'productStock' => $stock,
                         'images' => $images,
+                        'acq_price' => $acp,
                         'margin' => $margin,
                         'categoryNames' => $categoryNames,
                         'productVariations' => $productVariations
@@ -368,13 +372,20 @@ class WooCommerceRTGFeed
                 continue;
             }
 
-            $margin = $this->getMargin($single_variation->get_id());
+            $acp = $this->getCost($single_variation->get_id());
+
+            $margin = empty($acp)? null : ( $acp / (
+                empty($single_variation->get_sale_price()) ?
+                    $single_variation->get_price() : $single_variation->get_sale_price()
+                    )
+                ) * 100;
 
             $productVariations[] = [
                 'id' => $single_variation->get_id(),
                 'price' => $single_variation->get_price(),
                 'sale price' => $single_variation->get_sale_price(),
                 'stock' => $single_variation->get_stock_quantity(),
+                'acq_price' => $acp,
                 'margin' => $margin,
                 'in_supplier_stock' => null
             ];
@@ -445,6 +456,7 @@ class WooCommerceRTGFeed
             'brand' => $data['brand'],
             'category' => $data['category'],
             'extra data' => json_encode([
+                'acq_price' => $data['acq_price'],
                 'margin' => $data['margin'],
                 'media_gallery' => $data['images'],
                 'categories' => $data['categoryNames'],
