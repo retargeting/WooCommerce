@@ -346,7 +346,7 @@ class WooCommerceRTGFeed
                         'productStock' => $stock,
                         'images' => $images,
                         'acq_price' => $acp,
-                        'margin' => $margin,
+                        'margin' => $margin === null ? null : number_format($margin, 2, '.', ''),
                         'categoryNames' => $categoryNames,
                         'productVariations' => $productVariations
                     ];
@@ -386,7 +386,7 @@ class WooCommerceRTGFeed
                 'sale price' => $single_variation->get_sale_price(),
                 'stock' => $single_variation->get_stock_quantity(),
                 'acq_price' => $acp,
-                'margin' => $margin,
+                'margin' => $margin === null ? null : number_format($margin, 2, '.', ''),
                 'in_supplier_stock' => null
             ];
         }
