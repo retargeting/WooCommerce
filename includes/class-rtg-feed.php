@@ -325,9 +325,9 @@ class WooCommerceRTGFeed
 
                     $acp = $this->getCost($product->id);
 
-                    $margin = empty($acp) ? null : (
+                    $margin = empty($acp) ? null : 100 - ((
                         $acp / ( empty($product->promo) ? $product->price : $product->promo )
-                    ) * 100;
+                    ) * 100 );
 
                     $category = $this->getMainCategory($product);
                     // Get product categories
@@ -374,11 +374,11 @@ class WooCommerceRTGFeed
 
             $acp = $this->getCost($single_variation->get_id());
 
-            $margin = empty($acp)? null : ( $acp / (
+            $margin = empty($acp)? null : ( $acp / 100 - ((
                 empty($single_variation->get_sale_price()) ?
                     $single_variation->get_price() : $single_variation->get_sale_price()
                     )
-                ) * 100;
+                ) * 100);
 
             $productVariations[] = [
                 'id' => $single_variation->get_id(),
