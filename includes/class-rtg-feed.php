@@ -325,7 +325,7 @@ class WooCommerceRTGFeed
 
                     $acp = $this->getCost($product->id);
 
-                    $margin = empty($acp) ? null : 100 - ((
+                    $margin = empty($acp) ? null : (float) 100 - ((
                         $acp / ( empty($product->promo) ? $product->price : $product->promo )
                     ) * 100 );
 
@@ -346,7 +346,7 @@ class WooCommerceRTGFeed
                         'productStock' => $stock,
                         'images' => $images,
                         'acq_price' => $acp,
-                        'margin' => $margin === null ? null : number_format($margin, 2, '.', ''),
+                        'margin' => $margin === null ? null : number_format((float) $margin, 2, '.', ''),
                         'categoryNames' => $categoryNames,
                         'productVariations' => $productVariations
                     ];
@@ -374,8 +374,8 @@ class WooCommerceRTGFeed
 
             $acp = $this->getCost($single_variation->get_id());
 
-            $margin = empty($acp)? null : ( $acp / 100 - ((
-                empty($single_variation->get_sale_price()) ?
+            $margin = empty($acp) ? null : (float) 100 - ((
+                $acp / ( empty($single_variation->get_sale_price()) ?
                     $single_variation->get_price() : $single_variation->get_sale_price()
                     )
                 ) * 100);
@@ -386,7 +386,7 @@ class WooCommerceRTGFeed
                 'sale price' => $single_variation->get_sale_price(),
                 'stock' => $single_variation->get_stock_quantity(),
                 'acq_price' => $acp,
-                'margin' => $margin === null ? null : number_format($margin, 2, '.', ''),
+                'margin' => $margin === null ? null : number_format((float) $margin, 2, '.', ''),
                 'in_supplier_stock' => null
             ];
         }
