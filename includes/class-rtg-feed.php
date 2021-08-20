@@ -287,11 +287,11 @@ class WooCommerceRTGFeed
 
                     // Check product stock, url and categories
                     if ( !$product->url ||
-                        empty($product->name) ||
+                        empty( $product->name ) ||
                         $product->price == 0 ||
                         $product->visibility === 'private' ||
 						$product->visibility === 'trash' ||
-                        !wc_get_product_cat_ids($product->id)
+                        empty( $product->category )
                     ) {
                         continue;
                     }
@@ -332,7 +332,9 @@ class WooCommerceRTGFeed
                     $category = $this->getMainCategory($product);
                     // Get product categories
 
-                    $categoryNames = str_replace(',', ' |', strip_tags(wc_get_product_category_list($product->id)));
+                    foreach($product->category as $key=>$value){
+                        $categoryNames[$value->id] = $value->name;
+                    }
 
                     yield [
                         'product_id' => $product->id,
@@ -467,13 +469,14 @@ class WooCommerceRTGFeed
     }
 
     public function productsCSV($type = 'doLive') {
-        if ( $type !== 'doCron' ) {
-            header( 'Content-Disposition: attachment; filename=' . $this->fileName );
-            header( 'Content-Type: text/csv' );
-        }
 
         if ($type === 'doStatic' && !file_exists($this->filePath[$type])) {
             $type = 'doCron';
+        }
+
+        if ( $type !== 'doCron' ) {
+            header( 'Content-Disposition: attachment; filename=' . $this->fileName );
+            header( 'Content-Type: text/csv' );
         }
 
         $upstream = fopen($this->filePath[$type], $this->fileRule[$type]);
