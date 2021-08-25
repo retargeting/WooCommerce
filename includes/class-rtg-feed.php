@@ -231,7 +231,7 @@ class WooCommerceRTGFeed
             }
         }
 
-        return $cat->name;
+        return $cat;
     }
 
     protected function getCost($product){
@@ -290,8 +290,7 @@ class WooCommerceRTGFeed
                         empty( $product->name ) ||
                         $product->price == 0 ||
                         $product->visibility === 'private' ||
-						$product->visibility === 'trash' ||
-                        empty( $product->category )
+						$product->visibility === 'trash'
                     ) {
                         continue;
                     }
@@ -343,7 +342,7 @@ class WooCommerceRTGFeed
                         'price' => number_format((float) $product->price, 2, '.', ''),
                         'sale_price' => number_format((float) $product->promo, 2, '.', ''),
 						'brand' => $brand ?? '',
-                        'category' => $category,
+                        'category' => $category->name ?? "Root",
                         'productImg' => $productImg,
                         'productStock' => $stock,
                         'images' => $images,
