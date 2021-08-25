@@ -434,10 +434,25 @@ class WooCommerceRTGFeed
      */
     protected function getProductImages($product)
     {
-        return [
-            $product->images,
-            $product->img
-        ];
+        $images = [];
+        
+        if( is_array($product->images) ){
+            foreach ($product->images as $k => $v) {
+                $images[] = $v;
+            }
+        } else {
+            $images[] = $product->images;
+        }
+
+        if( is_array( $product->img ) ){
+            foreach ( $product->img as $k => $v ) {
+                $images[] = $v;
+            }
+        } else {
+            $images[] = $product->img;
+        }
+
+        return $images;
     }
 
     /**
