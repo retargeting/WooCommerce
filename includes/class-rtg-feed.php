@@ -209,7 +209,6 @@ class WooCommerceRTGFeed
     function getMainCategory($prod){
         $cat = $prod->category[0];
         $taxonomy = 'product_cat';
-        $this->check = '';
         
         if ( $this->wpSeo === null && class_exists('WPSEO_Primary_Term') ) {
             $this->check = '_yoast_wpseo_primary_' . $taxonomy;
@@ -225,12 +224,13 @@ class WooCommerceRTGFeed
             $primary_cat_id = get_post_meta($prod->id, $this->check, true);
             if(!empty($primary_cat_id)){
                 $primary_cat = get_term($primary_cat_id, $taxonomy);
-				if($primary_cat instanceof WP_Error && !empty($primary_cat->name)){
+                
+				if(!($primary_cat instanceof WP_Error) && !empty($primary_cat->name)){
                     $cat = $primary_cat;
                 }   
             }
         }
-
+        
         return $cat;
     }
 
