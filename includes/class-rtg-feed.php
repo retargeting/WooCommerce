@@ -326,7 +326,7 @@ class WooCommerceRTGFeed
 
                     $category = $this->getMainCategory($product);
                     // Get product categories
-
+                    $categoryNames = [];
                     foreach($product->category as $key=>$value){
                         if($category->name !== $value->name) {
                             $categoryNames[$value->id] = $value->name;
