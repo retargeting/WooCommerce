@@ -324,15 +324,13 @@ class WooCommerceRTGFeed
 
                     $acp = $this->getCost($product->id);
 
-                    $margin = empty($acp) ? null : (float) 100 - ((
-                        $acp / ( empty($product->promo) ? $product->price : $product->promo )
-                    ) * 100 );
-
                     $category = $this->getMainCategory($product);
                     // Get product categories
 
                     foreach($product->category as $key=>$value){
-                        $categoryNames[$value->id] = $value->name;
+                        if($category->name !== $value->name) {
+                            $categoryNames[$value->id] = $value->name;
+                        }
                     }
 
                     yield [
@@ -347,7 +345,6 @@ class WooCommerceRTGFeed
                         'productStock' => $stock,
                         'images' => $images,
                         'acq_price' => $acp,
-                        'margin' => $margin === null ? null : number_format((float) $margin, 2, '.', ''),
                         'categoryNames' => $categoryNames,
                         'productVariations' => $productVariations
                     ];
@@ -375,19 +372,12 @@ class WooCommerceRTGFeed
 
             $acp = $this->getCost($single_variation->get_id());
 
-            $margin = empty($acp) ? null : (float) 100 - ((
-                $acp / ( empty($single_variation->get_sale_price()) ?
-                    $single_variation->get_price() : $single_variation->get_sale_price()
-                    )
-                ) * 100);
-
             $productVariations[] = [
                 'id' => $single_variation->get_id(),
                 'price' => $single_variation->get_price(),
                 'sale price' => $single_variation->get_sale_price(),
                 'stock' => $single_variation->get_stock_quantity(),
                 'acq_price' => $acp,
-                'margin' => $margin === null ? null : number_format((float) $margin, 2, '.', ''),
                 'in_supplier_stock' => null
             ];
         }
@@ -473,9 +463,9 @@ class WooCommerceRTGFeed
             'category' => $data['category'],
             'extra data' => json_encode([
                 'acq_price' => $data['acq_price'],
+                'categories' => $data['categoryNames'],
                 'margin' => $data['margin'],
                 'media_gallery' => $data['images'],
-                'categories' => $data['categoryNames'],
                 'variations' => $data['productVariations'],
                 'in_supplier_stock' => null
             ], JSON_UNESCAPED_UNICODE)
