@@ -464,7 +464,7 @@ class WooCommerceRTGFeed
             'extra data' => json_encode([
                 'acq_price' => $data['acq_price'],
                 'categories' => $data['categoryNames'],
-                'margin' => $data['margin'],
+                'margin' => null,
                 'media_gallery' => $data['images'],
                 'variations' => $data['productVariations'],
                 'in_supplier_stock' => null
