@@ -371,16 +371,19 @@ class WooCommerceRTGFeed
         foreach ($variable as $value) {
             $single_variation = new WC_Product_Variation($value);
 
-            if ($single_variation->get_stock_quantity() === null) {
+            if ($single_variation->get_stock_quantity() === null || $single_variation->get_price() === 0) {
                 continue;
             }
 
             $acp = $this->getCost($single_variation->get_id());
 
+            $sp = empty($single_variation->get_sale_price()) ?
+                $single_variation->get_price() : $single_variation->get_sale_price();
+            
             $productVariations[] = [
-                'id' => $single_variation->get_id(),
+                'code' => $single_variation->get_id(),
                 'price' => $single_variation->get_price(),
-                'sale price' => $single_variation->get_sale_price(),
+                'sale_price' => $sp,
                 'stock' => $single_variation->get_stock_quantity(),
                 'acq_price' => $acp,
                 'in_supplier_stock' => null
@@ -478,7 +481,8 @@ class WooCommerceRTGFeed
     }
 
     public function productsCSV($type = 'doLive') {
-
+        ini_set('memory_limit', '-1');
+        
         if ($type === 'doStatic' && !file_exists($this->filePath[$type])) {
             $type = 'doCron';
         }

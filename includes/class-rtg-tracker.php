@@ -51,8 +51,8 @@ class WooCommerceRTGTracker
 
         add_action('wp_head',   [ $this, 'header_hook' ]);
         add_action('wp_footer', [ $this, 'footer_hook' ], 9999);
-
-        add_action('woocommerce_before_main_content',       [ $this, 'category_hook' ]);
+        //woocommerce_before_main_content
+        add_action('wp_footer',       [ $this, 'category_hook' ]);
         add_action('woocommerce_before_single_product',     [ $this, 'product_hook' ], 2);
 
         add_action('wp_footer',      [ $this, 'add_to_cart_v2_hook']);
@@ -167,6 +167,17 @@ class WooCommerceRTGTracker
         require_once RTG_TRACKER_DIR . '/includes/models/class-rtg-category-model.php';
 
         $RTGCategory = new WooCommerceRTGCategoryModel();
+
+        if($RTGCategory->getId() === '-1')
+		{
+			$ctID = get_queried_object();
+			
+			$category = get_term_by('name', $ctID->post_title, 'product_cat');
+            
+			if( $category->term_id !== null ){
+				$RTGCategory = new WooCommerceRTGCategoryModel($category->term_id);
+			}
+		}
 
         if($RTGCategory->getId() != '-1')
         {
