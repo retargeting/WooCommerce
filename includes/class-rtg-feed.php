@@ -227,6 +227,7 @@ class WooCommerceRTGFeed
                 
 				if(!($primary_cat instanceof WP_Error) && !empty($primary_cat->name)){
                     $cat = $primary_cat;
+					$cat->id = $primary_cat->term_id;
                 }   
             }
         }
@@ -237,6 +238,7 @@ class WooCommerceRTGFeed
     protected function getCost($product){
         if ($this->marginMeta === null) {
             $margin = get_post_meta( $product, '_wc_cog_cost' );
+            
             $this->marginMeta = '_wc_cog_cost';
 
             if (empty($margin)) {
@@ -326,12 +328,16 @@ class WooCommerceRTGFeed
 
                     $category = $this->getMainCategory($product);
                     // Get product categories
-                    $categoryNames = [];
+                    
+					$categoryNames = [
+                        $category->id => $category->name
+                    ];
+					
                     foreach($product->category as $key=>$value){
                         /* if($category->name !== $value->name) { } */
                         $categoryNames[$value->id] = $value->name;
                     }
-
+					
                     yield [
                         'product_id' => $product->id,
                         'product_name' => $product->name,
