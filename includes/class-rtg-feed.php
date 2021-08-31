@@ -313,7 +313,7 @@ class WooCommerceRTGFeed
                     }
 
                     // Check if product sale is 0
-                    $this->checkPromoPrice($product);
+                    $promo = $this->checkPromoPrice($product);
                     
                     // Get product images
                     $images = $this->getProductImages($product);
@@ -343,7 +343,7 @@ class WooCommerceRTGFeed
                         'product_name' => $product->name,
                         'product_url' => $product->url,
                         'price' => number_format((float) $product->price, 2, '.', ''),
-                        'sale_price' => number_format((float) $product->promo, 2, '.', ''),
+                        'sale_price' => number_format((float) $promo, 2, '.', ''),
 						'brand' => $brand ?? '',
                         'category' => $category->name ?? "Root",
                         'productImg' => $productImg,
@@ -421,9 +421,10 @@ class WooCommerceRTGFeed
      */
     protected function checkPromoPrice($product)
     {
-        if ($product->promo == 0 || empty($product->promo)) {
-            $product->promo = $product->price;
+        if (empty($product->promo)) {
+            return $product->price;
         }
+        return $product->promo;
     }
 
     /**
