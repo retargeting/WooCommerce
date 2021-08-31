@@ -31,11 +31,11 @@ class WooCommerceRTGIntegration extends WC_Integration
      */
     protected $rtgLinks = [
         'account-api' => [
-            '<a href="https://retargeting.biz/admin/module/settings/docs-and-api" target="_blank" rel="noopener noreferrer">',
+            '<a href="https://retargeting.app/en/settings/account/tracking-keys" target="_blank" rel="noopener noreferrer">',
             '</a>'
         ],
         'implementation-general' => [
-            '<a href="https://retargeting.biz/plugins/custom/general" target="_blank" rel="noopener noreferrer">',
+            '<a href="https://retargeting.biz/en/plugins/custom" target="_blank" rel="noopener noreferrer">',
             '</a>'
         ],
         'feed' => [
