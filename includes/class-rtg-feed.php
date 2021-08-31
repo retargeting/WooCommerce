@@ -299,7 +299,8 @@ class WooCommerceRTGFeed
 
                     // Check if product has image
                     $productImg = $this->getProductImage($product);
-                    if (!$productImg) {
+
+                    if ( !$productImg || !filter_var($productImg, FILTER_VALIDATE_URL) ) {
                         continue;
                     }
 
