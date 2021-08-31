@@ -298,7 +298,10 @@ class WooCommerceRTGFeed
                     }
 
                     // Check if product has image
-                    $productImg = $this->getProductImage($product);
+                    $productImg = str_replace(
+                        ['″', ' '],
+                        ['%e2%80%b3', '%20'],
+                        $this->getProductImage($product));
 
                     if ( !$productImg || !filter_var($productImg, FILTER_VALIDATE_URL) ) {
                         continue;
@@ -342,7 +345,10 @@ class WooCommerceRTGFeed
                     yield [
                         'product_id' => $product->id,
                         'product_name' => $product->name,
-                        'product_url' => $product->url,
+                        'product_url' => str_replace(
+                            ['″', ' '],
+                            ['%e2%80%b3', '%20'],
+                            $product->url ),
                         'price' => number_format((float) $product->price, 2, '.', ''),
                         'sale_price' => number_format((float) $promo, 2, '.', ''),
 						'brand' => $brand ?? '',
