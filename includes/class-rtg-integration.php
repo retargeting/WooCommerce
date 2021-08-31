@@ -35,7 +35,7 @@ class WooCommerceRTGIntegration extends WC_Integration
             '</a>'
         ],
         'implementation-general' => [
-            '<a href="https://retargeting.biz/plugins/custom" target="_blank" rel="noopener noreferrer">',
+            '<a href="https://retargeting.biz/plugins/woocommerce" target="_blank" rel="noopener noreferrer">',
             '</a>'
         ],
         'feed' => [
