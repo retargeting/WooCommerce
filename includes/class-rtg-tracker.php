@@ -88,7 +88,7 @@ class WooCommerceRTGTracker
         $quantitySelector = "document.querySelector(\"input[id ^= '$quantityInputId']\")";
 
         echo "
-                <script>
+                <script async>
                 window.addEventListener(\"load\",
                 function(){
                     if(_ra === undefined) {

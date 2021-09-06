@@ -78,8 +78,9 @@ class WooCommerceRTG
 
     function RTG_CRON_FUNC() {
         $_GET['rtg-feed'] = 'products-cron';
-        $_GET['isCronInternal'] = 'true';
-        $this->genFeed();
+        $res = wp_remote_request(get_site_url(), $_GET);
+        // $_GET['isCronInternal'] = 'true';
+        // $this->genFeed();
     }
     /* CRON JOBS STOP */
     function rtgDisable(){
@@ -130,6 +131,8 @@ class WooCommerceRTG
                     break;
                 case 'products-cron':
                 case 'products-cron-now':
+                    $res = wp_remote_request(get_site_url(), $_GET);
+                    exit ;
                     $this->doOption('rtg_products_feed_cron', [
                         $RTGFeed, 'productsCSV','doCron'
                     ]);

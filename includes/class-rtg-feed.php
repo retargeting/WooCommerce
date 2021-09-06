@@ -428,7 +428,7 @@ class WooCommerceRTGFeed
      */
     protected function checkPromoPrice($product)
     {
-        if (empty($product->promo)) {
+        if ( empty($product->promo) ) {
             return $product->price;
         }
         return $product->promo;
