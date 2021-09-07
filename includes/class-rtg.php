@@ -174,7 +174,6 @@ class WooCommerceRTG
      */
     private function isFeed()
     {
-        return isset($_GET['rtg-feed']) &&
-            in_array( $_GET['rtg-feed'], $this->getList );
+        return isset( $_GET['rtg-feed'] ) && in_array( $_GET['rtg-feed'], $this->getList );
     }
 }

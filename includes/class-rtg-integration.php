@@ -153,6 +153,10 @@ class WooCommerceRTGIntegration extends WC_Integration
                 'default'       => 'no'
             ]
         ];
+        if( isset($_POST["woocommerce_rtg_tracker_rtg_products_feed_cron"]) && !wp_next_scheduled( 'RTG_CRON_FEED' ) )
+        {
+            wp_schedule_event( time(), 'RTG_CRON_SCHEDULES', 'RTG_CRON_FEED' );
+        }
     }
 
     /**
