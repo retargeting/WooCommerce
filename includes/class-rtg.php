@@ -130,13 +130,13 @@ class WooCommerceRTG
                     ]);
                     break;
                 case 'products-cron':
-                case 'products-cron-now':
-                    $res = wp_remote_request(get_site_url(), $_GET);
-                    exit ;
                     $this->doOption('rtg_products_feed_cron', [
                         $RTGFeed, 'productsCSV','doCron'
                     ]);
                     break;
+                case 'products-cron-now':
+                    $res = wp_remote_request(get_site_url(), $_GET);
+                    break ;
                 case 'products-static':
                     $this->doOption('rtg_products_feed_cron',[
                         $RTGFeed, 'productsCSV','doStatic'

@@ -489,6 +489,7 @@ class WooCommerceRTGFeed
     }
 
     public function productsCSV($type = 'doLive') {
+        
         ini_set('memory_limit', '-1');
         
         if ($type === 'doStatic' && !file_exists($this->filePath[$type])) {
