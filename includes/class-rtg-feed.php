@@ -207,7 +207,7 @@ class WooCommerceRTGFeed
     }
 
     function getMainCategory($prod){
-        $cat = $prod->category[0];
+        $cat = end($prod->category);
         $taxonomy = 'product_cat';
         
         if ( $this->wpSeo === null && class_exists('WPSEO_Primary_Term') ) {
