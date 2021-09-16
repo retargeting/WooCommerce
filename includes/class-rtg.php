@@ -95,6 +95,7 @@ class WooCommerceRTG
 
     function rtgInstall(){
         if($this->getOption('rtg_products_feed_cron') && !wp_next_scheduled( 'RTG_CRON_FEED' )){
+            chmod(RTG_TRACKER_DIR, 0755);
             wp_schedule_event( time(), 'RTG_CRON_SCHEDULES', 'RTG_CRON_FEED' );
         }
     }
