@@ -323,7 +323,7 @@ class WooCommerceRTGFeed
                     $images = $this->getProductImages($product);
 
                     // Get product variations
-                    $productVariations = $this->getProductVariations($product->id);
+                    $productVariations = $this->getProductVariations($product);
                     
                     $stock = $product->visibility === 'publish' && $product->is_in_stock ?
                         1 : 0;
@@ -372,7 +372,7 @@ class WooCommerceRTGFeed
      */
     protected function getProductVariations($productId)
     {
-        $variable = (new WC_Product_Variable($productId))->get_children();
+        $variable = (new WC_Product_Variable($productId->id))->get_children();
 
         $productVariations = [];
 
@@ -385,12 +385,15 @@ class WooCommerceRTGFeed
 
             $acp = $this->getCost($single_variation->get_id());
 
+            $price = empty($single_variation->get_price()) ?
+				$productId->price : $single_variation->get_price();
+			
             $sp = empty($single_variation->get_sale_price()) ?
-                $single_variation->get_price() : $single_variation->get_sale_price();
-            
+                $price : $single_variation->get_sale_price();
+                
             $productVariations[] = [
                 'code' => $single_variation->get_id(),
-                'price' => $single_variation->get_price(),
+                'price' => $price,
                 'sale_price' => $sp,
                 'stock' => $single_variation->get_stock_quantity(),
                 'acq_price' => $acp,
