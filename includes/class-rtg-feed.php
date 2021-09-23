@@ -537,7 +537,7 @@ class WooCommerceRTGFeed
 
         fclose($upstream);
 
-        $type === 'doCron' && rename( $this->filePath[$type], $this->filePath['doStatic'] );
+        $type === 'doCron' && copy( $this->filePath[$type], $this->filePath['doStatic'] );
 
         if ( $type === 'doCron' && !isset($_GET['isCronInternal']) ) {
             header( 'Content-Type: text/json' );
