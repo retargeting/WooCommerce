@@ -267,10 +267,10 @@ class WooCommerceRTGFeed
      * @param $hasProductsInPage
      * @return Generator
      */
+    private $isFirst = null;
     protected function getProductData($hasProductsInPage)
     {
         wp_cache_flush();
-        
         while($hasProductsInPage)
         {
             $productsBatch = $this->getProducts()->data;
@@ -287,6 +287,13 @@ class WooCommerceRTGFeed
                     
                     $product = json_decode($product);
 
+                    if ($this->isFirst === null ) { 
+                        $this->isFirst = $product->id;
+                    }else if ($this->isFirst === $product->id){
+                        $hasProductsInPage = false;
+                        continue;
+                    }
+                    
                     // Check product stock, url and categories
                     if ( !$product->url ||
                         empty( $product->name ) ||

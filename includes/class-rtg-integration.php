@@ -120,7 +120,7 @@ class WooCommerceRTGIntegration extends WC_Integration
                 'default'       => ''
             ],
             'rtg_help_pages' => [
-                'title'         => __('Price label id', 'woo-rtg-tracker'),
+                'title'         => __('Visit Help Page', 'woo-rtg-tracker'),
                 'type'          => 'multiselect',
                 'options'       => $this->get_pages_map(),
                 'description'   => __( 'Choose the pages on which the "visitHelpPage" event should fire.', 'woo-rtg-tracker' ),
