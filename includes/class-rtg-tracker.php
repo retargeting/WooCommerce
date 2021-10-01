@@ -60,6 +60,7 @@ class WooCommerceRTGTracker
         add_action('woocommerce_after_cart',                [ $this, 'cart_hook' ]);
         add_action('woocommerce_after_checkout_form',       [ $this, 'checkout_hook' ]);
         add_action('woocommerce_thankyou',                  [ $this, 'order_hook' ]);
+        add_action('wp_footer',                             [ $this, 'order_hook' ]);
     }
 
     /**
@@ -274,16 +275,32 @@ class WooCommerceRTGTracker
      *
      * @param $orderId
      */
+    private $thankYou = true;
     public function order_hook($orderId)
     {
-        require_once RTG_TRACKER_DIR . '/includes/models/class-rtg-order-model.php';
+        if ($this->thankYou) {
+            $pagename = get_query_var('pagename');
+            if ($pagename === "checkout" && empty($orderId)) {
+                global $wp;
+                if(!empty($wp->query_vars['order-received'])){
+                    $orderId = $wp->query_vars['order-received'];
+                }else{
+                    $orderId = null;
+                }
+            }
+            
+            if ($orderId !== null) {
+                require_once RTG_TRACKER_DIR . '/includes/models/class-rtg-order-model.php';
 
-        $RTGOrder = new WooCommerceRTGOrderModel($orderId);
+                $RTGOrder = new WooCommerceRTGOrderModel($orderId);
 
-        if (!empty($RTGOrder->getOrderNo()))
-        {
-            $this->RTGJSBuilder->saveOrder($RTGOrder);
-            $this->RTGRecEng->markThankYouPage();
+                if (!empty($RTGOrder->getOrderNo()))
+                {
+                    $this->RTGJSBuilder->saveOrder($RTGOrder);
+                    $this->RTGRecEng->markThankYouPage();
+                }
+            }
+            $this->thankYou = false;
         }
     }
 }
