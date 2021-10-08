@@ -455,18 +455,26 @@ class WooCommerceRTGFeed
         
         if( is_array($product->images) ){
             foreach ($product->images as $k => $v) {
-                $images[] = $v;
+                $images[] = str_replace(
+                            ['″', ' '],
+                            ['%e2%80%b3', '%20'], $v);
             }
         } else {
-            $images[] = $product->images;
+            $images[] = str_replace(
+                            ['″', ' '],
+                            ['%e2%80%b3', '%20'], $product->images);
         }
 
         if( is_array( $product->img ) ){
             foreach ( $product->img as $k => $v ) {
-                $images[] = $v;
+                $images[] = str_replace(
+                            ['″', ' '],
+                            ['%e2%80%b3', '%20'], $v);
             }
         } else {
-            $images[] = $product->img;
+            $images[] = str_replace(
+                            ['″', ' '],
+                            ['%e2%80%b3', '%20'], $product->img);
         }
 
         return $images;
@@ -501,6 +509,7 @@ class WooCommerceRTGFeed
 
     public function productsCSV($type = 'doLive') {
         
+        ini_set('max_execution_time', 0);
         ini_set('memory_limit', '-1');
         set_time_limit(0);
         
