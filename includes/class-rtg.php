@@ -77,7 +77,7 @@ class WooCommerceRTG
     }
 
     function RTG_CRON_FUNC() {
-        //$_GET['rtg-feed'] = 'products-cron';
+        $_GET['rtg-feed'] = 'products-cron';
         //$res = wp_remote_request(get_site_url(), $_GET);
         $_GET['isCronInternal'] = 'true';
         $this->genFeed();

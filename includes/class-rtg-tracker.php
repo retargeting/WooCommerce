@@ -60,7 +60,7 @@ class WooCommerceRTGTracker
         add_action('woocommerce_after_cart',                [ $this, 'cart_hook' ]);
         add_action('woocommerce_after_checkout_form',       [ $this, 'checkout_hook' ]);
         add_action('woocommerce_thankyou',                  [ $this, 'order_hook' ]);
-        add_action('wp_footer',                             [ $this, 'order_hook' ]);
+        // add_action('wp_footer',                             [ $this, 'order_hook' ]);
     }
 
     /**
@@ -173,14 +173,20 @@ class WooCommerceRTGTracker
 		{
 			$ctID = get_queried_object();
 			
-			$category = get_term_by('name', $ctID->post_title, 'product_cat');
-            $category = $category->term_id === null ?
+			$category = $ctID !== null ? get_term_by('name', $ctID->post_title, 'product_cat') : null;
+            $category = $category !== null && $category->term_id === null ?
 				get_term_by('name', get_post($ctID->post_parent)->post_title, 'product_cat') : $category;
             
-			if( $category->term_id !== null ){
+			if( $category !== null && $category->term_id !== null ){
 				$RTGCategory = new WooCommerceRTGCategoryModel($category->term_id);
 			}
 		}
+
+        if($RTGCategory->getId() != '-1')
+        {
+            $this->RTGJSBuilder->sendCategory($RTGCategory);
+            $this->RTGRecEng->markCategoryPage();
+        }
 
         if($RTGCategory->getId() != '-1')
         {
