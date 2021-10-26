@@ -12,13 +12,13 @@ class WooCommerceRTG
 
         if($this->getOption('rtg_products_feed_cron')){
             /* RTG CRON START */
-            $CRON = wp_next_scheduled( 'RTG_CRON_FEED' );
+            /* $CRON = wp_next_scheduled( 'RTG_CRON_FEED' ); */
             add_filter( 'cron_schedules', [$this, 'RTG_CRON_SCHEDULES'] );
- 
+ /*
             if ( !$CRON ) {
                  wp_schedule_event( time(), 'RTG_CRON_SCHEDULES', 'RTG_CRON_FEED' );
             }
- 
+ */
             add_action( 'RTG_CRON_FEED', [ $this, 'RTG_CRON_FUNC' ] );           
         }
         /* RTG CRON END */
