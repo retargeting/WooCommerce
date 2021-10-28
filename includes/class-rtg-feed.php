@@ -310,11 +310,6 @@ class WooCommerceRTGFeed
                         ['%e2%80%b3', '%20'],
                         $this->getProductImage($product));
 
-                    if ( !$productImg || !filter_var($productImg, FILTER_VALIDATE_URL) ) {
-                        continue;
-                    }
-
-
 					$brand = wp_get_post_terms( $product->id, 'pa_brand', array('orderby'=>'name', 'fields' => 'names'));
 
                     if($brand instanceof WP_Error){
