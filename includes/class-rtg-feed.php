@@ -337,6 +337,13 @@ class WooCommerceRTGFeed
                     
 					$categoryNames = [ ];
 					
+					$categoryN = wc_get_product_term_ids( $product->id, 'product_cat' );
+
+					foreach ($categoryN as $k => $v) {
+						$c = get_term($v, 'product_cat');
+						$categoryNames[$v] = $c->name;
+					}
+					
                     foreach($product->category as $key=>$value){
                         $categoryNames[$value->id] = $value->name;
                     }
