@@ -263,6 +263,19 @@ class WooCommerceRTGFeed
 
         return $margin;
     }
+    private $checkHTTP = null;
+    public function fixURL($url)
+    {
+        $newURL = explode("/",$url);
+        $this->checkHTTP = $this->checkHTTP === null ?
+            !empty(array_intersect(["https:","http:"], $newURL)) : $this->checkHTTP;
+        foreach ($newURL as $k=>$v ){
+            if (!$this->checkHTTP || $this->checkHTTP && $k > 2) {
+                $newURL[$k] = urlencode($v);
+            }
+        }
+        return implode("/",$newURL);
+    }
     /**
      * @param $hasProductsInPage
      * @return Generator
@@ -305,10 +318,7 @@ class WooCommerceRTGFeed
                     }
 
                     // Check if product has image
-                    $productImg = str_replace(
-                        ['″', ' '],
-                        ['%e2%80%b3', '%20'],
-                        $this->getProductImage($product));
+                    $productImg = $this->getProductImage($product);
 
 					$brand = wp_get_post_terms( $product->id, 'pa_brand', array('orderby'=>'name', 'fields' => 'names'));
 
@@ -355,10 +365,7 @@ class WooCommerceRTGFeed
                     yield [
                         'product_id' => $product->id,
                         'product_name' => $product->name,
-                        'product_url' => str_replace(
-                            ['″', ' '],
-                            ['%e2%80%b3', '%20'],
-                            $product->url ),
+                        'product_url' => $this->fixURL($product->url),
                         'price' => number_format((float) $product->price, 2, '.', ''),
                         'sale_price' => number_format((float) $promo, 2, '.', ''),
 						'brand' => $brand ?? '',
@@ -433,7 +440,7 @@ class WooCommerceRTGFeed
                 $productImg = false;
             }
         }
-        return $productImg;
+        return $this->fixURL($productImg);
     }
 
     /**
@@ -454,29 +461,20 @@ class WooCommerceRTGFeed
     protected function getProductImages($product)
     {
         $images = [];
-        
-        if( is_array($product->images) ){
+        if (is_array($product->images)) {
             foreach ($product->images as $k => $v) {
-                $images[] = str_replace(
-                            ['″', ' '],
-                            ['%e2%80%b3', '%20'], $v);
+                $images[] = $this->fixURL($v);
             }
         } else {
-            $images[] = str_replace(
-                            ['″', ' '],
-                            ['%e2%80%b3', '%20'], $product->images);
+            $images[] = $this->fixURL($product->images);
         }
 
-        if( is_array( $product->img ) ){
-            foreach ( $product->img as $k => $v ) {
-                $images[] = str_replace(
-                            ['″', ' '],
-                            ['%e2%80%b3', '%20'], $v);
+        if (is_array($product->img)) {
+            foreach ($product->img as $k => $v) {
+                $images[] = $this->fixURL($v);
             }
         } else {
-            $images[] = str_replace(
-                            ['″', ' '],
-                            ['%e2%80%b3', '%20'], $product->img);
+            $images[] = $this->fixURL($product->img);
         }
 
         return $images;
