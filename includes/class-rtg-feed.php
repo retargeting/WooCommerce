@@ -270,9 +270,10 @@ class WooCommerceRTGFeed
         $new_URL = explode("?", $url, 2);
         $newURL = explode("/",$new_URL[0]);
 
-        $this->checkHTTP = $this->checkHTTP === null ?
-            !empty(array_intersect(["https:","http:"], $newURL)) : $this->checkHTTP;
-
+        if ($this->checkHTTP === null) {
+            $this->checkHTTP = !empty(array_intersect(["https:","http:"], $newURL));
+        } 
+        
         foreach ($newURL as $k=>$v ){
             if (!$this->checkHTTP || $this->checkHTTP && $k > 2) {
                 $newURL[$k] = urlencode($v);
@@ -287,7 +288,7 @@ class WooCommerceRTGFeed
             return implode("/",$newURL);
         }
     }
-    
+
     /**
      * @param $hasProductsInPage
      * @return Generator
