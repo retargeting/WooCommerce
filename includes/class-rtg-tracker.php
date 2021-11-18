@@ -82,37 +82,36 @@ class WooCommerceRTGTracker
             'quantity' => $quantity,
             'variation' => !empty($variation['code']) ? $variation : false
         ]);
+        
+        if (empty($quantityInputId)) {
+            $quantityInputId = "quantity_";
+        }
 
         $addToCartButtonId = $addToCartButtonId !== "" ? $addToCartButtonId : ".single_add_to_cart_button";
-        $addToCartSelector = "document.querySelector('$addToCartButtonId')";
+        $addToCartSelector = "document.querySelectorAll('$addToCartButtonId')";
 
         $quantitySelector = "document.querySelector(\"input[id ^= '$quantityInputId']\")";
 
         echo "
                 <script async>
-                window.addEventListener(\"load\",
-                function(){
+                window.addEventListener('DOMContentLoaded', 
+                function(ev){
                     if(_ra === undefined) {
                         _ra = _ra || {};
                     }
-                    
                     _ra.addToCartInfo = $addToCart;
 
-                    if($quantitySelector !== null) {
-                        $quantitySelector.addEventListener(\"change\", function() {
-                            _ra.addToCartInfo.quantity = this.value;
-                        });
-                    }
                     if($addToCartSelector !== null) {
-                        $addToCartSelector.addEventListener(\"click\",function(){
-
-                            _ra.addToCart(_ra.addToCartInfo.product_id, _ra.addToCartInfo.quantity, _ra.addToCartInfo.variation);
-                        });
+                        for (let i in Object.keys($addToCartSelector)) { 
+                            ".$addToCartSelector."[i].addEventListener(\"click\", function() {
+                                if($quantitySelector !== null) { _ra.addToCartInfo.quantity = ".$quantitySelector.".value; }
+                                _ra.addToCart(_ra.addToCartInfo.product_id, _ra.addToCartInfo.quantity, _ra.addToCartInfo.variation);
+                            });
+                        }
                     }
                     
                 });
-                </script>
-                    ";
+                </script>";
     }
 
     /**
