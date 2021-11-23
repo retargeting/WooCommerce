@@ -533,7 +533,7 @@ class WooCommerceRTGFeed
 
         if ( $type !== 'doCron' ) {
             header( 'Content-Disposition: attachment; filename=' . $this->fileName );
-            header( 'Content-Type: text/csv' );
+            header("Content-type: text/csv; charset=utf-8");
         }
 
         $upstream = fopen($this->filePath[$type], $this->fileRule[$type]);

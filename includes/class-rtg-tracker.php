@@ -94,7 +94,7 @@ class WooCommerceRTGTracker
 
         echo "
                 <script async>
-                window.addEventListener('DOMContentLoaded', 
+                window.addEventListener('load', 
                 function(ev){
                     if(_ra === undefined) {
                         _ra = _ra || {};
