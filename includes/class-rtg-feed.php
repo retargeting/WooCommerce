@@ -325,8 +325,8 @@ class WooCommerceRTGFeed
                     
                     // Check product stock, url and categories
                     if ( !$product->url ||
-                        empty( $product->name ) ||
-                        $product->price == 0 ||
+                        empty($product->name) ||
+                        empty($product->price)||
                         $product->visibility === 'private' ||
 						$product->visibility === 'trash'
                     ) {
@@ -346,6 +346,7 @@ class WooCommerceRTGFeed
 
                     // Check if product sale is 0
                     $promo = $this->checkPromoPrice($product);
+                    $price = $product->price;
                     
                     // Get product images
                     $images = $this->getProductImages($product);
@@ -382,7 +383,7 @@ class WooCommerceRTGFeed
                         'product_id' => $product->id,
                         'product_name' => $product->name,
                         'product_url' => $this->fixURL($product->url),
-                        'price' => number_format((float) $product->price, 2, '.', ''),
+                        'price' => number_format((float) $price, 2, '.', ''),
                         'sale_price' => number_format((float) $promo, 2, '.', ''),
 						'brand' => $brand ?? '',
                         'category' => $category->name ?? "Root",
@@ -421,7 +422,7 @@ class WooCommerceRTGFeed
 				$productId->price : $single_variation->get_price();
 			
             $sp = empty($single_variation->get_sale_price()) ?
-                $price : $single_variation->get_sale_price();
+                $this->checkPromoPrice($productId) : $single_variation->get_sale_price();
                 
             $productVariations[] = [
                 'code' => $single_variation->get_id(),
