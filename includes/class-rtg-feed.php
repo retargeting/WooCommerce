@@ -412,7 +412,9 @@ class WooCommerceRTGFeed
         foreach ($variable as $value) {
             $single_variation = new WC_Product_Variation($value);
 
-            if ($single_variation->get_stock_quantity() === null || $single_variation->get_price() === 0) {
+            if ($single_variation->get_stock_quantity() === null ||
+                $single_variation->get_price() === 0 ||
+                $single_variation->get_stock_quantity() < 0) {
                 continue;
             }
 
