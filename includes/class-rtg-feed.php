@@ -277,7 +277,7 @@ class WooCommerceRTGFeed
             
             foreach ($newURL as $k=>$v ){
                 if (!$this->checkHTTP || $this->checkHTTP && $k > 2) {
-                    $newURL[$k] = urlencode($v);
+                    $newURL[$k] = rawurlencode($v);
                 }
             }
     
@@ -537,7 +537,7 @@ class WooCommerceRTGFeed
         }
 
         if ( $type !== 'doCron' ) {
-            header( 'Content-Disposition: attachment; filename=' . $this->fileName );
+            header('Content-Disposition: attachment; filename=' . $this->fileName);
             header("Content-type: text/csv; charset=utf-8");
         }
 
