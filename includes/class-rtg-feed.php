@@ -566,7 +566,7 @@ class WooCommerceRTGFeed
             }
         } else {
             while (!feof($upstream)) {
-                echo fread($upstream, filesize($this->filePath[$type]));
+                echo fread($upstream, filesize($this->filePath[$type])) or die('please check');
             }
         }
 
