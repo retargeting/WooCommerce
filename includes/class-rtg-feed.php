@@ -336,6 +336,9 @@ class WooCommerceRTGFeed
                     // Check if product has image
                     $productImg = $this->getProductImage($product);
 
+                    if (empty($productImg)) {
+                        continue;
+                    }
 					$brand = wp_get_post_terms( $product->id, 'pa_brand', array('orderby'=>'name', 'fields' => 'names'));
 
                     if($brand instanceof WP_Error){
