@@ -416,7 +416,7 @@ class WooCommerceRTGFeed
             $single_variation = new WC_Product_Variation($value);
 
             if ($single_variation->get_stock_quantity() === null ||
-                $single_variation->get_price() === 0 ||
+                // $single_variation->get_price() === 0 ||
                 $single_variation->get_stock_quantity() < 0) {
                 continue;
             }
@@ -425,9 +425,13 @@ class WooCommerceRTGFeed
 
             $price = empty($single_variation->get_price()) ?
 				$productId->price : $single_variation->get_price();
+
+            $price = $this->priceConvert($price);
+
+            $sp = $this->priceConvert($single_variation->get_sale_price());
 			
-            $sp = empty($single_variation->get_sale_price()) ?
-                $this->checkPromoPrice($productId) : $single_variation->get_sale_price();
+            $sp = empty($sp) || (float) $sp > (float) $price ?
+                $this->checkPromoPrice($productId) : $sp;
                 
             $productVariations[] = [
                 'code' => $single_variation->get_id(),
@@ -438,7 +442,13 @@ class WooCommerceRTGFeed
                 'in_supplier_stock' => null
             ];
         }
+        
         return $productVariations;
+    }
+    
+    public function priceConvert($p)
+    {
+        return number_format((float) $p, 2, '.', '');
     }
 
     /**
