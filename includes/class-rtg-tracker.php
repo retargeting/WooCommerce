@@ -186,12 +186,6 @@ class WooCommerceRTGTracker
             $this->RTGJSBuilder->sendCategory($RTGCategory);
             $this->RTGRecEng->markCategoryPage();
         }
-
-        if($RTGCategory->getId() != '-1')
-        {
-            $this->RTGJSBuilder->sendCategory($RTGCategory);
-            $this->RTGRecEng->markCategoryPage();
-        }
     }
 
     /**
