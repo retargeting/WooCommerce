@@ -263,20 +263,16 @@ class WooCommerceRTGFeed
 
         return $margin;
     }
-    private $checkHTTP = null;
-
+    
     public function fixURL($url)
     {
         if (!filter_var($url, FILTER_VALIDATE_URL) && !strpos($url, "%20")) {
             $new_URL = explode("?", $url, 2);
             $newURL = explode("/",$new_URL[0]);
-    
-            if ($this->checkHTTP === null) {
-                $this->checkHTTP = !empty(array_intersect(["https:","http:"], $newURL));
-            } 
-            
+            $m = ['http:','https:'];
+
             foreach ($newURL as $k=>$v ){
-                if (!$this->checkHTTP || $this->checkHTTP && $k > 2) {
+                if ($k === 0 && !in_array($v, $m) || $k > 2) {
                     $newURL[$k] = rawurlencode($v);
                 }
             }
