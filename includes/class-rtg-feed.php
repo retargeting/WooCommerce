@@ -432,6 +432,9 @@ class WooCommerceRTGFeed
 			
             $sp = empty($sp) || (float) $sp > (float) $price ?
                 $this->checkPromoPrice($productId) : $sp;
+
+            $stock = $single_variation->get_stock_quantity();
+            $stock = $stock > 0 ? $stock : 0;
                 
             $productVariations[] = [
                 'code' => $single_variation->get_id(),

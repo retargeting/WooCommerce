@@ -1,7 +1,7 @@
 <?php
 class WooCommerceRTG
 {
-    private $getList = [ 'customers', 'products', 'products-cron','products-cron-now', 'products-static'];
+    private $getList = [ 'customers', 'products', 'products-cron','products-cron-now', 'products-static', 'products-cron-next'];
     private $option;
     /**
      * WooCommerceRTG constructor.
@@ -78,9 +78,9 @@ class WooCommerceRTG
 
     function RTG_CRON_FUNC() {
         $_GET['rtg-feed'] = 'products-cron';
-        //$res = wp_remote_request(get_site_url(), $_GET);
         $_GET['isCronInternal'] = 'true';
         $this->genFeed();
+        // $res = file_get_contents(get_site_url().'?rtg-feed=products-cron', false, $context);
     }
     /* CRON JOBS STOP */
     function rtgDisable(){
@@ -110,7 +110,15 @@ class WooCommerceRTG
             $this->genFeed();
         }
     }
+    function sh_get_next_cron_time( $cron_name ){
 
+        foreach( _get_cron_array() as $timestamp => $crons ){
+            if( in_array( $cron_name, array_keys( $crons ) ) ){
+                return [date('d.F.Y H:i:s', $timestamp), date('d.F.Y H:i:s')];
+            }
+        }
+        return false;
+    }
     function genFeed(){
         include_once RTG_TRACKER_DIR . '/includes/class-rtg-feed.php';
         /**
@@ -136,18 +144,29 @@ class WooCommerceRTG
                     ]);
                     break;
                 case 'products-cron-now':
-                    $res = wp_remote_request(get_site_url(), $_GET);
+                    file_get_contents(get_site_url().'?rtg-feed=products-cron', false, $context);
                     break ;
                 case 'products-static':
                     $this->doOption('rtg_products_feed_cron',[
                         $RTGFeed, 'productsCSV','doStatic'
                     ]);
                     break;
+                case 'products-cron-next':
+                    var_dump($this->sh_get_next_cron_time('RTG_CRON_FEED'));
+                    break;
             }
         }
-        catch (Exception $exception)
+        catch (Exception $ex)
         {
-            // DO NOTHING
+            $errors = error_get_last();
+            $myfile = fopen(RTG_TRACKER_DIR . '/RTG.log', "w+") or die("Unable to open file!");
+            
+            fwrite($myfile, "COPY ERROR: ".$errors['type']);
+            fwrite($myfile, "<br />\n".$errors['message']);
+            fwrite($myfile, "<br />\n".json_encode($errors));
+            fwrite($myfile, "<br />\n".$ex->getMessage());
+
+            fclose($myfile);
         }
         exit(0);
     }
