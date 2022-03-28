@@ -74,7 +74,6 @@ class WooCommerceRTGTracker
         $variation = new \RetargetingSDK\Variation();
         $variation = $variation->getData(false);
 
-        $addToCartButtonId = $this->RTGJSBuilder->getAddToCardId();
         $quantityInputId = $this->RTGJSBuilder->getQuantityInputId();
 
         $productId = $RTGProduct->getId();
@@ -89,7 +88,6 @@ class WooCommerceRTGTracker
             $quantityInputId = "quantity_";
         }
 
-        $addToCartButtonId = $addToCartButtonId !== "" ? $addToCartButtonId : ".single_add_to_cart_button";
         $addToCartSelector = "document.querySelectorAll('.add_to_cart_button[data-product_id=\"'+addToCartInfo.product_id+'\"]')";
 
         $quantitySelector = "document.querySelector(\"input[id ^= '$quantityInputId']\")";
