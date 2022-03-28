@@ -51,7 +51,9 @@ class WooCommerceRTGTracker
 
         add_action('wp_head',   [ $this, 'header_hook' ]);
         add_action('wp_footer', [ $this, 'footer_hook' ], 9999);
-        //woocommerce_before_main_content
+        // woocommerce_before_main_content
+        // woocommerce_after_add_to_cart_button
+        // woocommerce_after_add_to_cart_quantity
         add_action('wp_footer',       [ $this, 'category_hook' ]);
         add_action('woocommerce_before_single_product',     [ $this, 'product_hook' ], 2);
 
@@ -60,7 +62,61 @@ class WooCommerceRTGTracker
         add_action('woocommerce_after_cart',                [ $this, 'cart_hook' ]);
         add_action('woocommerce_after_checkout_form',       [ $this, 'checkout_hook' ]);
         add_action('woocommerce_thankyou',                  [ $this, 'order_hook' ]);
+        add_filter('woocommerce_loop_add_to_cart_link', [ $this, 'add_to_cart_v3_hook'], 10, 3 );
         // add_action('wp_footer',                             [ $this, 'order_hook' ]);
+    }
+
+    function add_to_cart_v3_hook( $add_to_cart_html, $product, $args ){
+        $before = ''; // Some text or HTML here
+        $after = ''; // Add some text or HTML here as well
+
+        $RTGProduct = new WooCommerceRTGProductModel($product);
+        $variation = new \RetargetingSDK\Variation();
+        $variation = $variation->getData(false);
+
+        $addToCartButtonId = $this->RTGJSBuilder->getAddToCardId();
+        $quantityInputId = $this->RTGJSBuilder->getQuantityInputId();
+
+        $productId = $RTGProduct->getId();
+        $quantity = 1; // default
+        $addToCart = json_encode([
+            'product_id' => $productId,
+            'quantity' => $quantity,
+            'variation' => !empty($variation['code']) ? $variation : false
+        ]);
+        
+        if (empty($quantityInputId)) {
+            $quantityInputId = "quantity_";
+        }
+
+        $addToCartButtonId = $addToCartButtonId !== "" ? $addToCartButtonId : ".single_add_to_cart_button";
+        $addToCartSelector = "document.querySelectorAll('.add_to_cart_button[data-product_id=\"'+addToCartInfo.product_id+'\"]')";
+
+        $quantitySelector = "document.querySelector(\"input[id ^= '$quantityInputId']\")";
+
+        $after = "
+                <script async>
+                window.addEventListener('load', 
+                function(ev){
+                    if(_ra === undefined) {
+                        _ra = _ra || {};
+                    }
+                    let addToCartInfo = $addToCart;
+                    
+                    if($addToCartSelector !== null) {
+                        for (let i in Object.keys($addToCartSelector)) { 
+                            ".$addToCartSelector."[i].addEventListener(\"click\", function() {
+                                _ra.addToCartInfo = addToCartInfo;
+
+                                if($quantitySelector !== null) { _ra.addToCartInfo.quantity = ".$quantitySelector.".value; }
+                                _ra.addToCart(_ra.addToCartInfo.product_id, _ra.addToCartInfo.quantity, _ra.addToCartInfo.variation);
+                            });
+                        }
+                    }
+                    
+                });
+                </script>";
+        return $before . $add_to_cart_html . $after;
     }
 
     /**
@@ -99,11 +155,14 @@ class WooCommerceRTGTracker
                     if(_ra === undefined) {
                         _ra = _ra || {};
                     }
-                    _ra.addToCartInfo = $addToCart;
+
+                    let addToCartInfo = $addToCart;
 
                     if($addToCartSelector !== null) {
                         for (let i in Object.keys($addToCartSelector)) { 
                             ".$addToCartSelector."[i].addEventListener(\"click\", function() {
+                                _ra.addToCartInfo = addToCartInfo;
+
                                 if($quantitySelector !== null) { _ra.addToCartInfo.quantity = ".$quantitySelector.".value; }
                                 _ra.addToCart(_ra.addToCartInfo.product_id, _ra.addToCartInfo.quantity, _ra.addToCartInfo.variation);
                             });
@@ -173,10 +232,10 @@ class WooCommerceRTGTracker
 			$ctID = get_queried_object();
 			
 			$category = $ctID !== null ? get_term_by('name', $ctID->post_title, 'product_cat') : null;
-            $category = $category !== null && $category->term_id === null ?
+            $category = empty($category->term_id) ?
 				get_term_by('name', get_post($ctID->post_parent)->post_title, 'product_cat') : $category;
             
-			if( $category !== null && $category->term_id !== null ){
+			if(empty($category->term_id)){
 				$RTGCategory = new WooCommerceRTGCategoryModel($category->term_id);
 			}
 		}
