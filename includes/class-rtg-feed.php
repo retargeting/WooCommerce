@@ -50,7 +50,8 @@ class WooCommerceRTGFeed
      */
     public function __construct()
     {
-        set_time_limit(300);
+        set_time_limit(1800);
+        ini_set('max_execution_time',1800);
         
         $this->token = isset( $_GET['token'] ) ? $_GET['token'] : null;
 
