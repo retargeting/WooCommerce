@@ -45,6 +45,8 @@ class WooCommerceRTGFeed
     private $wpSeo = null;
     private $check = '';
 
+    private static $stock = 0;
+
     /**
      * WooCommerceRTGFeed constructor.
      */
@@ -325,7 +327,8 @@ class WooCommerceRTGFeed
                         empty($product->name) ||
                         empty($product->price)||
                         $product->visibility === 'private' ||
-						$product->visibility === 'trash'
+						$product->visibility === 'trash' ||
+                        $product->visibility === 'draft'
                     ) {
                         continue;
                     }
@@ -354,7 +357,7 @@ class WooCommerceRTGFeed
                     // Get product variations
                     $productVariations = $this->getProductVariations($product);
                     
-                    $stock = $product->visibility === 'publish' && $product->is_in_stock ?
+                    self::$stock = $product->visibility === 'publish' && $product->is_in_stock ?
                         1 : 0;
 
                     $acp = $this->getCost($product->id);
@@ -388,7 +391,7 @@ class WooCommerceRTGFeed
 						'brand' => $brand ?? '',
                         'category' => $category->name ?? "Root",
                         'productImg' => $productImg,
-                        'productStock' => $stock,
+                        'productStock' => self::$stock,
                         'images' => $images,
                         'acq_price' => $acp,
                         'categoryNames' => $categoryNames,
@@ -432,7 +435,8 @@ class WooCommerceRTGFeed
 
             $stock = $single_variation->get_stock_quantity();
             $stock = $stock > 0 ? $stock : 0;
-                
+            self::$stock += $stock;
+
             $productVariations[] = [
                 'code' => $single_variation->get_id(),
                 'price' => $price,
