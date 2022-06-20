@@ -66,7 +66,7 @@ class WooCommerceRTGTracker
         // add_action('wp_footer',                             [ $this, 'order_hook' ]);
     }
 
-    function add_to_cart_v3_hook( $add_to_cart_html, $product, $args ){
+    function add_to_cart_v3_hook( $add_to_cart_html, $product, $args = null){
         $before = ''; // Some text or HTML here
         $after = ''; // Add some text or HTML here as well
 
