@@ -321,6 +321,18 @@ class WooCommerceRTGFeed
                         $hasProductsInPage = false;
                         continue;
                     }
+
+                    //populate $product->price for 'variable' products
+                    $loadVariable = false;
+                     if (empty($product->price)) {
+                        // Get product variations
+                        $productVariations = $this->getProductVariations($product);
+                        $loadVariable = true;
+                        if (!empty($productVariations)) {
+                            $product->price = (float) $productVariations[0]['price'];
+                            $product->promo = (float) $productVariations[0]['sale_price'];
+                        }
+                     }
                     
                     // Check product stock, url and categories
                     if ( !$product->url ||
@@ -354,8 +366,10 @@ class WooCommerceRTGFeed
                     // Get product images
                     $images = $this->getProductImages($product);
 
-                    // Get product variations
-                    $productVariations = $this->getProductVariations($product);
+                    if (!$loadVariable) {
+                        // Get product variations
+                        $productVariations = $this->getProductVariations($product);
+                    }
                     
                     self::$stock = $product->visibility === 'publish' && $product->is_in_stock ?
                         1 : 0;
@@ -371,16 +385,28 @@ class WooCommerceRTGFeed
 
 					foreach ($categoryN as $k => $v) {
 						$c = get_term($v, 'product_cat');
-						$categoryNames[$v] = $c->name;
+                        if ($c->name !== null) {
+						    $categoryNames[$v] = $c->name;
+                        } else {
+                            $categoryNames['Root'] = 'Root';
+                        }
 					}
 					
                     foreach($product->category as $key=>$value){
-                        $categoryNames[$value->id] = $value->name;
+                        if ($value->name !== null) {
+						    $categoryNames[$value->id] = $value->name;
+                        } else {
+                            $categoryNames['Root'] = 'Root';
+                        }
                     }
 
-					unset($categoryNames[$category->id]);
-                    
-                    $categoryNames[$category->id] = $category->name;
+                    if ($category->name !== null) {
+                        unset($categoryNames[$category->id]);
+                        
+                        $categoryNames[$category->id] = $category->name;
+                    } else {
+                        $categoryNames['Root'] = 'Root';
+                    }
 
                     yield [
                         'product_id' => $product->id,
@@ -412,7 +438,10 @@ class WooCommerceRTGFeed
 
         $productVariations = [];
 
-        foreach ($variable as $value) {
+        $product = new WC_Product_Variable($productId->id);
+        $variations = $product->get_available_variations();
+
+        foreach ($variable as $key=>$value) {
             $single_variation = new WC_Product_Variation($value);
 
             if ($single_variation->get_stock_quantity() === null ||
@@ -423,12 +452,12 @@ class WooCommerceRTGFeed
 
             $acp = $this->getCost($single_variation->get_id());
 
-            $price = empty($single_variation->get_price()) ?
-				$productId->price : $single_variation->get_price();
+            $price = empty($variations[$key]['display_regular_price']) ?
+            $productId->price : $variations[$key]['display_regular_price'];
 
             $price = $this->priceConvert($price);
 
-            $sp = $this->priceConvert($single_variation->get_sale_price());
+            $sp = $this->priceConvert($variations[$key]['display_price']);
 			
             $sp = empty($sp) || (float) $sp > (float) $price ?
                 $this->checkPromoPrice($productId) : $sp;
