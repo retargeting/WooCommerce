@@ -233,8 +233,8 @@ class WooCommerceRTGTracker
             $category = empty($category->term_id) ?
 				get_term_by('name', get_post($ctID->post_parent)->post_title, 'product_cat') : $category;
             
-			if(empty($category->term_id)){
-				$RTGCategory = new WooCommerceRTGCategoryModel($category->term_id);
+			if(!empty($category)){
+				$RTGCategory = new WooCommerceRTGCategoryModel($category);
 			}
 		}
 
