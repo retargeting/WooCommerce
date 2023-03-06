@@ -51,6 +51,16 @@ class WooCommerceRTGTracker
 
         add_action('wp_head',   [ $this, 'header_hook' ]);
         add_action('wp_footer', [ $this, 'footer_hook' ], 9999);
+
+        /* Rec-Engine Zone Start */
+        
+        add_action('wp_footer', [ $this, 'footer_rec_hook' ], 9999);
+    
+        /* Rec-Engine Zone End */
+        /* RemoveFromCart */
+        add_action('woocommerce_remove_cart_item', array($this, 'RemoveCartEvent'), 10, 2);
+        add_filter('woocommerce_cart_item_removed_title', array($this, 'RemoveCartEventFilter'), 10, 2);
+        /* RemoveFromCart End */
         // woocommerce_before_main_content
         // woocommerce_after_add_to_cart_button
         // woocommerce_after_add_to_cart_quantity
@@ -58,13 +68,140 @@ class WooCommerceRTGTracker
         add_action('woocommerce_before_single_product',     [ $this, 'product_hook' ], 2);
 
         add_action('wp_footer',      [ $this, 'add_to_cart_v2_hook']);
-        add_action('woocommerce_remove_cart_item',          [ $this, 'remove_from_cart_hook' ]);
+        // add_action('woocommerce_remove_cart_item',          [ $this, 'remove_from_cart_hook' ]);
         add_action('woocommerce_after_cart',                [ $this, 'cart_hook' ]);
         add_action('woocommerce_after_checkout_form',       [ $this, 'checkout_hook' ]);
         add_action('woocommerce_thankyou',                  [ $this, 'order_hook' ]);
         add_filter('woocommerce_loop_add_to_cart_link', [ $this, 'add_to_cart_v3_hook'], 10, 3 );
         // add_action('wp_footer',                             [ $this, 'order_hook' ]);
     }
+
+    /* Rec-Engine Zone Start */
+    private static $rec_engine = array(
+        "is_home" => "rtg_rec_home_page",
+        "is_order_received_page" => "rtg_rec_thank_you_page", /* Importanta Ordinea */
+        "is_checkout" => "rtg_rec_shopping_cart",
+        "is_cart" => "rtg_rec_shopping_cart",
+        "is_product_category" => "rtg_rec_category_page",
+        "is_product" => "rtg_rec_product_page",
+        "is_search" => "rtg_rec_search_page",
+        "is_404" => "rtg_rec_page_404",
+        "is_shop" => "rtg_rec_category_page"
+    );
+
+    function rec_engine_load() {
+
+        $add = "";
+        if ((bool) $this->options->rtg_status && (bool) $this->options->rtg_rec_status) {
+            foreach (self::$rec_engine as $key=>$value) {
+                if ($key() || $key === 'is_home' && is_front_page()) {
+                    $add = '_ra_rec_engine.list = '.str_replace('\\\"', '"', json_encode($this->options->{$value})).';
+                    _ra_rec_engine.init();';
+                    break;
+                }
+            }
+
+            return (
+                empty($add) ?
+                    $add : '
+            var _ra_rec_engine = {};
+
+            _ra_rec_engine.init = function () {
+                let list = this.list;
+                for (let key in list) {
+                    _ra_rec_engine.insert(list[key].value, list[key].selector, list[key].place);
+                }
+            };
+
+            _ra_rec_engine.insert = function (code = "", selector = null, place = "before") {
+                if (code !== "" && selector !== null) {
+                    let newTag = document.createRange().createContextualFragment(code);
+                    let content = document.querySelector(selector);
+
+                    content.parentNode.insertBefore(newTag, place === "before" ? content : content.nextSibling);
+                }
+            };
+            '.$add
+            );
+
+        }
+
+        return $add;
+    }
+
+    public function footer_rec_hook()
+    {
+        // $this->RTGJSBuilder->removeFromCart();
+        $rm = "";
+        
+        if(!is_ajax() && !isset($_GET['removed_item'])){
+            $last = [];
+        
+            foreach (self::getSession('RemoveCartEvent') as $cart) {
+                $rm .= "_ra.removeFromCart(".$cart['product_id'].",".$cart['quantity'].",".$cart['variation'].");";
+                $last = $cart;
+            }
+
+            if (!empty($rm)) {
+                $rm = "var _ra = _ra || {};
+                _ra.removeFromCartInfo = ".json_encode($last)."
+                if (_ra.ready !== undefined) {
+                ".$rm."
+                }";
+            }
+        }
+
+        echo '<script type="text/javascript">'. $this->rec_engine_load() . $rm .'</script>';
+    }
+    /* Rec-Engine Zone Stop */
+
+    /* RemoveFromCart */
+    public static function RemoveCartEvent($item, $cart = null) {
+        $cart = $cart->cart_contents[$item];
+        self::addToSession('RemoveCartEvent', array(
+            "product_id" => $cart['product_id'],
+            "quantity" => $cart['quantity'],
+            "variation" => false
+        ));
+        // $cart['product_id'], $cart['quantity'], $cart['variation_id'];
+    }
+
+    public static function RemoveCartEventFilter($item, $cart = null) {
+        self::addToSession('RemoveCartEvent', array(
+            "product_id" => $cart['product_id'],
+            "quantity" => $cart['quantity'],
+            "variation" => false
+        ));
+        // $cart['product_id'], $cart['quantity'],$cart['variation_id'];
+        return $item;
+    }
+
+    public static function addToSession($name, $data, $key = null) {
+        $add = WC()->session->get($name);
+
+        if ($key === null)
+        {
+            $n = '';
+
+            for ($i = 0; $i < 5; ++$i) {
+                $n .= random_int(0, 9);
+            }
+
+            $add[time().$n] = $data;
+        } else {
+            $add[$key] = $data;
+        }
+
+        WC()->session->set($name, $add);
+    }
+
+    public static function getSession($name = 'RemoveCartEvent') {
+        $return = WC()->session->get($name);
+        WC()->session->set($name, array());
+        return $return;
+    }
+
+    /* RemoveFromCart End*/
 
     function add_to_cart_v3_hook( $add_to_cart_html, $product, $args = null){
         $before = ''; // Some text or HTML here
