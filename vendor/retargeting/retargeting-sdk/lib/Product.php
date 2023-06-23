@@ -25,6 +25,7 @@ class Product extends AbstractRetargetingSDK
     protected $category = [];
     protected $inventory = [];
     protected $additionalImages = [];
+    protected $weight = 0.01;
 
     /**
      * @return mixed
@@ -217,6 +218,14 @@ class Product extends AbstractRetargetingSDK
         $this->additionalImages = $additionalImages;
     }
 
+    public function setWeight($weight) {
+        $this->weight = $weight;
+    }
+
+    public function getWeight() {
+        return $this->weight;
+    }
+
     /**
      * @param bool $encoded
      * @return array|string
@@ -233,7 +242,8 @@ class Product extends AbstractRetargetingSDK
             'brand'     => $this->getBrand(),
             'category'  => $this->getCategory(),
             'inventory' => $this->getInventory(),
-            'images'    => $this->getAdditionalImages()
+            'images'    => $this->getAdditionalImages(),
+            'weight'    => $this->getWeight()
         ];
 
         return $encoded ? $this->toJSON($product) : $product;

@@ -60,6 +60,7 @@ class WooCommerceRTGProductModel extends \RetargetingSDK\Product
         $this->setId($product->get_id());
         $this->setName($product->get_name());
         $this->setUrl($product->get_permalink());
+        $this->setWeight($product->get_weight());
         $this->_setProductPrices($product);
         $this->_setProductImages($product->get_image_id(), $product->get_gallery_image_ids());
         $this->_setProductCategories($product->get_category_ids());

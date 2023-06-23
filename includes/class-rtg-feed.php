@@ -408,6 +408,7 @@ class WooCommerceRTGFeed
                         $categoryNames['Root'] = 'Root';
                     }
 
+
                     yield [
                         'product_id' => $product->id,
                         'product_name' => $product->name,
@@ -421,7 +422,8 @@ class WooCommerceRTGFeed
                         'images' => $images,
                         'acq_price' => $acp,
                         'categoryNames' => $categoryNames,
-                        'productVariations' => $productVariations
+                        'productVariations' => $productVariations,
+                        'product_weight' => $this->getProductWeightFormatedWithTwoDecimals($product->weight)
                     ];
                 }
             }
@@ -567,7 +569,8 @@ class WooCommerceRTGFeed
                 'margin' => null,
                 'media_gallery' => $data['images'],
                 'variations' => $data['productVariations'],
-                'in_supplier_stock' => null
+                'in_supplier_stock' => null,
+                'product_weight' => $data['product_weight']
             ], JSON_UNESCAPED_UNICODE)
         ), ',', '"');
     }
@@ -626,5 +629,23 @@ class WooCommerceRTGFeed
         }
 
         return true ;
+    }
+    private function formatWeightToKg($weight) {
+
+        $unit = get_option('woocommerce_weight_unit');
+
+        if(strtoupper($unit) === "G") {
+            return $weight/1000;
+        }else if(strtoupper($unit) === 'LBS') {
+            return $weight*0.45359237;
+        }else if(strtoupper($unit) === 'OZ') {
+            return $weight/35.27396195;
+        }
+        return $weight;
+    }
+    private function getProductWeightFormatedWithTwoDecimals($weight) {
+
+        return number_format($this->formatWeightToKg($weight), 2, '.','') > 0 ?
+            (float)number_format($this->formatWeightToKg($weight), 2, '.','') :0.01;
     }
 }
