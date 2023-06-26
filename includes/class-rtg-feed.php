@@ -646,6 +646,6 @@ class WooCommerceRTGFeed
     private function getProductWeightFormatedWithTwoDecimals($weight) {
 
         return number_format($this->formatWeightToKg($weight), 2, '.','') > 0 ?
-            (float)number_format($this->formatWeightToKg($weight), 2, '.','') :0.01;
+            floatval(number_format($this->formatWeightToKg($weight), 2, '.','')) :0.01;
     }
 }
