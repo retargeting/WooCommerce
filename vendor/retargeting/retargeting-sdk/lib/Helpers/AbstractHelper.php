@@ -35,7 +35,8 @@ class AbstractHelper
                 break;
             case 'string':
             default:
-                $filter = FILTER_SANITIZE_STRING;
+                // $filter = FILTER_SANITIZE_STRING;
+                return htmlspecialchars($var);
                 break;
 
         }

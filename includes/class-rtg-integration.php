@@ -60,7 +60,7 @@ class WooCommerceRTGIntegration extends WC_Integration
 
         $this->init_form_fields();
         $this->init_settings();
-        
+
         foreach ($this->rtgParams as $param)
         {
             $this->{$param} = $this->get_option($param);
@@ -72,7 +72,7 @@ class WooCommerceRTGIntegration extends WC_Integration
 
         add_action('woocommerce_update_options_integration_' .  $this->id, [ $this, 'process_admin_options' ] );
         add_filter('woocommerce_settings_api_sanitized_fields_rtg_tracker',  [ $this, 'save_fields']);
-        
+
         if (is_admin())
         {
             add_action('admin_notices', [ $this, 'admin_check_for_notices' ]);
@@ -84,7 +84,7 @@ class WooCommerceRTGIntegration extends WC_Integration
             new WooCommerceRTGTracker($this);
         }
     }
-    
+
     /* Rec-Engine Zone Start */
     private $rtgRec = [
         "rtg_rec_home_page",
@@ -163,10 +163,14 @@ class WooCommerceRTGIntegration extends WC_Integration
         return $options;
     }
 
+    function sanitize_rec_eng_values($value) {
+        return $value ? json_encode($value) : '';
+    }
+
     function generate_rec_engine_html($key, $selected) {
 
 		$field_key = $this->get_field_key( $key );
-        
+
         $value = isset($_POST['woocommerce_rtg_tracker_'.$key]) ?
             $_POST['woocommerce_rtg_tracker_'.$key] :
             $this->get_option($key, array());
@@ -228,6 +232,8 @@ class WooCommerceRTGIntegration extends WC_Integration
 				//'description' => 'This section is for Recommendation Engine '.$value['title'],
                 'desc_tip' => false
 			);*/
+
+            $value['sanitize_callback'] = array( $this, 'sanitize_rec_eng_values');
 
             $this->form_fields[$v] = $value;
         }
@@ -324,9 +330,9 @@ class WooCommerceRTGIntegration extends WC_Integration
                 'default'       => 0
             ]
         ];
-        
+
         $this->load_rec_engine();
-        
+
         if( isset($_POST["woocommerce_rtg_tracker_rtg_products_feed_cron"]) && !wp_next_scheduled( 'RTG_CRON_FEED' ) ) {
             wp_schedule_event( time(), 'RTG_CRON_SCHEDULES', 'RTG_CRON_FEED' );
         }
