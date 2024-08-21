@@ -459,10 +459,12 @@ class WooCommerceRTGFeed
 
             $price = $this->priceConvert($price);
 
-            $sp = $this->priceConvert($variations[$key]['display_price']);
+            $sp = $this->priceConvert($variations[$key]['display_price']) ?? $this->checkPromoPrice($productId);
 			
-            $sp = empty($sp) || (float) $sp > (float) $price ?
+            $sp = (float) $sp > (float) $price ?
                 $this->checkPromoPrice($productId) : $sp;
+
+            $sp = number_format($sp, 2, '.', '');
 
             $stock = $single_variation->get_stock_quantity();
             $stock = $stock > 0 ? $stock : 0;
