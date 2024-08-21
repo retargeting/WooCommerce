@@ -28,7 +28,7 @@ class WooCommerceRTGIntegration extends WC_Integration
         "rtg_products_feed",
         "rtg_products_feed_cron",
         "rtg_tax_rate",
-        "rtg_rec_status"
+        // "rtg_rec_status"
     ];
 
     /**
@@ -66,12 +66,12 @@ class WooCommerceRTGIntegration extends WC_Integration
             $this->{$param} = $this->get_option($param);
         }
 
-        foreach ($this->rtgRec as $param) {
-            $this->{$param} = $this->get_option($param);
-        }
+        // foreach ($this->rtgRec as $param) {
+        //     $this->{$param} = $this->get_option($param);
+        // }
 
         add_action('woocommerce_update_options_integration_' .  $this->id, [ $this, 'process_admin_options' ] );
-        add_filter('woocommerce_settings_api_sanitized_fields_rtg_tracker',  [ $this, 'save_fields']);
+        // add_filter('woocommerce_settings_api_sanitized_fields_rtg_tracker',  [ $this, 'save_fields']);
         
         if (is_admin())
         {
@@ -154,84 +154,84 @@ class WooCommerceRTGIntegration extends WC_Integration
     ];
 
     /* Rec-Engine Zone End */
-    public static function save_fields($options) {
-        foreach ($options as $key => $option) {
-            if (strpos($key, 'rtg_rec_') !== false) {
-                $options[$key] = $_POST['woocommerce_rtg_tracker_'.$key];
-            }
-        }
-        return $options;
-    }
+    // public static function save_fields($options) {
+    //     foreach ($options as $key => $option) {
+    //         if (strpos($key, 'rtg_rec_') !== false) {
+    //             $options[$key] = $_POST['woocommerce_rtg_tracker_'.$key];
+    //         }
+    //     }
+    //     return $options;
+    // }
 
-    function generate_rec_engine_html($key, $selected) {
+    // function generate_rec_engine_html($key, $selected) {
 
-		$field_key = $this->get_field_key( $key );
+	// 	$field_key = $this->get_field_key( $key );
         
-        $value = isset($_POST['woocommerce_rtg_tracker_'.$key]) ?
-            $_POST['woocommerce_rtg_tracker_'.$key] :
-            $this->get_option($key, array());
+    //     $value = isset($_POST['woocommerce_rtg_tracker_'.$key]) ?
+    //         $_POST['woocommerce_rtg_tracker_'.$key] :
+    //         $this->get_option($key, array());
 
 
-        $html = '<tr valign="top">
-			<th scope="row" class="titledesc">
-				<label>'.wp_kses_post($selected['title'] ).'</label>
-			</th>
-			<td class="forminp">';
+    //     $html = '<tr valign="top">
+	// 		<th scope="row" class="titledesc">
+	// 			<label>'.wp_kses_post($selected['title'] ).'</label>
+	// 		</th>
+	// 		<td class="forminp">';
 
-        foreach (self::$blocks as $k => $v) {
-            if (empty($value[$k]['value']) && empty($value[$k]['selector'])) {
-                $def = isset($v['def_rtg']) ?
-                    $v['def_rtg'] : (isset($selected['def_rtg']) ? $selected['def_rtg'] : null);
+    //     foreach (self::$blocks as $k => $v) {
+    //         if (empty($value[$k]['value']) && empty($value[$k]['selector'])) {
+    //             $def = isset($v['def_rtg']) ?
+    //                 $v['def_rtg'] : (isset($selected['def_rtg']) ? $selected['def_rtg'] : null);
 
-                $value[$k] = $def !== null ? $def : self::$def;
-            }
-            $html .= '
-                <label for="'.esc_attr($field_key).'_'.$k.'">
-                    <strong>'.$v['title'].'</strong>
-                </label>
-				<fieldset>
-                <textarea style="max-width:400px;width: 50%; height: 75px;"'.
-                ' id="'.esc_attr($field_key).'_'.$k.'" name="'.esc_attr($field_key).'['.$k.'][value]" spellcheck="false">'.
-                (string) str_replace('\"','"',$value[$k]['value']).'</textarea>
-				</fieldset>
-                <p class="description">
-                <strong><a href="javascript:void(0);" onclick="document.querySelectorAll(\'#'.esc_attr($field_key).
-                '_advace\').forEach((e)=>{e.style.display=e.style.display===\'none\'?\'table-row\':\'none\';});">'.
-                'Show/Hide Advance</a></strong>
-                </p>';
+    //             $value[$k] = $def !== null ? $def : self::$def;
+    //         }
+    //         $html .= '
+    //             <label for="'.esc_attr($field_key).'_'.$k.'">
+    //                 <strong>'.$v['title'].'</strong>
+    //             </label>
+	// 			<fieldset>
+    //             <textarea style="max-width:400px;width: 50%; height: 75px;"'.
+    //             ' id="'.esc_attr($field_key).'_'.$k.'" name="'.esc_attr($field_key).'['.$k.'][value]" spellcheck="false">'.
+    //             (string) str_replace('\"','"',$value[$k]['value']).'</textarea>
+	// 			</fieldset>
+    //             <p class="description">
+    //             <strong><a href="javascript:void(0);" onclick="document.querySelectorAll(\'#'.esc_attr($field_key).
+    //             '_advace\').forEach((e)=>{e.style.display=e.style.display===\'none\'?\'table-row\':\'none\';});">'.
+    //             'Show/Hide Advance</a></strong>
+    //             </p>';
 
-            $html .= '<fieldset id="'.esc_attr($field_key).'_advace" style="display:none"><input style="max-width: 300px;width: 70%;display: inline;" class="wc_input input-text regular-input" type="text" name="'.esc_attr($field_key).'['.$k.'][selector]" value="'.$value[$k]['selector'].'" />';
-            $html .= '<select style="max-width: 100px;width: 30%;max-height: 30px;display: inline;" name="'.esc_attr($field_key).'['.$k.'][place]">';
-            foreach (['before', 'after'] as $v)
-            {
-                $html .= '<option value="'.$v.'"'.($value[$k]['place'] === $v ? ' selected="selected"' : '' );
-                $html .= '>'.$v.'</option>'."\n";  
-            }
-            $html .= '</select></fieldset><br />';
-        }
-        $html .= '</td>
-    </tr>';
-		return $html;
-	}
+    //         $html .= '<fieldset id="'.esc_attr($field_key).'_advace" style="display:none"><input style="max-width: 300px;width: 70%;display: inline;" class="wc_input input-text regular-input" type="text" name="'.esc_attr($field_key).'['.$k.'][selector]" value="'.$value[$k]['selector'].'" />';
+    //         $html .= '<select style="max-width: 100px;width: 30%;max-height: 30px;display: inline;" name="'.esc_attr($field_key).'['.$k.'][place]">';
+    //         foreach (['before', 'after'] as $v)
+    //         {
+    //             $html .= '<option value="'.$v.'"'.($value[$k]['place'] === $v ? ' selected="selected"' : '' );
+    //             $html .= '>'.$v.'</option>'."\n";  
+    //         }
+    //         $html .= '</select></fieldset><br />';
+    //     }
+    //     $html .= '</td>
+    //     </tr>';
+	// 	return $html;
+	// }
     
-    public function load_rec_engine() {
+    // public function load_rec_engine() {
         
 
-        foreach (self::$fields as $key => $value) {
-            $v = "rtg_rec_".$key;
-            // $this->rtgParams[] = $v;
+    //     foreach (self::$fields as $key => $value) {
+    //         $v = "rtg_rec_".$key;
+    //         // $this->rtgParams[] = $v;
 
-            /*$this->form_fields[$v.'_title'] = array(
-				'title' => $value['title'],
-				//'type'  => 'title',
-                'type'  => 'rec_engine',
-				//'description' => 'This section is for Recommendation Engine '.$value['title'],
-                'desc_tip' => false
-			);*/
+    //         /*$this->form_fields[$v.'_title'] = array(
+	// 			'title' => $value['title'],
+	// 			//'type'  => 'title',
+    //             'type'  => 'rec_engine',
+	// 			//'description' => 'This section is for Recommendation Engine '.$value['title'],
+    //             'desc_tip' => false
+	// 		);*/
 
-            $this->form_fields[$v] = $value;
-        }
-    }
+    //         $this->form_fields[$v] = $value;
+    //     }
+    // }
 
 
     /* Rec-Engine Zone End */
@@ -313,19 +313,19 @@ class WooCommerceRTGIntegration extends WC_Integration
                 'label'         => __( 'Enable products feed Cron', 'woo-rtg-tracker' ),
                 'default'       => 'no'
             ],
-            'rtg_rec_status' => [
-                'title'         => "Recommendation Engine",
-                'type'          => 'select',
-                'options'       => [
-                    0 => 'Disable',
-                    1 => 'Enable',
-                ],
-                'desc_tip'      => true,
-                'default'       => 0
-            ]
+            // 'rtg_rec_status' => [
+            //     'title'         => "Recommendation Engine",
+            //     'type'          => 'select',
+            //     'options'       => [
+            //         0 => 'Disable',
+            //         1 => 'Enable',
+            //     ],
+            //     'desc_tip'      => true,
+            //     'default'       => 0
+            // ]
         ];
         
-        $this->load_rec_engine();
+        // $this->load_rec_engine();
         
         if( isset($_POST["woocommerce_rtg_tracker_rtg_products_feed_cron"]) && !wp_next_scheduled( 'RTG_CRON_FEED' ) ) {
             wp_schedule_event( time(), 'RTG_CRON_SCHEDULES', 'RTG_CRON_FEED' );
