@@ -54,11 +54,11 @@ class WooCommerceRTGTracker
 
         /* Rec-Engine Zone Start */
         
-        add_action('wp_footer', [ $this, 'footer_rec_hook' ], 9999);
+        // add_action('wp_footer', [ $this, 'footer_rec_hook' ], 9999);
     
         /* Rec-Engine Zone End */
         /* RemoveFromCart */
-        add_action('woocommerce_remove_cart_item', array($this, 'RemoveCartEvent'), 10, 2);
+        // add_action('woocommerce_remove_cart_item', array($this, 'RemoveCartEvent'), 10, 2);
         add_filter('woocommerce_cart_item_removed_title', array($this, 'RemoveCartEventFilter'), 10, 2);
         /* RemoveFromCart End */
         // woocommerce_before_main_content
@@ -129,77 +129,77 @@ class WooCommerceRTGTracker
         return $add;
     }
 
-    public function footer_rec_hook()
-    {
-        // $this->RTGJSBuilder->removeFromCart();
-        $rm = "";
+    // public function footer_rec_hook()
+    // {
+    //     // $this->RTGJSBuilder->removeFromCart();
+    //     $rm = "";
         
-        if(!is_ajax() && !isset($_GET['removed_item'])){
-            $last = [];
+    //     if(!is_ajax() && !isset($_GET['removed_item'])){
+    //         $last = [];
         
-            foreach (self::getSession('RemoveCartEvent') as $cart) {
-                $rm .= "_ra.removeFromCart(".$cart['product_id'].",".$cart['quantity'].",".$cart['variation'].");";
-                $last = $cart;
-            }
+    //         foreach (self::getSession('RemoveCartEvent') as $cart) {
+    //             $rm .= "_ra.removeFromCart(".$cart['product_id'].",".$cart['quantity'].",".$cart['variation'].");";
+    //             $last = $cart;
+    //         }
 
-            if (!empty($rm)) {
-                $rm = "var _ra = _ra || {};
-                _ra.removeFromCartInfo = ".json_encode($last)."
-                if (_ra.ready !== undefined) {
-                ".$rm."
-                }";
-            }
-        }
+    //         if (!empty($rm)) {
+    //             $rm = "var _ra = _ra || {};
+    //             _ra.removeFromCartInfo = ".json_encode($last)."
+    //             if (_ra.ready !== undefined) {
+    //             ".$rm."
+    //             }";
+    //         }
+    //     }
 
-        echo '<script type="text/javascript">'. $this->rec_engine_load() . $rm .'</script>';
-    }
+    //     echo '<script type="text/javascript">'. $this->rec_engine_load() . $rm .'</script>';
+    // }
     /* Rec-Engine Zone Stop */
 
     /* RemoveFromCart */
-    public static function RemoveCartEvent($item, $cart = null) {
-        $cart = $cart->cart_contents[$item];
-        self::addToSession('RemoveCartEvent', array(
-            "product_id" => $cart['product_id'],
-            "quantity" => $cart['quantity'],
-            "variation" => false
-        ));
-        // $cart['product_id'], $cart['quantity'], $cart['variation_id'];
-    }
+    // public static function RemoveCartEvent($item, $cart = null) {
+    //     $cart = $cart->cart_contents[$item];
+    //     self::addToSession('RemoveCartEvent', array(
+    //         "product_id" => $cart['product_id'],
+    //         "quantity" => $cart['quantity'],
+    //         "variation" => false
+    //     ));
+    //     // $cart['product_id'], $cart['quantity'], $cart['variation_id'];
+    // }
 
-    public static function RemoveCartEventFilter($item, $cart = null) {
-        self::addToSession('RemoveCartEvent', array(
-            "product_id" => $cart['product_id'],
-            "quantity" => $cart['quantity'],
-            "variation" => false
-        ));
-        // $cart['product_id'], $cart['quantity'],$cart['variation_id'];
-        return $item;
-    }
+    // public static function RemoveCartEventFilter($item, $cart = null) {
+    //     self::addToSession('RemoveCartEvent', array(
+    //         "product_id" => $cart['product_id'],
+    //         "quantity" => $cart['quantity'],
+    //         "variation" => false
+    //     ));
+    //     // $cart['product_id'], $cart['quantity'],$cart['variation_id'];
+    //     return $item;
+    // }
 
-    public static function addToSession($name, $data, $key = null) {
-        $add = WC()->session->get($name);
+    // public static function addToSession($name, $data, $key = null) {
+    //     $add = WC()->session->get($name);
 
-        if ($key === null)
-        {
-            $n = '';
+    //     if ($key === null)
+    //     {
+    //         $n = '';
 
-            for ($i = 0; $i < 5; ++$i) {
-                $n .= random_int(0, 9);
-            }
+    //         for ($i = 0; $i < 5; ++$i) {
+    //             $n .= random_int(0, 9);
+    //         }
 
-            $add[time().$n] = $data;
-        } else {
-            $add[$key] = $data;
-        }
+    //         $add[time().$n] = $data;
+    //     } else {
+    //         $add[$key] = $data;
+    //     }
 
-        WC()->session->set($name, $add);
-    }
+    //     WC()->session->set($name, $add);
+    // }
 
-    public static function getSession($name = 'RemoveCartEvent') {
-        $return = WC()->session->get($name);
-        WC()->session->set($name, array());
-        return $return;
-    }
+    // public static function getSession($name = 'RemoveCartEvent') {
+    //     $return = WC()->session->get($name);
+    //     WC()->session->set($name, array());
+    //     return $return;
+    // }
 
     /* RemoveFromCart End*/
 
@@ -419,15 +419,15 @@ class WooCommerceRTGTracker
      *
      * @param $cartItemKey
      */
-    public function remove_from_cart_hook($cartItemKey)
-    {
-        $cartItem = WC()->cart->get_cart_item($cartItemKey);
+    // public function remove_from_cart_hook($cartItemKey)
+    // {
+    //     $cartItem = WC()->cart->get_cart_item($cartItemKey);
 
-        if (!empty($cartItem))
-        {
-            $this->RTGJSBuilder->removeFromCart($cartItem['product_id'], $cartItem['quantity'], new \RetargetingSDK\Variation());
-        }
-    }
+    //     if (!empty($cartItem))
+    //     {
+    //         $this->RTGJSBuilder->removeFromCart($cartItem['product_id'], $cartItem['quantity'], new \RetargetingSDK\Variation());
+    //     }
+    // }
 
     /**
      * Cart hook

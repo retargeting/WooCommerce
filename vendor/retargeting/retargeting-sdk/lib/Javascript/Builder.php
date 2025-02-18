@@ -162,21 +162,21 @@ class Builder extends AbstractCredentials
      * @param Variation $variation
      * @return Builder
      */
-    public function removeFromCart($productId, $quantity, Variation $variation)
-    {
-        if (empty($variation->getCode()))
-        {
-            $variation = [];
-        }
-        else
-        {
-            $variation = $variation->getData(false);
-        }
+    // public function removeFromCart($productId, $quantity, Variation $variation)
+    // {
+    //     if (empty($variation->getCode()))
+    //     {
+    //         $variation = [];
+    //     }
+    //     else
+    //     {
+    //         $variation = $variation->getData(false);
+    //     }
 
-        return $this->addItem(
-            new Item\CartRemove($productId, $quantity, $variation)
-        );
-    }
+    //     return $this->addItem(
+    //         new Item\CartRemove($productId, $quantity, $variation)
+    //     );
+    // }
 
     /**
      * @param $productId
