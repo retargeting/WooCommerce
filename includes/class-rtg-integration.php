@@ -66,9 +66,9 @@ class WooCommerceRTGIntegration extends WC_Integration
             $this->{$param} = $this->get_option($param);
         }
 
-        foreach ($this->rtgRec as $param) {
-            $this->{$param} = $this->get_option($param);
-        }
+        // foreach ($this->rtgRec as $param) {
+        //     $this->{$param} = $this->get_option($param);
+        // }
 
         add_action('woocommerce_update_options_integration_' .  $this->id, [ $this, 'process_admin_options' ] );
         add_filter('woocommerce_settings_api_sanitized_fields_rtg_tracker',  [ $this, 'save_fields']);
