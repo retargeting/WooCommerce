@@ -59,7 +59,7 @@ class WooCommerceRTGTracker
         /* Rec-Engine Zone End */
         /* RemoveFromCart */
         // add_action('woocommerce_remove_cart_item', array($this, 'RemoveCartEvent'), 10, 2);
-        add_filter('woocommerce_cart_item_removed_title', array($this, 'RemoveCartEventFilter'), 10, 2);
+        // add_filter('woocommerce_cart_item_removed_title', array($this, 'RemoveCartEventFilter'), 10, 2);
         /* RemoveFromCart End */
         // woocommerce_before_main_content
         // woocommerce_after_add_to_cart_button
@@ -77,57 +77,57 @@ class WooCommerceRTGTracker
     }
 
     /* Rec-Engine Zone Start */
-    private static $rec_engine = array(
-        "is_home" => "rtg_rec_home_page",
-        "is_order_received_page" => "rtg_rec_thank_you_page", /* Importanta Ordinea */
-        "is_checkout" => "rtg_rec_shopping_cart",
-        "is_cart" => "rtg_rec_shopping_cart",
-        "is_product_category" => "rtg_rec_category_page",
-        "is_product" => "rtg_rec_product_page",
-        "is_search" => "rtg_rec_search_page",
-        "is_404" => "rtg_rec_page_404",
-        "is_shop" => "rtg_rec_category_page"
-    );
+    // private static $rec_engine = array(
+    //     "is_home" => "rtg_rec_home_page",
+    //     "is_order_received_page" => "rtg_rec_thank_you_page", /* Importanta Ordinea */
+    //     "is_checkout" => "rtg_rec_shopping_cart",
+    //     "is_cart" => "rtg_rec_shopping_cart",
+    //     "is_product_category" => "rtg_rec_category_page",
+    //     "is_product" => "rtg_rec_product_page",
+    //     "is_search" => "rtg_rec_search_page",
+    //     "is_404" => "rtg_rec_page_404",
+    //     "is_shop" => "rtg_rec_category_page"
+    // );
 
-    function rec_engine_load() {
+    // function rec_engine_load() {
 
-        $add = "";
-        if ((bool) $this->options->rtg_status && (bool) $this->options->rtg_rec_status) {
-            foreach (self::$rec_engine as $key=>$value) {
-                if ($key() || $key === 'is_home' && is_front_page()) {
-                    $add = '_ra_rec_engine.list = '.str_replace('\\\"', '"', json_encode($this->options->{$value})).';
-                    _ra_rec_engine.init();';
-                    break;
-                }
-            }
+    //     $add = "";
+    //     if ((bool) $this->options->rtg_status && (bool) $this->options->rtg_rec_status) {
+    //         foreach (self::$rec_engine as $key=>$value) {
+    //             if ($key() || $key === 'is_home' && is_front_page()) {
+    //                 $add = '_ra_rec_engine.list = '.str_replace('\\\"', '"', json_encode($this->options->{$value})).';
+    //                 _ra_rec_engine.init();';
+    //                 break;
+    //             }
+    //         }
 
-            return (
-                empty($add) ?
-                    $add : '
-            var _ra_rec_engine = {};
+    //         return (
+    //             empty($add) ?
+    //                 $add : '
+    //         var _ra_rec_engine = {};
 
-            _ra_rec_engine.init = function () {
-                let list = this.list;
-                for (let key in list) {
-                    _ra_rec_engine.insert(list[key].value, list[key].selector, list[key].place);
-                }
-            };
+    //         _ra_rec_engine.init = function () {
+    //             let list = this.list;
+    //             for (let key in list) {
+    //                 _ra_rec_engine.insert(list[key].value, list[key].selector, list[key].place);
+    //             }
+    //         };
 
-            _ra_rec_engine.insert = function (code = "", selector = null, place = "before") {
-                if (code !== "" && selector !== null) {
-                    let newTag = document.createRange().createContextualFragment(code);
-                    let content = document.querySelector(selector);
+    //         _ra_rec_engine.insert = function (code = "", selector = null, place = "before") {
+    //             if (code !== "" && selector !== null) {
+    //                 let newTag = document.createRange().createContextualFragment(code);
+    //                 let content = document.querySelector(selector);
 
-                    content.parentNode.insertBefore(newTag, place === "before" ? content : content.nextSibling);
-                }
-            };
-            '.$add
-            );
+    //                 content.parentNode.insertBefore(newTag, place === "before" ? content : content.nextSibling);
+    //             }
+    //         };
+    //         '.$add
+    //         );
 
-        }
+    //     }
 
-        return $add;
-    }
+    //     return $add;
+    // }
 
     // public function footer_rec_hook()
     // {
